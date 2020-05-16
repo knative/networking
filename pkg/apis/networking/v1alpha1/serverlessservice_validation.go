@@ -21,7 +21,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	"knative.dev/pkg/apis"
-	"knative.dev/serving/pkg/apis/serving"
+	"knative.dev/networking/pkg/apis/serving"
 )
 
 // Validate inspects and validates ClusterServerlessService object.
