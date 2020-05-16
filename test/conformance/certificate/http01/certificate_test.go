@@ -23,8 +23,8 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	utils "knative.dev/networking/test/conformance/certificate"
 	"knative.dev/serving/test"
-	utils "knative.dev/serving/test/conformance/certificate"
 )
 
 // TestHTTP01Challenge verifies that HTTP challenges are created for a certificate
