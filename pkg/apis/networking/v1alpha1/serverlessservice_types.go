@@ -22,7 +22,7 @@ import (
 	"knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
 	"knative.dev/pkg/kmeta"
-	networking "knative.dev/serving/pkg/apis/networking"
+	networking "knative.dev/networking/pkg/apis/networking"
 )
 
 // +genclient
