@@ -22,8 +22,8 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	corev1 "k8s.io/api/core/v1"
-	"knative.dev/pkg/apis"
 	networking "knative.dev/networking/pkg/apis/networking"
+	"knative.dev/pkg/apis"
 )
 
 func TestServerlessServiceSpecValidation(t *testing.T) {
