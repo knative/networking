@@ -24,7 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
-	"knative.dev/serving/test"
+	"knative.dev/networking/test"
 )
 
 // TestBasics verifies that a no frills Ingress exposes a simple Pod/Service via the public load balancer.
