@@ -24,7 +24,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	cache "k8s.io/client-go/tools/cache"
-	versioned "knative.dev/sample-controller/pkg/client/clientset/versioned"
+	versioned "knative.dev/networking/pkg/client/clientset/versioned"
 )
 
 // NewInformerFunc takes versioned.Interface and time.Duration to return a SharedIndexInformer.

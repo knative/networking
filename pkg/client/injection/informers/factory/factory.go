@@ -21,11 +21,11 @@ package factory
 import (
 	context "context"
 
+	externalversions "knative.dev/networking/pkg/client/informers/externalversions"
+	client "knative.dev/networking/pkg/client/injection/client"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 	logging "knative.dev/pkg/logging"
-	externalversions "knative.dev/sample-controller/pkg/client/informers/externalversions"
-	client "knative.dev/sample-controller/pkg/client/injection/client"
 )
 
 func init() {
@@ -50,7 +50,7 @@ func Get(ctx context.Context) externalversions.SharedInformerFactory {
 	untyped := ctx.Value(Key{})
 	if untyped == nil {
 		logging.FromContext(ctx).Panic(
-			"Unable to fetch knative.dev/sample-controller/pkg/client/informers/externalversions.SharedInformerFactory from context.")
+			"Unable to fetch knative.dev/networking/pkg/client/informers/externalversions.SharedInformerFactory from context.")
 	}
 	return untyped.(externalversions.SharedInformerFactory)
 }
