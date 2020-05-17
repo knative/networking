@@ -23,7 +23,7 @@ import (
 
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
-	v1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
+	v1alpha1 "knative.dev/networking/pkg/apis/networking/v1alpha1"
 )
 
 // GenericInformer is type of SharedIndexInformer which will locate and delegate to other
@@ -52,9 +52,13 @@ func (f *genericInformer) Lister() cache.GenericLister {
 // TODO extend this to unknown resources with a client pool
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
-	// Group=samples.knative.dev, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("addressableservices"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Samples().V1alpha1().AddressableServices().Informer()}, nil
+	// Group=networking.internal.knative.dev, Version=v1alpha1
+	case v1alpha1.SchemeGroupVersion.WithResource("certificates"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Networking().V1alpha1().Certificates().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("ingresses"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Networking().V1alpha1().Ingresses().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("serverlessservices"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Networking().V1alpha1().ServerlessServices().Informer()}, nil
 
 	}
 
