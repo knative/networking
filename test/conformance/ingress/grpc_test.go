@@ -32,8 +32,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
-	"knative.dev/serving/test"
-	ping "knative.dev/serving/test/test_images/grpc-ping/proto"
+	"knative.dev/networking/test"
+	ping "knative.dev/networking/test/test_images/grpc-ping/proto"
 )
 
 // TestGRPC verifies that GRPC may be used via a simple Ingress.

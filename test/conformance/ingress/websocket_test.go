@@ -32,7 +32,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
-	"knative.dev/serving/test"
+	"knative.dev/networking/test"
 )
 
 // TestWebsocket verifies that websockets may be used via a simple Ingress.

@@ -49,11 +49,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
+	"knative.dev/networking/test/types"
+
 	"knative.dev/pkg/network"
 	pkgTest "knative.dev/pkg/test"
-	"knative.dev/serving/test"
-	"knative.dev/serving/test/types"
-	v1a1test "knative.dev/serving/test/v1alpha1"
 )
 
 var rootCAs = x509.NewCertPool()
@@ -638,7 +638,7 @@ func CreateIngressReadyDialContext(t *testing.T, clients *test.Clients, spec v1a
 	t.Helper()
 	ing, cancel := CreateIngress(t, clients, spec)
 
-	if err := v1a1test.WaitForIngressState(clients.NetworkingClient, ing.Name, v1a1test.IsIngressReady, t.Name()); err != nil {
+	if err := test.WaitForIngressState(clients.NetworkingClient, ing.Name, test.IsIngressReady, t.Name()); err != nil {
 		cancel()
 		t.Fatal("Error waiting for ingress state:", err)
 	}
@@ -697,7 +697,7 @@ func UpdateIngressReady(t *testing.T, clients *test.Clients, name string, spec v
 	t.Helper()
 	UpdateIngress(t, clients, name, spec)
 
-	if err := v1a1test.WaitForIngressState(clients.NetworkingClient, name, v1a1test.IsIngressReady, t.Name()); err != nil {
+	if err := test.WaitForIngressState(clients.NetworkingClient, name, test.IsIngressReady, t.Name()); err != nil {
 		t.Fatal("Error waiting for ingress state:", err)
 	}
 }

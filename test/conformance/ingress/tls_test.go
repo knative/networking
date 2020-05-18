@@ -24,7 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
-	"knative.dev/serving/test"
+	"knative.dev/networking/test"
 )
 
 // TestIngressTLS verifies that the Ingress properly handles the TLS field.
