@@ -829,7 +829,7 @@ func CreateDialContext(t *testing.T, ing *v1alpha1.Ingress, clients *test.Client
 		t.Fatalf("Unable to retrieve Kubernetes service %s/%s: %v", namespace, name, err)
 	}
 	if len(svc.Status.LoadBalancer.Ingress) < 1 {
-		t.Fatal("Serice does not have any ingresses (not type LoadBalancer?).")
+		t.Fatal("Service does not have any ingresses (not type LoadBalancer?).")
 	}
 	ingress := svc.Status.LoadBalancer.Ingress[0]
 	dial := network.NewBackoffDialer(dialBackoff)
