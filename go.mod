@@ -11,7 +11,6 @@ require (
 	google.golang.org/grpc v1.28.1
 	istio.io/client-go v0.0.0-20200513000250-b1d6e9886b7b
 	k8s.io/api v0.18.1
-	k8s.io/apiextensions-apiserver v0.17.6 // indirect
 	k8s.io/apimachinery v0.18.1
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
@@ -28,7 +27,6 @@ replace (
 	github.com/tsenart/vegeta => github.com/tsenart/vegeta v1.2.1-0.20190917092155-ab06ddb56e2f
 
 	k8s.io/api => k8s.io/api v0.17.6
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.17.6
 	k8s.io/apimachinery => k8s.io/apimachinery v0.17.6
 	k8s.io/apiserver => k8s.io/apiserver v0.17.6
 	k8s.io/client-go => k8s.io/client-go v0.17.6
