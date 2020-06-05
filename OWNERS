@@ -1,7 +1,14 @@
 # The OWNERS file is used by prow to automatically merge approved PRs.
 
 approvers:
+# TOC
+- evankanderson
+- grantr
+- markusthoemmes
 - mattmoor
-- n3wscott
-- vaikas-google
-- vaikas
+- tcnghia
+# Networking Approvers
+- mdemirhan
+- nak3
+- vagababov
+- ZhiminXiang
