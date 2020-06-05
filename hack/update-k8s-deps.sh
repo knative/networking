@@ -23,7 +23,7 @@ export K8S_VERSION="${1:-v0.17.6}"
 
 K8S_DEPS=(
   "k8s.io/api"
-  "k8s.io/apiextensions-aiserver"
+  "k8s.io/apiextensions-apiserver"
   "k8s.io/apimachinery"
   "k8s.io/apiserver"
   "k8s.io/code-generator"
@@ -46,13 +46,6 @@ for dep in "${K8S_DEPS[@]}"
 do
   update_module "${dep}" "${K8S_VERSION}"
 done
-
-
-# TODO - this isn't great but it's automated
-IFS='.' semver=(${K8S_VERSION}) #turn the version into an array where the period is the separator
-OPENAPI_BRANCH="release-1.${semver[1]}"
-
-update_module "k8s.io/kube-openapi" "${OPENAPI_BRANCH}"
 
 
 ./hack/update-deps.sh
