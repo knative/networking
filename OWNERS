@@ -12,3 +12,16 @@ approvers:
 - nak3
 - vagababov
 - ZhiminXiang
+
+# Networking Reviewers
+reviewers:
+- andrew-su
+- JRBANCEL
+- markusthoemmes
+- mdemirhan
+- nak3
+- shashwathi
+- tcnghia
+- vagababov
+- yanweiguo
+- ZhiminXiang
