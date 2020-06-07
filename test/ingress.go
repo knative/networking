@@ -53,5 +53,5 @@ func WaitForIngressState(client *NetworkingClients, name string, inState func(r 
 // IsIngressReady will check the status conditions of the ingress and return true if the ingress is
 // ready.
 func IsIngressReady(r *v1alpha1.Ingress) (bool, error) {
-	return r.Generation == r.Status.ObservedGeneration && r.Status.IsReady(), nil
+	return r.IsReady(), nil
 }
