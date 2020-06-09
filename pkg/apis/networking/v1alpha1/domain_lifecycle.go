@@ -28,7 +28,7 @@ func (*Domain) GetConditionSet() apis.ConditionSet {
 	return domainCondSet
 }
 
-// GetGroupVersionKind returns SchemeGroupVersion of an Ingress
-func (i *Domain) GetGroupVersionKind() schema.GroupVersionKind {
+// GetGroupVersionKind returns SchemeGroupVersion of an Domain
+func (*Domain) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind("Domain")
 }

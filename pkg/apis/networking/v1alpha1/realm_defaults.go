@@ -22,11 +22,11 @@ import (
 	"knative.dev/pkg/apis"
 )
 
-// SetDefaults populates default values in Ingress
-func (i *Realm) SetDefaults(ctx context.Context) {
-	i.Spec.SetDefaults(apis.WithinSpec(ctx))
+// SetDefaults populates default values in Realm
+func (r *Realm) SetDefaults(ctx context.Context) {
+	r.Spec.SetDefaults(apis.WithinSpec(ctx))
 }
 
-// SetDefaults populates default values in IngressSpec
+// SetDefaults populates default values in RealmSpec
 func (s *RealmSpec) SetDefaults(ctx context.Context) {
 }

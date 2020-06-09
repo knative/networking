@@ -22,11 +22,11 @@ import (
 	"knative.dev/pkg/apis"
 )
 
-// SetDefaults populates default values in Ingress
-func (i *Domain) SetDefaults(ctx context.Context) {
-	i.Spec.SetDefaults(apis.WithinSpec(ctx))
+// SetDefaults populates default values in Domain
+func (d *Domain) SetDefaults(ctx context.Context) {
+	d.Spec.SetDefaults(apis.WithinSpec(ctx))
 }
 
-// SetDefaults populates default values in IngressSpec
+// SetDefaults populates default values in DomainSpec
 func (s *DomainSpec) SetDefaults(ctx context.Context) {
 }
