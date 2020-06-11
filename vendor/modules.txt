@@ -16,7 +16,7 @@ contrib.go.opencensus.io/exporter/stackdriver/monitoredresource/gcp
 github.com/PuerkitoBio/purell
 # github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
 github.com/PuerkitoBio/urlesc
-# github.com/aws/aws-sdk-go v1.29.34
+# github.com/aws/aws-sdk-go v1.30.5
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/awsutil
@@ -708,7 +708,7 @@ k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200605170718-b7125260dc6f
+# knative.dev/pkg v0.0.0-20200609184032-fef70cc2616b
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -785,10 +785,10 @@ knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/ad
 knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice
 knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1
 knative.dev/sample-controller/pkg/reconciler/addressableservice
-# knative.dev/test-infra v0.0.0-20200606045118-14ebc4a42974
+# knative.dev/test-infra v0.0.0-20200610141822-fd009ecf10fe
 ## explicit
 knative.dev/test-infra/scripts
-# sigs.k8s.io/yaml v1.1.0
+# sigs.k8s.io/yaml v1.2.0
 sigs.k8s.io/yaml
 # github.com/Azure/azure-sdk-for-go => github.com/Azure/azure-sdk-for-go v38.2.0+incompatible
 # github.com/Azure/go-autorest => github.com/Azure/go-autorest v13.4.0+incompatible
