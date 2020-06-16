@@ -49,15 +49,50 @@ func TestDomainSpecValidation(t *testing.T) {
 				Domain: "test-domain",
 			}},
 		},
-		want: apis.ErrMissingField("spec.IngressClass"),
+		want: apis.ErrMissingField("spec.ingressClass"),
 	}, {
 		name: "loadbalacers arent specified",
 		ds: DomainSpec{
 			IngressClass: "test-ingress-class",
 		},
-		want: apis.ErrMissingField("spec.LoadBalancers"),
+		want: apis.ErrMissingField("spec.loadBalancers"),
+	}, {
+		name: "at least one field in loadbalacer is specified",
+		ds: DomainSpec{
+			IngressClass: "test-ingress-class",
+			LoadBalancers: []LoadBalancerIngressSpec{{
+				Domain: "some-domain",
+			}},
+		},
+	}, {
+		name: "none of the fields are specified in a loadbalancer",
+		ds: DomainSpec{
+			IngressClass:  "test-ingress-class",
+			LoadBalancers: []LoadBalancerIngressSpec{{}},
+		},
+		want: apis.ErrMissingOneOf("spec.loadBalancers[0].domain", "spec.loadBalancers[0].domainInternal",
+			"spec.loadBalancers[0].ip", "spec.loadBalancers[0].meshOnly"),
+	}, {
+		name: "name is missing from ingressConfig",
+		ds: DomainSpec{
+			IngressClass: "test-ingress-class",
+			Configs:      []IngressConfig{{Namespace: "ns", Type: "my-type"}},
+			LoadBalancers: []LoadBalancerIngressSpec{{
+				Domain: "some-domain",
+			}},
+		},
+		want: apis.ErrMissingField("spec.configs[0].name"),
+	}, {
+		name: "type is missing from ingressConfig",
+		ds: DomainSpec{
+			IngressClass: "test-ingress-class",
+			Configs:      []IngressConfig{{Namespace: "ns", Name: "my-name"}},
+			LoadBalancers: []LoadBalancerIngressSpec{{
+				Domain: "some-domain",
+			}},
+		},
+		want: apis.ErrMissingField("spec.configs[0].type"),
 	}}
-
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			ds := Domain{
@@ -65,8 +100,8 @@ func TestDomainSpecValidation(t *testing.T) {
 				Spec:       test.ds,
 			}
 			got := ds.Validate(context.Background())
-			if diff := cmp.Diff(test.want.Error(), got.Error()); diff != "" {
-				t.Errorf("Validate (-want, +got) = %v", diff)
+			if !cmp.Equal(test.want.Error(), got.Error()) {
+				t.Errorf("Validate (-want, +got) = \n%s", cmp.Diff(test.want.Error(), got.Error()))
 			}
 		})
 	}

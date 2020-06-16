@@ -24,10 +24,10 @@ import (
 )
 
 func TestRealmDefaults(t *testing.T) {
-	r := &Realm{}
+	r := Realm{}
 	r.SetDefaults(context.Background())
 
-	if diff := cmp.Diff(&Realm{}, r); diff != "" {
-		t.Errorf("SetDefaults (-want, +got) = %v", diff)
+	if !cmp.Equal(Realm{}, r) {
+		t.Errorf("SetDefaults (-want, +got) = \n%s", cmp.Diff(Realm{}, r))
 	}
 }

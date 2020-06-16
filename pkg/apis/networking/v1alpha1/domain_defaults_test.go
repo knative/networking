@@ -24,10 +24,10 @@ import (
 )
 
 func TestDomainDefaults(t *testing.T) {
-	d := &Domain{}
+	d := Domain{}
 	d.SetDefaults(context.Background())
 
-	if diff := cmp.Diff(&Domain{}, d); diff != "" {
-		t.Errorf("SetDefaults (-want, +got) = %v", diff)
+	if !cmp.Equal(Domain{}, d) {
+		t.Errorf("SetDefaults (-want, +got) = \n%s", cmp.Diff(Domain{}, d))
 	}
 }

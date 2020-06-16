@@ -33,7 +33,7 @@ func TestRealmGetConditionSet(t *testing.T) {
 func TestRealmGetGroupVersionKind(t *testing.T) {
 	r := Realm{}
 	expected := SchemeGroupVersion.WithKind("Realm")
-	if diff := cmp.Diff(expected, r.GetGroupVersionKind()); diff != "" {
-		t.Errorf("Unexpected diff (-want, +got) = %v", diff)
+	if !cmp.Equal(expected, r.GetGroupVersionKind()) {
+		t.Errorf("Unexpected diff (-want, +got) = %v", cmp.Diff(expected, r.GetGroupVersionKind()))
 	}
 }

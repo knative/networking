@@ -33,7 +33,7 @@ func TestDomainGetConditionSet(t *testing.T) {
 func TestDomainGetGroupVersionKind(t *testing.T) {
 	d := Domain{}
 	expected := SchemeGroupVersion.WithKind("Domain")
-	if diff := cmp.Diff(expected, d.GetGroupVersionKind()); diff != "" {
-		t.Errorf("Unexpected diff (-want, +got) = %v", diff)
+	if !cmp.Equal(expected, d.GetGroupVersionKind()) {
+		t.Errorf("Unexpected diff (-want, +got) = %v", cmp.Diff(expected, d.GetGroupVersionKind()))
 	}
 }

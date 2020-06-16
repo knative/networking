@@ -36,10 +36,35 @@ func (spec *DomainSpec) Validate(ctx context.Context) *apis.FieldError {
 	}
 	var all *apis.FieldError
 	if spec.IngressClass == "" {
-		all = all.Also(apis.ErrMissingField("IngressClass"))
+		all = all.Also(apis.ErrMissingField("ingressClass"))
 	}
 	if len(spec.LoadBalancers) == 0 {
-		all = all.Also(apis.ErrMissingField("LoadBalancers"))
+		all = all.Also(apis.ErrMissingField("loadBalancers"))
+	}
+	for idx, lbSpec := range spec.LoadBalancers {
+		all = all.Also(lbSpec.Validate(ctx).ViaFieldIndex("loadBalancers", idx))
+	}
+	for idx, cfg := range spec.Configs {
+		all = all.Also(cfg.Validate(ctx).ViaFieldIndex("configs", idx))
+	}
+	return all
+}
+
+func (lb *LoadBalancerIngressSpec) Validate(ctx context.Context) *apis.FieldError {
+	var all *apis.FieldError
+	if lb.Domain == "" && lb.DomainInternal == "" && lb.IP == "" && !lb.MeshOnly {
+		return all.Also(apis.ErrMissingOneOf("domain", "domainInternal", "ip", "meshOnly"))
+	}
+	return all
+}
+
+func (cfg *IngressConfig) Validate(ctx context.Context) *apis.FieldError {
+	var all *apis.FieldError
+	if cfg.Name == "" {
+		all = all.Also(apis.ErrMissingField("name"))
+	}
+	if cfg.Type == "" {
+		all = all.Also(apis.ErrMissingField("type"))
 	}
 	return all
 }

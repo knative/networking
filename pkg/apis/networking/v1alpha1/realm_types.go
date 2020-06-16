@@ -81,8 +81,7 @@ type RealmList struct {
 //
 // Conditions: Currently each Realm can have only two Domains.
 // That fits well with the way we assign Route.Status.URL and Route.Status.Domain.
-// All Domain in the same Realm must share the same ingress class annotation.
-
+// All Domains in the same Realm must share the same ingress class annotation.
 type RealmSpec struct {
 	// External contains the name of the Domain resource corresponding with traffic
 	// originating from outside of the cluster.  Could be omitted for a Realm without

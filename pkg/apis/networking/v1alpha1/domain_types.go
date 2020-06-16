@@ -94,13 +94,13 @@ type DomainSpec struct {
 	// +optional
 	Suffix string `json:"suffix,omitempty"`
 
-	// LoadBalancers provide addresses (IP address, domains) of the load balancers
+	// LoadBalancers provide addresses (IP addresses, domains) of the load balancers
 	// associated with this Domain.  This is used in automatic DNS provisioning like
 	// configuration of magic DNS or creating ExternalName services for cluster-local
 	// access.
 	LoadBalancers []LoadBalancerIngressSpec `json:"loadBalancers"`
 
-	// Config represents multiple resource information required for Kingress implementation.
+	// Configs represent multiple resource information for Kingress implementation.
 	// +optional
 	Configs []IngressConfig `json:"configs,omitempty"`
 }

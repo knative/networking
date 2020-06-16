@@ -31,7 +31,7 @@ func (r *Realm) Validate(ctx context.Context) *apis.FieldError {
 func (spec *RealmSpec) Validate(ctx context.Context) *apis.FieldError {
 	var all *apis.FieldError
 	if spec.External == "" && spec.Cluster == "" {
-		all = all.Also(apis.ErrMissingOneOf("External", "Cluster"))
+		all = all.Also(apis.ErrMissingOneOf("external", "cluster"))
 	}
 	return all
 }
