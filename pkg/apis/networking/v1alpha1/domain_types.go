@@ -100,13 +100,26 @@ type DomainSpec struct {
 	// access.
 	LoadBalancers []LoadBalancerIngressSpec `json:"loadBalancers"`
 
-	// Config allows KIngress implementations to add additional information needed
-	// for configuring the proxies associated with this Domain.
-	// For examples, in our Istio-based Ingress this will contains all references of
-	// Istio Gateways associated with this Domain. This could be a reference of a ConfigMap
-	// owned by the implementation as well.
+	// Config represents multiple resource information required for Kingress implementation.
 	// +optional
-	Config []map[string]string `json:"config,omitempty"`
+	Configs []IngressConfig `json:"configs,omitempty"`
+}
+
+// IngressConfig allows KIngress implementations to add additional information needed
+// for configuring the proxies associated with this Domain.
+// For examples, in our Istio-based Ingress this will contains all references of
+// Istio Gateways associated with this Domain. This could be a reference of a ConfigMap
+// owned by the implementation as well.
+type IngressConfig struct {
+	// Name of the Kingress implementation resource
+	// +optional
+	Name string `json:"name,omitempty"`
+	// Namespace of the Kingress implementation resource
+	// +optional
+	Namespace string `json:"namespace,omitempty"`
+	// Type of the Kingress implementation resource
+	// +optional
+	Type string `json:"type,omitempty"`
 }
 
 // LoadBalancerIngressSpec represents the spec of a load-balancer ingress point:
