@@ -1383,8 +1383,9 @@ knative.dev/pkg v0.0.0-20200509234445-b52862b1b3ea/go.mod h1:VR1a7CeToIFubOhOlip
 knative.dev/pkg v0.0.0-20200515002500-16d7b963416f/go.mod h1:tMOHGbxtRz8zYFGEGpV/bpoTEM1o89MwYFC4YJXl3GY=
 knative.dev/pkg v0.0.0-20200520073958-94316e20e860/go.mod h1:QgNZTxnwpB/oSpNcfnLVlw+WpEwwyKAvJlvR3hgeltA=
 knative.dev/pkg v0.0.0-20200603222317-b79e4a24ca50/go.mod h1:8IfPj/lpuKHHg82xZCl2wuFZ3BM96To72sN1W8T9wjQ=
-knative.dev/pkg v0.0.0-20200609184032-fef70cc2616b h1:L25RYK4WW4kVVUQHl6JA3oacGTMZxiiOG1QETHtBxR8=
-knative.dev/pkg v0.0.0-20200609184032-fef70cc2616b/go.mod h1:rA+FklsrVahwF4a+D63NyHJlzDoAFH81K4J5CYuE3bA=
+knative.dev/pkg v0.0.0-20200611204322-2ddcfef739a2/go.mod h1:rA+FklsrVahwF4a+D63NyHJlzDoAFH81K4J5CYuE3bA=
+knative.dev/pkg v0.0.0-20200616011124-086ff4395641 h1:9rw5fSACzkF0E4qC2qgnbPZsa8t4Q2e3Ql7NS8XGqfw=
+knative.dev/pkg v0.0.0-20200616011124-086ff4395641/go.mod h1:rA+FklsrVahwF4a+D63NyHJlzDoAFH81K4J5CYuE3bA=
 knative.dev/sample-controller v0.0.0-20200510050845-bf7c19498b7e h1:I6nRhlOCuFMShAMRhbe9c0+pbfQHttUWZMqVVtRnNt0=
 knative.dev/sample-controller v0.0.0-20200510050845-bf7c19498b7e/go.mod h1:D2ZDLrR9Dq9LiiVN7TatzI7WMcEPgk1MHbbhgBKE6W8=
 knative.dev/test-infra v0.0.0-20200407185800-1b88cb3b45a5/go.mod h1:xcdUkMJrLlBswIZqL5zCuBFOC22WIPMQoVX1L35i0vQ=
@@ -1396,8 +1397,8 @@ knative.dev/test-infra v0.0.0-20200519015156-82551620b0a9/go.mod h1:A5b2OAXTOeHT
 knative.dev/test-infra v0.0.0-20200522180958-6a0a9b9d893a/go.mod h1:n9eQkzmSNj8BiqNFl1lzoz68D09uMeJfyOjc132Gbik=
 knative.dev/test-infra v0.0.0-20200606045118-14ebc4a42974 h1:CrZmlbB+j3ZF/aTrfyypY5ulX2w7XrkfeXKQsbkqzTg=
 knative.dev/test-infra v0.0.0-20200606045118-14ebc4a42974/go.mod h1://I6IZIF0QDgs5wotU243ZZ5cTpm6/GthayjUenBBc0=
-knative.dev/test-infra v0.0.0-20200610141822-fd009ecf10fe h1:C0CvM3Vak0wUKaoTCS0QFRhRPkiF4Gq93fhxq3oFj7I=
-knative.dev/test-infra v0.0.0-20200610141822-fd009ecf10fe/go.mod h1:vyiP+4ospN/PJgwVzHkjnhlNP4uBPnvwkgb9dPCFSj4=
+knative.dev/test-infra v0.0.0-20200615231324-3a016f44102c h1:pzn7d3gVWX6p10CpdSFAYlgFhLwI6hGQ8H4sxQfvob4=
+knative.dev/test-infra v0.0.0-20200615231324-3a016f44102c/go.mod h1:+BfrTJpc++rH30gX/C0QY6NT2eYVzycll52uw6CrQnc=
 modernc.org/cc v1.0.0/go.mod h1:1Sk4//wdnYJiUIxnW8ddKpaOJCF37yAdqYnkxUpaYxw=
 modernc.org/golex v1.0.0/go.mod h1:b/QX9oBD/LhixY6NDh+IdGv17hgB+51fET1i2kPSmvk=
 modernc.org/mathutil v1.0.0/go.mod h1:wU0vUrJsVWBZ4P6e7xtFJEhFSNsfRLJ8H458uRjg03k=
