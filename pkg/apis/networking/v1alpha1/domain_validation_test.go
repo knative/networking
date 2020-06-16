@@ -34,7 +34,7 @@ func TestDomainSpecValidation(t *testing.T) {
 		name: "all good",
 		ds: DomainSpec{
 			IngressClass: "test-ingress-class",
-			LoadBalancers: []LoadBalancerIngressStatus{{
+			LoadBalancers: []LoadBalancerIngressSpec{{
 				Domain: "test-domain",
 			}},
 		},
@@ -45,7 +45,7 @@ func TestDomainSpecValidation(t *testing.T) {
 	}, {
 		name: "ingress class isnt specified",
 		ds: DomainSpec{
-			LoadBalancers: []LoadBalancerIngressStatus{{
+			LoadBalancers: []LoadBalancerIngressSpec{{
 				Domain: "test-domain",
 			}},
 		},
