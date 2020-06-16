@@ -100,7 +100,7 @@ type DomainSpec struct {
 	// access.
 	LoadBalancers []LoadBalancerIngressSpec `json:"loadBalancers"`
 
-	// Configs represent multiple resource information for Kingress implementation.
+	// Configs contains additional pieces of information to configure ingress proxies.
 	// +optional
 	Configs []IngressConfig `json:"configs,omitempty"`
 }
