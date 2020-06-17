@@ -708,7 +708,7 @@ k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200616011124-086ff4395641
+# knative.dev/pkg v0.0.0-20200616232624-ffb929374a39
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -785,7 +785,7 @@ knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/ad
 knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice
 knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1
 knative.dev/sample-controller/pkg/reconciler/addressableservice
-# knative.dev/test-infra v0.0.0-20200615231324-3a016f44102c
+# knative.dev/test-infra v0.0.0-20200617011927-7220df1de9de
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/yaml v1.2.0
