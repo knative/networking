@@ -178,7 +178,7 @@ github.com/rogpeppe/go-internal/module
 github.com/rogpeppe/go-internal/semver
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# go.opencensus.io v0.22.3
+# go.opencensus.io v0.22.4
 go.opencensus.io
 go.opencensus.io/internal
 go.opencensus.io/internal/tagencoding
@@ -707,7 +707,7 @@ k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200618002824-96c250871fac
+# knative.dev/pkg v0.0.0-20200618194225-7a18226dfce6
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -784,7 +784,7 @@ knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/ad
 knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice
 knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1
 knative.dev/sample-controller/pkg/reconciler/addressableservice
-# knative.dev/test-infra v0.0.0-20200617235125-6382dba95484
+# knative.dev/test-infra v0.0.0-20200618184825-a7b2980a8884
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/yaml v1.2.0
