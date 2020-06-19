@@ -64,6 +64,8 @@ rm -rf $(find vendor/ -name '*_test.go')
 # Add permission for shell scripts
 chmod +x $(find vendor -name '*.sh')
 
+git apply ./hack/patches/*.patch
+
 
 export GOFLAGS=-mod=vendor
 update_licenses third_party/VENDOR-LICENSE "./..."

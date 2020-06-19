@@ -244,9 +244,13 @@ func (r *reconcilerImpl) Reconcile(ctx context.Context, key string) error {
 
 			reconciler.PostProcessReconcile(ctx, resource, original)
 
+<<<<<<< HEAD
 		} else if isROI {
 			// Append the target method to the logger.
 			logger = logger.With(zap.String("targetMethod", "ObserveKind"))
+=======
+		reconciler.PostProcessReconcile(ctx, resource, original)
+>>>>>>> 9c436c4... Embed patch for generate-groups from
 
 			// Observe any changes to this resource, since we are not the leader.
 			reconcileEvent = roi.ObserveKind(ctx, resource)
