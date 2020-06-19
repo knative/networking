@@ -14,7 +14,7 @@ require (
 	k8s.io/apimachinery v0.18.1
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
-	knative.dev/pkg v0.0.0-20200618194225-7a18226dfce6
+	knative.dev/pkg v0.0.0-20200619020725-7df8fc5d7743
 	knative.dev/sample-controller v0.0.0-20200510050845-bf7c19498b7e
 	knative.dev/test-infra v0.0.0-20200618184825-a7b2980a8884
 )
