@@ -382,7 +382,7 @@ istio.io/client-go/pkg/apis/networking/v1alpha3
 istio.io/gogo-genproto/googleapis/google/api
 # k8s.io/api v0.18.1 => k8s.io/api v0.17.6
 ## explicit
-k8s.io/api/admission/v1beta1
+k8s.io/api/admission/v1
 k8s.io/api/admissionregistration/v1
 k8s.io/api/admissionregistration/v1beta1
 k8s.io/api/apps/v1
@@ -425,7 +425,7 @@ k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
 # k8s.io/apiextensions-apiserver v0.17.6
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
-k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1
+k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
 # k8s.io/apimachinery v0.18.1 => k8s.io/apimachinery v0.17.6
 ## explicit
 k8s.io/apimachinery/pkg/api/equality
@@ -707,7 +707,7 @@ k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200619020725-7df8fc5d7743
+# knative.dev/pkg v0.0.0-20200622135826-98f8a949a106
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -715,8 +715,8 @@ knative.dev/pkg/apis/duck/v1
 knative.dev/pkg/apis/testing
 knative.dev/pkg/changeset
 knative.dev/pkg/client/injection/kube/client
-knative.dev/pkg/client/injection/kube/informers/admissionregistration/v1beta1/mutatingwebhookconfiguration
-knative.dev/pkg/client/injection/kube/informers/admissionregistration/v1beta1/validatingwebhookconfiguration
+knative.dev/pkg/client/injection/kube/informers/admissionregistration/v1/mutatingwebhookconfiguration
+knative.dev/pkg/client/injection/kube/informers/admissionregistration/v1/validatingwebhookconfiguration
 knative.dev/pkg/client/injection/kube/informers/core/v1/service
 knative.dev/pkg/client/injection/kube/informers/factory
 knative.dev/pkg/codegen/cmd/injection-gen
@@ -784,7 +784,7 @@ knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/ad
 knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice
 knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1
 knative.dev/sample-controller/pkg/reconciler/addressableservice
-# knative.dev/test-infra v0.0.0-20200618184825-a7b2980a8884
+# knative.dev/test-infra v0.0.0-20200619200026-0b0587234302
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/yaml v1.2.0
