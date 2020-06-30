@@ -3,9 +3,11 @@ module knative.dev/networking
 go 1.14
 
 require (
+	contrib.go.opencensus.io/exporter/stackdriver v0.13.1 // indirect
 	github.com/golang/protobuf v1.3.5
 	github.com/google/go-cmp v0.4.0
 	github.com/gorilla/websocket v1.4.0
+	github.com/grpc-ecosystem/grpc-gateway v1.12.2 // indirect
 	go.uber.org/zap v1.14.1
 	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	google.golang.org/grpc v1.28.1
@@ -14,9 +16,8 @@ require (
 	k8s.io/apimachinery v0.18.1
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
-	knative.dev/pkg v0.0.0-20200629195729-e16ecb840d88
-	knative.dev/sample-controller v0.0.0-20200510050845-bf7c19498b7e
-	knative.dev/test-infra v0.0.0-20200630000129-4b3a8597df67
+	knative.dev/pkg v0.0.0-20200630170034-2c1a029eb97f
+	knative.dev/test-infra v0.0.0-20200630141629-15f40fe97047
 )
 
 replace (
