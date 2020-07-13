@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1
+package v1beta1
 
 import (
 	"time"
@@ -45,7 +45,8 @@ type Source struct {
 }
 
 type SourceSpec struct {
-	// Sink is a reference to an object that will resolve to a uri to use as the sink.
+	// Sink is a reference to an object that will resolve to a domain name or a
+	// URI directly to use as the sink.
 	Sink Destination `json:"sink,omitempty"`
 
 	// CloudEventOverrides defines overrides to control the output format and
@@ -78,22 +79,6 @@ type SourceStatus struct {
 	// Source.
 	// +optional
 	SinkURI *apis.URL `json:"sinkUri,omitempty"`
-
-	// CloudEventAttributes are the specific attributes that the Source uses
-	// as part of its CloudEvents.
-	// +optional
-	CloudEventAttributes []CloudEventAttributes `json:"ceAttributes,omitempty"`
-}
-
-// CloudEventAttributes specifies the attributes that a Source
-// uses as part of its CloudEvents.
-type CloudEventAttributes struct {
-
-	// Type refers to the CloudEvent type attribute.
-	Type string `json:"type,omitempty"`
-
-	// Source is the CloudEvents source attribute.
-	Source string `json:"source,omitempty"`
 }
 
 // IsReady returns true if the resource is ready overall.
@@ -148,10 +133,6 @@ func (s *Source) Populate() {
 		Host:     "tableflip.dev",
 		RawQuery: "flip=mattmoor",
 	}
-	s.Status.CloudEventAttributes = []CloudEventAttributes{{
-		Type:   "dev.knative.foo",
-		Source: "http://knative.dev/knative/eventing",
-	}}
 }
 
 // GetListType implements apis.Listable

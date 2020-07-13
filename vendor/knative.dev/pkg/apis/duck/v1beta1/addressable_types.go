@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1
+package v1beta1
 
 import (
 	"context"
@@ -25,6 +25,7 @@ import (
 
 	"knative.dev/pkg/apis"
 	"knative.dev/pkg/apis/duck/ducktypes"
+	"knative.dev/pkg/apis/duck/v1"
 )
 
 // +genduck
@@ -74,12 +75,24 @@ func (*Addressable) GetFullType() ducktypes.Populatable {
 
 // ConvertTo implements apis.Convertible
 func (a *Addressable) ConvertTo(ctx context.Context, to apis.Convertible) error {
-	return fmt.Errorf("v1 is the highest known version, got: %T", to)
+	switch sink := to.(type) {
+	case *v1.Addressable:
+		sink.URL = a.URL.DeepCopy()
+		return nil
+	default:
+		return fmt.Errorf("unknown version, got: %T", to)
+	}
 }
 
 // ConvertFrom implements apis.Convertible
 func (a *Addressable) ConvertFrom(ctx context.Context, from apis.Convertible) error {
-	return fmt.Errorf("v1 is the highest known version, got: %T", from)
+	switch source := from.(type) {
+	case *v1.Addressable:
+		a.URL = source.URL.DeepCopy()
+		return nil
+	default:
+		return fmt.Errorf("unknown version, got: %T", from)
+	}
 }
 
 // Populate implements duck.Populatable

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package v1
+package v1beta1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,7 +25,7 @@ import (
 )
 
 // SchemeGroupVersion is group version used to register these objects
-var SchemeGroupVersion = schema.GroupVersion{Group: ducktypes.GroupName, Version: "v1"}
+var SchemeGroupVersion = schema.GroupVersion{Group: ducktypes.GroupName, Version: "v1beta1"}
 
 // Kind takes an unqualified kind and returns back a Group qualified GroupKind
 func Kind(kind string) schema.GroupKind {
@@ -50,10 +50,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		(&KResource{}).GetListType(),
 		&AddressableType{},
 		(&AddressableType{}).GetListType(),
-		&Source{},
-		(&Source{}).GetListType(),
-		&WithPod{},
-		(&WithPod{}).GetListType(),
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil
