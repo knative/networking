@@ -3,7 +3,6 @@ module knative.dev/networking
 go 1.14
 
 require (
-	contrib.go.opencensus.io/exporter/stackdriver v0.13.1 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/google/go-cmp v0.5.0
 	github.com/gorilla/websocket v1.4.2
@@ -16,7 +15,7 @@ require (
 	k8s.io/apimachinery v0.18.5
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
-	knative.dev/pkg v0.0.0-20200714070918-ac02cac99b88
+	knative.dev/pkg v0.0.0-20200715082932-e863db03445f
 	knative.dev/test-infra v0.0.0-20200713220518-5a4c4cad5372
 )
 
