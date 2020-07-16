@@ -30,21 +30,20 @@ func TestDefaultsConfigurationFromFile(t *testing.T) {
 	cm, example := ConfigMapsFromTestFile(t, DefaultsConfigName)
 
 	if _, err := NewDefaultsConfigFromConfigMap(cm); err != nil {
-		t.Errorf("NewDefaultsConfigFromConfigMap(actual) = %v", err)
+		t.Fatal("NewDefaultsConfigFromConfigMap(actual) =", err)
 	}
 
-	if got, err := NewDefaultsConfigFromConfigMap(example); err != nil {
-		t.Errorf("NewDefaultsConfigFromConfigMap(example) = %v", err)
-	} else {
-		if want := defaultConfig(); !cmp.Equal(got, want) {
-			t.Errorf("Example does not represent default config: diff(-want,+got)\n%s",
-				cmp.Diff(want, got))
-		}
+	got, err := NewDefaultsConfigFromConfigMap(example)
+	if err != nil {
+		t.Fatal("NewDefaultsConfigFromConfigMap(example) =", err)
+	}
+	if want := defaultConfig(); !cmp.Equal(got, want) {
+		t.Errorf("Example does not represent default config: diff(-want,+got)\n%s",
+			cmp.Diff(want, got))
 	}
 }
 
 func TestDefaultsConfiguration(t *testing.T) {
-
 	configTests := []struct {
 		name         string
 		wantErr      bool
