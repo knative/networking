@@ -6,7 +6,6 @@ require (
 	github.com/golang/protobuf v1.4.2
 	github.com/google/go-cmp v0.5.0
 	github.com/gorilla/websocket v1.4.2
-	github.com/grpc-ecosystem/grpc-gateway v1.12.2 // indirect
 	go.uber.org/zap v1.14.1
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	google.golang.org/grpc v1.30.0
@@ -15,8 +14,8 @@ require (
 	k8s.io/apimachinery v0.18.5
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.0
-	knative.dev/pkg v0.0.0-20200719221534-601c9ff3832e
-	knative.dev/test-infra v0.0.0-20200719034534-5adf654f5ed5
+	knative.dev/pkg v0.0.0-20200721091635-3b7ca76a63e4
+	knative.dev/test-infra v0.0.0-20200720224135-d2706240545c
 )
 
 replace (
