@@ -21,11 +21,13 @@ package ingress
 import (
 	context "context"
 
+	cache "k8s.io/client-go/tools/cache"
 	ingress "knative.dev/networking/pkg/client/injection/informers/networking/v1alpha1/ingress"
 	v1alpha1ingress "knative.dev/networking/pkg/client/injection/reconciler/networking/v1alpha1/ingress"
 	configmap "knative.dev/pkg/configmap"
 	controller "knative.dev/pkg/controller"
 	logging "knative.dev/pkg/logging"
+	reconciler "knative.dev/pkg/reconciler"
 )
 
 // TODO: PLEASE COPY AND MODIFY THIS FILE AS A STARTING POINT
@@ -39,14 +41,21 @@ func NewController(
 
 	ingressInformer := ingress.Get(ctx)
 
+	classValue := "default" // TODO: update this to the appropriate value.
+	classFilter := reconciler.AnnotationFilterFunc(v1alpha1ingress.ClassAnnotationKey, classValue, false /*allowUnset*/)
+
 	// TODO: setup additional informers here.
+	// TODO: remember to use the classFilter from above to filter appropriately.
 
 	r := &Reconciler{}
-	impl := v1alpha1ingress.NewImpl(ctx, r)
+	impl := v1alpha1ingress.NewImpl(ctx, r, classValue)
 
 	logger.Info("Setting up event handlers.")
 
-	ingressInformer.Informer().AddEventHandler(controller.HandleAll(impl.Enqueue))
+	ingressInformer.Informer().AddEventHandler(cache.FilteringResourceEventHandler{
+		FilterFunc: classFilter,
+		Handler:    controller.HandleAll(impl.Enqueue),
+	})
 
 	// TODO: add additional informer event handlers here.
 
