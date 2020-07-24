@@ -14,20 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-syntax = "proto3";
+package http01
 
-package ping;
+import "testing"
 
-service PingService {
-  rpc Ping(Request) returns (Response) {}
-  rpc PingStream(stream Request) returns (stream Response) {}
+func RunConformance(t *testing.T) {
+	t.Run("http01", TestHTTP01Challenge)
 }
-
-message Request {
-  string msg = 1;
-}
-
-message Response {
-  string msg = 1;
-}
-

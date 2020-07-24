@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2019 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,20 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-syntax = "proto3";
+package handlers
 
-package ping;
+import (
+	"net/http"
+	"time"
 
-service PingService {
-  rpc Ping(Request) returns (Response) {}
-  rpc PingStream(stream Request) returns (stream Response) {}
+	"knative.dev/serving/test/types"
+)
+
+func requestInfo(r *http.Request) *types.RequestInfo {
+	return &types.RequestInfo{
+		Ts:         time.Now(),
+		URI:        r.RequestURI,
+		Host:       r.Host,
+		Method:     r.Method,
+		Headers:    r.Header,
+		ProtoMajor: r.ProtoMajor,
+		ProtoMinor: r.ProtoMinor,
+	}
 }
-
-message Request {
-  string msg = 1;
-}
-
-message Response {
-  string msg = 1;
-}
-

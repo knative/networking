@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2019 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,20 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-syntax = "proto3";
+package handlers
 
-package ping;
+import (
+	"io"
+	"os"
 
-service PingService {
-  rpc Ping(Request) returns (Response) {}
-  rpc PingStream(stream Request) returns (stream Response) {}
+	"knative.dev/serving/test/types"
+)
+
+// stdin attempts to read bytes from the stdin file descriptor and returns the result.
+func stdin() *types.Stdin {
+	_, err := os.Stdin.Read(make([]byte, 1))
+	if err == io.EOF {
+		return &types.Stdin{EOF: &yes}
+	}
+	if err != nil {
+		return &types.Stdin{Error: err.Error()}
+	}
+
+	return &types.Stdin{EOF: &no}
 }
-
-message Request {
-  string msg = 1;
-}
-
-message Response {
-  string msg = 1;
-}
-

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2019 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,20 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-syntax = "proto3";
+package handlers
 
-package ping;
+import (
+	"os"
+)
 
-service PingService {
-  rpc Ping(Request) returns (Response) {}
-  rpc PingStream(stream Request) returns (stream Response) {}
+func args() []string {
+	return os.Args
 }
-
-message Request {
-  string msg = 1;
-}
-
-message Response {
-  string msg = 1;
-}
-

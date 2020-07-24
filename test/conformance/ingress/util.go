@@ -49,11 +49,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
-	"knative.dev/networking/test"
-	"knative.dev/networking/test/types"
-
 	"knative.dev/pkg/network"
 	pkgTest "knative.dev/pkg/test"
+	"knative.dev/serving/test"
+	"knative.dev/serving/test/types"
+	v1a1test "knative.dev/serving/test/v1alpha1"
 )
 
 var rootCAs = x509.NewCertPool()
@@ -638,7 +638,7 @@ func CreateIngressReadyDialContext(t *testing.T, clients *test.Clients, spec v1a
 	t.Helper()
 	ing, cancel := CreateIngress(t, clients, spec)
 
-	if err := test.WaitForIngressState(clients.NetworkingClient, ing.Name, test.IsIngressReady, t.Name()); err != nil {
+	if err := v1a1test.WaitForIngressState(clients.NetworkingClient, ing.Name, v1a1test.IsIngressReady, t.Name()); err != nil {
 		cancel()
 		t.Fatal("Error waiting for ingress state:", err)
 	}
@@ -697,7 +697,7 @@ func UpdateIngressReady(t *testing.T, clients *test.Clients, name string, spec v
 	t.Helper()
 	UpdateIngress(t, clients, name, spec)
 
-	if err := test.WaitForIngressState(clients.NetworkingClient, name, test.IsIngressReady, t.Name()); err != nil {
+	if err := v1a1test.WaitForIngressState(clients.NetworkingClient, name, v1a1test.IsIngressReady, t.Name()); err != nil {
 		t.Fatal("Error waiting for ingress state:", err)
 	}
 }
@@ -893,29 +893,27 @@ func RuntimeRequestWithExpectations(t *testing.T, client *http.Client, url strin
 
 	defer resp.Body.Close()
 
-	if resp != nil {
-		for _, e := range responseExpectations {
-			if err := e(resp); err != nil {
-				t.Errorf("Error meeting response expectations: %v", err)
-				DumpResponse(t, resp)
-				return nil
-			}
+	for _, e := range responseExpectations {
+		if err := e(resp); err != nil {
+			t.Errorf("Error meeting response expectations: %v", err)
+			DumpResponse(t, resp)
+			return nil
 		}
+	}
 
-		if resp.StatusCode == http.StatusOK {
-			b, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				t.Errorf("Unable to read response body: %v", err)
-				DumpResponse(t, resp)
-				return nil
-			}
-			ri := &types.RuntimeInfo{}
-			if err := json.Unmarshal(b, ri); err != nil {
-				t.Errorf("Unable to parse runtime image's response payload: %v", err)
-				return nil
-			}
-			return ri
+	if resp.StatusCode == http.StatusOK {
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			t.Errorf("Unable to read response body: %v", err)
+			DumpResponse(t, resp)
+			return nil
 		}
+		ri := &types.RuntimeInfo{}
+		if err := json.Unmarshal(b, ri); err != nil {
+			t.Errorf("Unable to parse runtime image's response payload: %v", err)
+			return nil
+		}
+		return ri
 	}
 	return nil
 }

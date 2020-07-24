@@ -1,3 +1,5 @@
+// +build e2e
+
 /*
 Copyright 2020 The Knative Authors
 
@@ -14,20 +16,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-syntax = "proto3";
+package ingress
 
-package ping;
+import "testing"
 
-service PingService {
-  rpc Ping(Request) returns (Response) {}
-  rpc PingStream(stream Request) returns (stream Response) {}
+func TestIngressConformance(t *testing.T) {
+	RunConformance(t)
 }
-
-message Request {
-  string msg = 1;
-}
-
-message Response {
-  string msg = 1;
-}
-
