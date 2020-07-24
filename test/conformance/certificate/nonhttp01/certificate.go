@@ -19,8 +19,8 @@ package nonhttp01
 import (
 	"testing"
 
-	"knative.dev/serving/test"
-	utils "knative.dev/serving/test/conformance/certificate"
+	"knative.dev/networking/test"
+	utils "knative.dev/networking/test/conformance/certificate"
 )
 
 // TestSecret verifies that a certificate creates a secret

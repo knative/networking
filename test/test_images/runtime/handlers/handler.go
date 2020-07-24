@@ -23,7 +23,7 @@ import (
 	"net/http/httputil"
 	"strings"
 
-	"knative.dev/serving/pkg/network"
+	"knative.dev/networking/pkg/network"
 )
 
 // InitHandlers initializes all handlers.

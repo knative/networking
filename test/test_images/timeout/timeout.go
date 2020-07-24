@@ -23,8 +23,8 @@ import (
 	"strconv"
 	"time"
 
-	"knative.dev/serving/pkg/network"
-	"knative.dev/serving/test"
+	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/test"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {

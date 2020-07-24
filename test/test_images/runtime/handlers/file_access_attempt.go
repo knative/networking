@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"knative.dev/serving/test/types"
+	"knative.dev/networking/test/types"
 )
 
 type permissionBits uint32

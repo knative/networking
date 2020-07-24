@@ -27,9 +27,9 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/pool"
 	"knative.dev/pkg/test/logstream"
-	"knative.dev/serving/test"
 )
 
 func TestVisibility(t *testing.T) {

@@ -32,8 +32,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/test/logging"
-	"knative.dev/serving/test"
 )
 
 // CreateCertificate creates a Certificate with the given DNS names. The

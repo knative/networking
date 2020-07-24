@@ -49,11 +49,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
+	"knative.dev/networking/test/types"
+	v1a1test "knative.dev/networking/test/v1alpha1"
 	"knative.dev/pkg/network"
 	pkgTest "knative.dev/pkg/test"
-	"knative.dev/serving/test"
-	"knative.dev/serving/test/types"
-	v1a1test "knative.dev/serving/test/v1alpha1"
 )
 
 var rootCAs = x509.NewCertPool()

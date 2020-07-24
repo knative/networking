@@ -20,7 +20,7 @@ import (
 	"log"
 	"net/http"
 
-	"knative.dev/serving/test/types"
+	"knative.dev/networking/test/types"
 )
 
 var fileAccessExclusions = []string{

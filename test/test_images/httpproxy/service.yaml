@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       containers:
-      - image: ko://knative.dev/serving/test/test_images/httpproxy
+      - image: ko://knative.dev/networking/test/test_images/httpproxy
         env:
         - name: TARGET_HOST
           value: "helloworld-test-image.default.svc.cluster.local"

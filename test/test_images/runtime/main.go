@@ -22,8 +22,8 @@ import (
 	"net/http"
 	"os"
 
-	"knative.dev/serving/test"
-	"knative.dev/serving/test/test_images/runtime/handlers"
+	"knative.dev/networking/test"
+	"knative.dev/networking/test/test_images/runtime/handlers"
 )
 
 func main() {

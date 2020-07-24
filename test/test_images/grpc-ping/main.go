@@ -27,9 +27,9 @@ import (
 
 	"google.golang.org/grpc"
 
+	servingnetwork "knative.dev/networking/pkg/network"
+	ping "knative.dev/networking/test/test_images/grpc-ping/proto"
 	"knative.dev/pkg/network"
-	servingnetwork "knative.dev/serving/pkg/network"
-	ping "knative.dev/serving/test/test_images/grpc-ping/proto"
 )
 
 var (

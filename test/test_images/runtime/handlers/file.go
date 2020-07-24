@@ -20,7 +20,7 @@ import (
 	"os"
 	"strings"
 
-	"knative.dev/serving/test/types"
+	"knative.dev/networking/test/types"
 )
 
 func fileInfo(paths ...string) map[string]types.FileInfo {

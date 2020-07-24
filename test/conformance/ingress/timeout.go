@@ -25,8 +25,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/test/logstream"
-	"knative.dev/serving/test"
 )
 
 // TestTimeout verifies that an Ingress configured with a timeout respects that.

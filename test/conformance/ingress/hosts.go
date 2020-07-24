@@ -22,8 +22,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/test/logstream"
-	"knative.dev/serving/test"
 )
 
 // TestMultipleHosts verifies that an Ingress can respond to multiple hosts.

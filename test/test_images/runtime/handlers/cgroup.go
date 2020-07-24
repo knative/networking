@@ -22,7 +22,7 @@ import (
 	"strconv"
 	"strings"
 
-	"knative.dev/serving/test/types"
+	"knative.dev/networking/test/types"
 )
 
 // cgroupPaths is the set of cgroups probed and returned to the

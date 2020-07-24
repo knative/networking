@@ -23,8 +23,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/test/logstream"
-	"knative.dev/serving/test"
 )
 
 // TestRetry verifies that an Ingress configured to retry N times properly masks transient failures.

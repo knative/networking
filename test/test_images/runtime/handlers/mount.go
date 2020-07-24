@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"knative.dev/serving/test/types"
+	"knative.dev/networking/test/types"
 )
 
 func mounts() []*types.Mount {

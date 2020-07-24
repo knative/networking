@@ -22,7 +22,7 @@ package conformance
 
 import (
 	"testing"
-	"knative.dev/serving/test/conformance/certificate/http01"
+	"knative.dev/networking/test/conformance/certificate/http01"
 )
 
 func TestYourHTTP01ProviderConformance(t *testing.T) {

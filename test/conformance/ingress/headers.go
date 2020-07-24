@@ -25,10 +25,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/test"
 	"knative.dev/pkg/ptr"
 	"knative.dev/pkg/test/logstream"
-	"knative.dev/serving/pkg/network"
-	"knative.dev/serving/test"
 )
 
 // TestTagHeaders verifies that an Ingress properly dispaches to backends based on the tag header
