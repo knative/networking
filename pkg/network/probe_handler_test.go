@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors.
+Copyright 2019 The Knative Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package probe
+package network
 
 import (
 	"context"
@@ -28,7 +28,7 @@ import (
 	_ "knative.dev/pkg/system/testing"
 )
 
-func TestHandlerSuccessful(t *testing.T) {
+func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	body := "Inner Body"
 	cases := []struct {
 		name    string
@@ -38,7 +38,7 @@ func TestHandlerSuccessful(t *testing.T) {
 	}{{
 		name: "successful probe when both headers are specified",
 		options: []interface{}{
-			prober.WithHeader(HeaderName, HeaderValue),
+			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
 			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
@@ -56,10 +56,10 @@ func TestHandlerSuccessful(t *testing.T) {
 	}, {
 		name: "forwards to inner handler when probe header is not 'probe'",
 		options: []interface{}{
-			prober.WithHeader(HeaderName, "queue"),
+			prober.WithHeader(ProbeHeaderName, "queue"),
 			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
 			prober.ExpectsBody(body),
-			prober.ExpectsHeader(HeaderName, "true"),
+			prober.ExpectsHeader(ProbeHeaderName, "true"),
 			// Validates the header is stripped before forwarding to the inner handler
 			prober.ExpectsHeader(HashHeaderName, "false"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
@@ -68,7 +68,7 @@ func TestHandlerSuccessful(t *testing.T) {
 	}, {
 		name: "failed probe when hash header is not present",
 		options: []interface{}{
-			prober.WithHeader(HeaderName, HeaderValue),
+			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		want:   false,
@@ -76,13 +76,13 @@ func TestHandlerSuccessful(t *testing.T) {
 	}}
 
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Header[HeaderName]
-		w.Header().Set(HeaderName, strconv.FormatBool(ok))
+		_, ok := r.Header[ProbeHeaderName]
+		w.Header().Set(ProbeHeaderName, strconv.FormatBool(ok))
 		_, ok = r.Header[HashHeaderName]
 		w.Header().Set(HashHeaderName, strconv.FormatBool(ok))
 		w.Write([]byte(body))
 	})
-	h = NewHandler(h)
+	h = NewProbeHandler(h)
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
@@ -96,15 +96,15 @@ func TestHandlerSuccessful(t *testing.T) {
 				t.Errorf("prober.Do() = nil, expected an error")
 			}
 			if got != c.want {
-				t.Errorf(" result = %t, want: %t", got, c.want)
+				t.Errorf("Probe result = %t, want: %t", got, c.want)
 			}
 		})
 	}
 }
 
-func BenchmarkHandlerNoHeader(b *testing.B) {
+func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewHandler(h)
+	h = NewProbeHandler(h)
 	resp := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
 
@@ -123,12 +123,12 @@ func BenchmarkHandlerNoHeader(b *testing.B) {
 	})
 }
 
-func BenchmarkHandlerWithHeader(b *testing.B) {
+func BenchmarkProbeHandlerWithProbeHeader(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
-	req.Header.Set(HeaderName, HeaderValue)
+	req.Header.Set(ProbeHeaderName, ProbeHeaderValue)
 	req.Header.Set(HashHeaderName, "ok")
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewHandler(h)
+	h = NewProbeHandler(h)
 	b.Run("sequential-probe-header", func(b *testing.B) {
 		resp := httptest.NewRecorder()
 		for j := 0; j < b.N; j++ {

@@ -20,15 +20,7 @@ limitations under the License.
 
 package test
 
-import "time"
-
 const (
-	// PollInterval is how frequently e2e tests will poll for updates.
-	PollInterval = 1 * time.Second
-
-	// PollTimeout is how long e2e tests will wait for resource updates when polling.
-	PollTimeout = 10 * time.Minute
-
 	// ServingNamespace is the default namespace for serving e2e tests
 	ServingNamespace = "serving-tests"
 
