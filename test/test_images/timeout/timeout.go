@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"time"
 
-	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/pkg/probe"
 	"knative.dev/networking/test"
 )
 
@@ -50,6 +50,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	h := network.NewProbeHandler(http.HandlerFunc(handler))
+	h := probe.NewHandler(http.HandlerFunc(handler))
 	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
 }

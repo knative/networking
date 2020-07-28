@@ -22,8 +22,9 @@ import (
 	"os"
 
 	"github.com/gorilla/websocket"
-	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/pkg/probe"
 	"knative.dev/networking/test"
+	"knative.dev/pkg/network"
 )
 
 const suffixMessageEnv = "SUFFIX"
@@ -85,6 +86,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
-	h := network.NewProbeHandler(http.HandlerFunc(handler))
+	h := probe.NewHandler(http.HandlerFunc(handler))
 	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
 }

@@ -25,7 +25,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/pkg/probe"
 	"knative.dev/networking/test"
 )
 
@@ -99,6 +99,6 @@ func main() {
 	address := fmt.Sprint(":", port)
 	log.Print("Listening on address: ", address)
 	// Handle forwarding requests which uses "K-Network-Hash" header.
-	probeHandler := network.NewProbeHandler(http.HandlerFunc(handler)).ServeHTTP
+	probeHandler := probe.NewHandler(http.HandlerFunc(handler)).ServeHTTP
 	test.ListenAndServeGracefully(address, probeHandler)
 }

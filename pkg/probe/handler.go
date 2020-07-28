@@ -22,14 +22,18 @@ import (
 )
 
 const (
+	// ProbePath is the name of a path that activator, autoscaler and
+	// prober(used by KIngress generally) use for health check.
+	Path = "/healthz"
+
 	// ProbeHeaderName is the name of a header that can be added to
 	// requests to probe the knative networking layer.  Requests
 	// with this header will not be passed to the user container or
 	// included in request metrics.
-	ProbeHeaderName = "K-Network-Probe"
+	HeaderName = "K-Network-Probe"
 
 	// ProbeHeaderValue is the value used in 'K-Network-Probe'
-	ProbeHeaderValue = "probe"
+	HeaderValue = "probe"
 
 	// HashHeaderName is the name of an internal header that Ingress controller
 	// uses to find out which version of the networking config is deployed.
@@ -40,14 +44,14 @@ type handler struct {
 	next http.Handler
 }
 
-// NewProbeHandler wraps a HTTP handler handling probing requests around the provided HTTP handler
-func NewProbeHandler(next http.Handler) http.Handler {
+// NewHandler wraps a HTTP handler handling probing requests around the provided HTTP handler
+func NewHandler(next http.Handler) http.Handler {
 	return &handler{next: next}
 }
 
 // ServeHTTP handles probing requests
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if ph := r.Header.Get(ProbeHeaderName); ph != ProbeHeaderValue {
+	if ph := r.Header.Get(HeaderName); ph != HeaderValue {
 		r.Header.Del(HashHeaderName)
 		h.next.ServeHTTP(w, r)
 		return

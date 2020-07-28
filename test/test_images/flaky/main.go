@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"sync/atomic"
 
-	"knative.dev/networking/pkg/network"
+	"knative.dev/networking/pkg/probe"
 	"knative.dev/networking/test"
 )
 
@@ -35,7 +35,7 @@ var (
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	// Always succeed probes.
-	if network.IsKubeletProbe(r) {
+	if probe.IsKubeletProbe(r) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -57,6 +57,6 @@ func main() {
 		log.Fatalf("Period must be positive, got: %d", p)
 	}
 	period = uint64(p)
-	h := network.NewProbeHandler(http.HandlerFunc(handler))
+	h := probe.NewHandler(http.HandlerFunc(handler))
 	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
 }

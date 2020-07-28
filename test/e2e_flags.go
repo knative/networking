@@ -21,8 +21,6 @@ package test
 
 import (
 	"flag"
-
-	"knative.dev/networking/pkg/network"
 )
 
 // ServingFlags holds the flags or defaults for knative/serving settings in the user's environment.
@@ -57,12 +55,12 @@ func initializeServingFlags() *ServingEnvironmentFlags {
 
 	flag.StringVar(&f.IngressClass,
 		"ingressClass",
-		network.IstioIngressClassName,
+		"istio.ingress.networking.knative.dev",
 		"Set this flag to the ingress class to test against.")
 
 	flag.StringVar(&f.CertificateClass,
 		"certificateClass",
-		network.CertManagerCertificateClassName,
+		"cert-manager.certificate.networking.knative.dev",
 		"Set this flag to the certificate class to test against.")
 
 	flag.IntVar(&f.Buckets,

@@ -38,7 +38,7 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}{{
 		name: "successful probe when both headers are specified",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
+			prober.WithHeader(HeaderName, HeaderValue),
 			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
@@ -56,10 +56,10 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}, {
 		name: "forwards to inner handler when probe header is not 'probe'",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, "queue"),
+			prober.WithHeader(HeaderName, "queue"),
 			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
 			prober.ExpectsBody(body),
-			prober.ExpectsHeader(ProbeHeaderName, "true"),
+			prober.ExpectsHeader(HeaderName, "true"),
 			// Validates the header is stripped before forwarding to the inner handler
 			prober.ExpectsHeader(HashHeaderName, "false"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
@@ -68,7 +68,7 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}, {
 		name: "failed probe when hash header is not present",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
+			prober.WithHeader(HeaderName, HeaderValue),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		want:   false,
@@ -76,13 +76,13 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}}
 
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Header[ProbeHeaderName]
-		w.Header().Set(ProbeHeaderName, strconv.FormatBool(ok))
+		_, ok := r.Header[HeaderName]
+		w.Header().Set(HeaderName, strconv.FormatBool(ok))
 		_, ok = r.Header[HashHeaderName]
 		w.Header().Set(HashHeaderName, strconv.FormatBool(ok))
 		w.Write([]byte(body))
 	})
-	h = NewProbeHandler(h)
+	h = NewHandler(h)
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
@@ -102,9 +102,9 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}
 }
 
-func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
+func BenchmarkHandlerNoHeader(b *testing.B) {
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewProbeHandler(h)
+	h = NewHandler(h)
 	resp := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
 
@@ -123,12 +123,12 @@ func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
 	})
 }
 
-func BenchmarkProbeHandlerWithProbeHeader(b *testing.B) {
+func BenchmarkHandlerWithHeader(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
-	req.Header.Set(ProbeHeaderName, ProbeHeaderValue)
+	req.Header.Set(HeaderName, HeaderValue)
 	req.Header.Set(HashHeaderName, "ok")
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewProbeHandler(h)
+	h = NewHandler(h)
 	b.Run("sequential-probe-header", func(b *testing.B) {
 		resp := httptest.NewRecorder()
 		for j := 0; j < b.N; j++ {
