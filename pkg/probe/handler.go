@@ -22,17 +22,17 @@ import (
 )
 
 const (
-	// ProbePath is the name of a path that activator, autoscaler and
+	// Path is the name of a path that activator, autoscaler and
 	// prober(used by KIngress generally) use for health check.
 	Path = "/healthz"
 
-	// ProbeHeaderName is the name of a header that can be added to
+	// HeaderName is the name of a header that can be added to
 	// requests to probe the knative networking layer.  Requests
 	// with this header will not be passed to the user container or
 	// included in request metrics.
 	HeaderName = "K-Network-Probe"
 
-	// ProbeHeaderValue is the value used in 'K-Network-Probe'
+	// HeaderValue is the value used in 'K-Network-Probe'
 	HeaderValue = "probe"
 
 	// HashHeaderName is the name of an internal header that Ingress controller
