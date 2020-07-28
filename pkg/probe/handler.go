@@ -14,15 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package network
+package probe
 
 import (
 	"fmt"
 	"net/http"
 )
 
-// ProbeHeaderValue is the value used in 'K-Network-Probe'
-var ProbeHeaderValue = "probe"
+const (
+	// ProbeHeaderName is the name of a header that can be added to
+	// requests to probe the knative networking layer.  Requests
+	// with this header will not be passed to the user container or
+	// included in request metrics.
+	ProbeHeaderName = "K-Network-Probe"
+
+	// ProbeHeaderValue is the value used in 'K-Network-Probe'
+	ProbeHeaderValue = "probe"
+
+	// HashHeaderName is the name of an internal header that Ingress controller
+	// uses to find out which version of the networking config is deployed.
+	HashHeaderName = "K-Network-Hash"
+)
 
 type handler struct {
 	next http.Handler
