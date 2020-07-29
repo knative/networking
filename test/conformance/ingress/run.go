@@ -19,7 +19,7 @@ package ingress
 import (
 	"testing"
 
-	"knative.dev/networking/test"
+	"knative.dev/serving/test"
 )
 
 // RunConformance will run ingress conformance tests
@@ -68,5 +68,6 @@ func RunConformance(t *testing.T) {
 	if test.ServingFlags.EnableAlphaFeatures {
 		// Add your conformance test for alpha features
 		t.Run("headers/tags", TestTagHeaders)
+		t.Run("host-rewrite", TestRewriteHost)
 	}
 }

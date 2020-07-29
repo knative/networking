@@ -6,7 +6,6 @@ require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/google/go-cmp v0.5.1
 	github.com/gorilla/websocket v1.4.2
-	github.com/hashicorp/golang-lru v0.5.4
 	go.uber.org/zap v1.14.1
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	google.golang.org/grpc v1.30.0
