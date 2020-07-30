@@ -133,6 +133,7 @@ github.com/grpc-ecosystem/grpc-gateway/internal
 github.com/grpc-ecosystem/grpc-gateway/runtime
 github.com/grpc-ecosystem/grpc-gateway/utilities
 # github.com/hashicorp/golang-lru v0.5.4
+## explicit
 github.com/hashicorp/golang-lru
 github.com/hashicorp/golang-lru/simplelru
 # github.com/imdario/mergo v0.3.9
@@ -254,6 +255,7 @@ golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
 # golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e
+## explicit
 golang.org/x/time/rate
 # golang.org/x/tools v0.0.0-20200727233628-55644ead90ce
 golang.org/x/tools/go/ast/astutil
@@ -755,7 +757,7 @@ k8s.io/kube-openapi/pkg/util/sets
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200729214559-47e34f1f4ef1
+# knative.dev/pkg v0.0.0-20200730180200-bd4b7612364d
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -798,7 +800,7 @@ knative.dev/pkg/tracing/config
 knative.dev/pkg/tracing/propagation
 knative.dev/pkg/tracing/propagation/tracecontextb3
 knative.dev/pkg/tracker
-# knative.dev/test-infra v0.0.0-20200729161259-d21e6ed450cb
+# knative.dev/test-infra v0.0.0-20200730141100-d0f7784f5bda
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/yaml v1.2.0
