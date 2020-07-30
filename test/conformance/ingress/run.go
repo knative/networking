@@ -19,7 +19,7 @@ package ingress
 import (
 	"testing"
 
-	"knative.dev/serving/test"
+	"knative.dev/networking/test"
 )
 
 // RunConformance will run ingress conformance tests
