@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2019 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"knative.dev/networking/pkg/probe"
+	networkingpkg "knative.dev/networking/pkg"
 	ping "knative.dev/networking/test/test_images/grpc-ping/proto"
 	"knative.dev/pkg/network"
 )
@@ -81,7 +81,7 @@ func (s *server) PingStream(stream ping.PingService_PingStreamServer) error {
 }
 
 func httpWrapper(g *grpc.Server) http.Handler {
-	return probe.NewHandler(
+	return networkingpkg.NewProbeHandler(
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.ProtoMajor == 2 && r.Header.Get("Content-Type") == "application/grpc" {
 				g.ServeHTTP(w, r)

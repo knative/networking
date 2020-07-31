@@ -51,9 +51,9 @@ import (
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/test"
 	"knative.dev/networking/test/types"
-
 	"knative.dev/pkg/network"
 	pkgTest "knative.dev/pkg/test"
+	"knative.dev/pkg/test/logging"
 )
 
 var rootCAs = x509.NewCertPool()
@@ -638,7 +638,7 @@ func CreateIngressReadyDialContext(t *testing.T, clients *test.Clients, spec v1a
 	t.Helper()
 	ing, cancel := CreateIngress(t, clients, spec)
 
-	if err := test.WaitForIngressState(clients.NetworkingClient, ing.Name, test.IsIngressReady, t.Name()); err != nil {
+	if err := WaitForIngressState(clients.NetworkingClient, ing.Name, IsIngressReady, t.Name()); err != nil {
 		cancel()
 		t.Fatal("Error waiting for ingress state:", err)
 	}
@@ -697,7 +697,7 @@ func UpdateIngressReady(t *testing.T, clients *test.Clients, name string, spec v
 	t.Helper()
 	UpdateIngress(t, clients, name, spec)
 
-	if err := test.WaitForIngressState(clients.NetworkingClient, name, test.IsIngressReady, t.Name()); err != nil {
+	if err := WaitForIngressState(clients.NetworkingClient, name, IsIngressReady, t.Name()); err != nil {
 		t.Fatal("Error waiting for ingress state:", err)
 	}
 }
@@ -893,29 +893,27 @@ func RuntimeRequestWithExpectations(t *testing.T, client *http.Client, url strin
 
 	defer resp.Body.Close()
 
-	if resp != nil {
-		for _, e := range responseExpectations {
-			if err := e(resp); err != nil {
-				t.Errorf("Error meeting response expectations: %v", err)
-				DumpResponse(t, resp)
-				return nil
-			}
+	for _, e := range responseExpectations {
+		if err := e(resp); err != nil {
+			t.Errorf("Error meeting response expectations: %v", err)
+			DumpResponse(t, resp)
+			return nil
 		}
+	}
 
-		if resp.StatusCode == http.StatusOK {
-			b, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				t.Errorf("Unable to read response body: %v", err)
-				DumpResponse(t, resp)
-				return nil
-			}
-			ri := &types.RuntimeInfo{}
-			if err := json.Unmarshal(b, ri); err != nil {
-				t.Errorf("Unable to parse runtime image's response payload: %v", err)
-				return nil
-			}
-			return ri
+	if resp.StatusCode == http.StatusOK {
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			t.Errorf("Unable to read response body: %v", err)
+			DumpResponse(t, resp)
+			return nil
 		}
+		ri := &types.RuntimeInfo{}
+		if err := json.Unmarshal(b, ri); err != nil {
+			t.Errorf("Unable to parse runtime image's response payload: %v", err)
+			return nil
+		}
+		return ri
 	}
 	return nil
 }
@@ -944,4 +942,34 @@ func IsDialError(err error) bool {
 		return ok && err.Op == "dial"
 	}
 	return false
+}
+
+// WaitForIngressState polls the status of the Ingress called name from client every
+// PollInterval until inState returns `true` indicating it is done, returns an
+// error or PollTimeout. desc will be used to name the metric that is emitted to
+// track how long it took for name to get into the state checked by inState.
+func WaitForIngressState(client *test.NetworkingClients, name string, inState func(r *v1alpha1.Ingress) (bool, error), desc string) error {
+	span := logging.GetEmitableSpan(context.Background(), fmt.Sprintf("WaitForIngressState/%s/%s", name, desc))
+	defer span.End()
+
+	var lastState *v1alpha1.Ingress
+	waitErr := wait.PollImmediate(test.PollInterval, test.PollTimeout, func() (bool, error) {
+		var err error
+		lastState, err = client.Ingresses.Get(name, metav1.GetOptions{})
+		if err != nil {
+			return true, err
+		}
+		return inState(lastState)
+	})
+
+	if waitErr != nil {
+		return fmt.Errorf("ingress %q is not in desired state, got: %+v: %w", name, lastState, waitErr)
+	}
+	return nil
+}
+
+// IsIngressReady will check the status conditions of the ingress and return true if the ingress is
+// ready.
+func IsIngressReady(r *v1alpha1.Ingress) (bool, error) {
+	return r.IsReady(), nil
 }
