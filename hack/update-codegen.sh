@@ -60,7 +60,8 @@ ${CODEGEN_PKG}/generate-groups.sh "client,informer,lister" \
 ${GOPATH}/bin/deepcopy-gen \
   -O zz_generated.deepcopy \
   --go-header-file ${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt \
-  -i knative.dev/networking/pkg/apis/config
+  -i knative.dev/networking/pkg/apis/config \
+  -i knative.dev/networking/pkg
 
 # Make sure our dependencies are up-to-date
 ${REPO_ROOT_DIR}/hack/update-deps.sh
