@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2018 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	"testing"
 )
 
 func init() {
@@ -56,4 +57,11 @@ func CleanupOnInterrupt(cleanup func()) {
 	cf.m.Lock()
 	defer cf.m.Unlock()
 	cf.f = append(cf.f, cleanup)
+}
+
+// EnsureCleanup will run the provided cleanup function when the test ends,
+// either via t.Cleanup or on interrupt via CleanupOnInterrupt.
+func EnsureCleanup(t *testing.T, cleanup func()) {
+	t.Cleanup(cleanup)
+	CleanupOnInterrupt(cleanup)
 }

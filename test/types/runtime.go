@@ -1,5 +1,5 @@
 /*
-Copyright 2020 The Knative Authors
+Copyright 2019 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +19,98 @@ package types
 import (
 	"net/http"
 	"time"
+
+	"knative.dev/pkg/ptr"
 )
+
+// MustEnvVars defines environment variables that "MUST" be set.
+// The value provided is an example value.
+var MustEnvVars = map[string]string{
+	"PORT": "8801",
+}
+
+// ShouldEnvVars defines environment variables that "SHOULD" be set.
+// To match these values with test service parameters,
+// map values must represent corresponding test.ResourceNames fields
+var ShouldEnvVars = map[string]string{
+	"K_SERVICE":       "Service",
+	"K_CONFIGURATION": "Config",
+	"K_REVISION":      "Revision",
+}
+
+// MustFiles specifies the file paths and expected permissions that MUST be set as specified in the runtime contract.
+// See https://golang.org/pkg/os/#FileMode for "Mode" string meaning. '*' indicates no specification.
+var MustFiles = map[string]FileInfo{
+	"/dev/fd": {
+		IsDir:      ptr.Bool(true),
+		SourceFile: "/proc/self/fd",
+	},
+	"/dev/full": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/null": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/ptmx": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/random": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/stdin": {
+		IsDir:      ptr.Bool(false),
+		SourceFile: "/proc/self/fd/0",
+	},
+	"/dev/stdout": {
+		IsDir:      ptr.Bool(false),
+		SourceFile: "/proc/self/fd/1",
+	},
+	"/dev/stderr": {
+		IsDir:      ptr.Bool(false),
+		SourceFile: "/proc/self/fd/2",
+	},
+	"/dev/tty": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/urandom": {
+		IsDir: ptr.Bool(false),
+	},
+	"/dev/zero": {
+		IsDir: ptr.Bool(false),
+	},
+	"/proc/self/fd": {
+		IsDir: ptr.Bool(true),
+	},
+	"/proc/self/fd/0": {
+		IsDir: ptr.Bool(false),
+	},
+	"/proc/self/fd/1": {
+		IsDir: ptr.Bool(false),
+	},
+	"/proc/self/fd/2": {
+		IsDir: ptr.Bool(false),
+	},
+	"/tmp": {
+		IsDir: ptr.Bool(true),
+		Perm:  "rwxrwxrwx",
+	},
+	"/var/log": {
+		IsDir: ptr.Bool(true),
+		Perm:  "rwxrwxrwx",
+	},
+}
+
+// ShouldFiles specifies the file paths and expected permissions that SHOULD be set as specified in the runtime contract.
+// See https://golang.org/pkg/os/#FileMode for "Mode" string meaning. '*' indicates no specification.
+var ShouldFiles = map[string]FileInfo{
+	"/etc/resolv.conf": {
+		IsDir: ptr.Bool(false),
+		Perm:  "rw*r**r**",
+	},
+	"/dev/console": { // This file SHOULD NOT exist.
+		Error: "stat /dev/console: no such file or directory",
+	},
+}
 
 // RuntimeInfo encapsulates both the host and request information.
 type RuntimeInfo struct {
