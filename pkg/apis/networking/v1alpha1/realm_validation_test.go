@@ -36,14 +36,14 @@ func TestRealmSpecValidation(t *testing.T) {
 			External: "test-ext",
 		},
 	}, {
-		name: "cluster domain is specified",
+		name: "internal domain is specified",
 		rs: RealmSpec{
-			Cluster: "test-cluster",
+			Internal: "test-cluster",
 		},
 	}, {
-		name: "neither cluster nor external domain is specified",
+		name: "neither internal nor external domain is specified",
 		rs:   RealmSpec{},
-		want: apis.ErrMissingOneOf("spec.cluster", "spec.external"),
+		want: apis.ErrMissingOneOf("spec.internal", "spec.external"),
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
