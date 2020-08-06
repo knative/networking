@@ -89,8 +89,6 @@ func TestIngressDefaulting(t *testing.T) {
 								// Percent is filled in.
 								Percent: 100,
 							}},
-							// Timeout and Retries are filled in.
-							Timeout: &metav1.Duration{Duration: defaultMaxRevisionTimeout},
 						}},
 					},
 				}},
@@ -119,7 +117,6 @@ func TestIngressDefaulting(t *testing.T) {
 								},
 								Percent: 70,
 							}},
-							Timeout: &metav1.Duration{Duration: 10 * time.Second},
 							Retries: &HTTPRetry{
 								PerTryTimeout: &metav1.Duration{Duration: 10 * time.Second},
 								Attempts:      2,
@@ -152,8 +149,7 @@ func TestIngressDefaulting(t *testing.T) {
 								// Percent is kept intact.
 								Percent: 70,
 							}},
-							// Timeout and Retries are kept intact.
-							Timeout: &metav1.Duration{Duration: 10 * time.Second},
+							// Retries is kept intact.
 							Retries: &HTTPRetry{
 								PerTryTimeout: &metav1.Duration{Duration: 10 * time.Second},
 								Attempts:      2,
