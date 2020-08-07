@@ -1,6 +1,6 @@
 # Ingress Conformance Testing
 
-This directory contains Ingress conformance tests for Knative Ingress resource. 
+This directory contains Ingress conformance tests for Knative Ingress resource.
 
 ## Environment requirements
 
@@ -24,15 +24,17 @@ This directory contains Ingress conformance tests for Knative Ingress resource.
    #   export INGRESS_CLASS=kourier.ingress.networking.knative.dev   # Kourier Ingress
    export INGRESS_CLASS=<your-ingress-class-annotation>
    ```
-1. Knative Networking source code check out at `${NETWORKING_ROOT}`. Often this is
-   `$GO_PATH/src/go/knative.dev/networking`. This contains both the test images and the tests.
+1. Knative Networking source code check out at `${NETWORKING_ROOT}`. Often this
+   is `$GO_PATH/src/go/knative.dev/networking`. This contains both the test
+   images and the tests.
    ```bash
    export NETWORKING_ROOT=<where-you-checked-out-knative/networking>
    ```
-1. (Recommended) Knative net-istio source code checked out. This contains an invocation 
-of `RunConformance` that easily allows to run tests.
-1. (For setup only) Knative Serving source code check out at `${SERVING_ROOT}`. Often this is
-   `$GO_PATH/src/go/knative.dev/serving`. This contains the `knative-testing` resources.
+1. (Recommended) Knative net-istio source code checked out. This contains an
+   invocation of `RunConformance` that easily allows to run tests.
+1. (For setup only) Knative Serving source code check out at `${SERVING_ROOT}`.
+   Often this is `$GO_PATH/src/go/knative.dev/serving`. This contains the
+   `knative-testing` resources.
    ```bash
    export SERVING_ROOT=<where-you-checked-out-knative/serving>
    ```
@@ -98,20 +100,22 @@ func TestYourIngressConformance(t *testing.T) {
 	ingress.RunConformance(t)
 }
 
-```
 ### Running the tests from `net-istio` repository
 
-`net-istio` already invokes the `RunConformance` function in [`ingress_test.go`](https://github.com/knative-sandbox/net-istio/blob/master/test/conformance/ingress_test.go), so it offers a convenient place to run the tests.
+`net-istio` already invokes the `RunConformance` function in
+[`ingress_test.go`](https://github.com/knative-sandbox/net-istio/blob/master/test/conformance/ingress_test.go),
+so it offers a convenient place to run the tests.
 
 If `INGRESS_CLASS` is already set, then you can simply `go test ingress_test.go`
 
 ## How to run tests from your local repository
-1. Clone the net-istio repository (or use any repository that invokes [`RunConformance`](./run.go)).
-1. In net-istio, add an entry to go.mod that points to your local networking folder:
 
- ```
- knative.dev/networking => {YOUR NETWORKING_ROOT}
- ```
+1. Clone the net-istio repository (or use any repository that invokes
+   [`RunConformance`](./run.go)).
+1. In net-istio, add an entry to go.mod that points to your local networking
+   folder:
+
+
 1. Make any changes to your local networking E2E tests
 1. Run `go mod vendor` in net-istio
 1. Run `go test test/conformance/ingress_test.go`
