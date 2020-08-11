@@ -2,7 +2,7 @@
 
 This doc explains how to setup a development environment so you can get started
 [contributing](https://www.knative.dev/contributing/) to Knative
-`sample-controller`. Also take a look at:
+`networking`. Also take a look at:
 
 - [The pull request workflow](https://knative.dev/community/contributing/reviewing/)
 
@@ -22,7 +22,7 @@ Before submitting a PR, see also [CONTRIBUTING.md](./CONTRIBUTING.md).
 You must install these tools:
 
 1. [`go`](https://golang.org/doc/install): The language Knative
-   `sample-controller` is built in
+   `networking` is built in
 1. [`git`](https://help.github.com/articles/set-up-git/): For source control
 1. [`dep`](https://github.com/golang/dep): For managing external dependencies.
 
@@ -47,7 +47,7 @@ export PATH="${PATH}:${GOPATH}/bin"
 ### Checkout your fork
 
 The Go tools require that you clone the repository to the
-`src/knative.dev/sample-controller` directory in your
+`src/knative.dev/networking` directory in your
 [`GOPATH`](https://github.com/golang/go/wiki/SettingGOPATH).
 
 To check out this repository:
@@ -60,9 +60,9 @@ To check out this repository:
 ```shell
 mkdir -p ${GOPATH}/src/knative.dev
 cd ${GOPATH}/src/knative.dev
-git clone git@github.com:${YOUR_GITHUB_USERNAME}/sample-controller.git
-cd sample-controller
-git remote add upstream https://knative.dev/sample-controller.git
+git clone git@github.com:${YOUR_GITHUB_USERNAME}/networking.git
+cd networking
+git remote add upstream https://knative.dev/networking.git
 git remote set-url --push upstream no_push
 ```
 
