@@ -25,12 +25,12 @@ https://knative.dev/docs/install/any-kubernetes-cluster/#installing-the-serving-
 for a list of the current supported KIngress implementations.
 
 Check out:
-* [/pkg/apis/networking/v1alpha1/ingress_types.go] for more information about the
-  KIngress API spec.
-* [/pkg/apis/networking/v1alpha1/ingress_validations.go] for more information
-  about the validation logic for KIngress API spec.
-* [/test/conformance/ingress/README.md] for the conformance tests and how to run
-  them.
+* [/pkg/apis/networking/v1alpha1/ingress_types.go](/pkg/apis/networking/v1alpha1/ingress_types.go)
+  for more information about the KIngress API spec.
+* [/pkg/apis/networking/v1alpha1/ingress_validations.go](/pkg/apis/networking/v1alpha1/ingress_validations.go)
+  for more information about the validation logic for KIngress API spec.
+* [/test/conformance/ingress/README.md](/test/conformance/ingress/README.md) for
+  the conformance tests and how to run them.
 
 See also:
 * [http://github.com/knative-sandbox/net-contour] for the Contour-based
@@ -44,11 +44,11 @@ See also:
 
 Knative Certificate CRD is a Knative abstraction for various SSL certificate
 provisioning solutions (such as cert-manager or self-signed SSL certificate).
-
+X
 Check out:
-* [/pkg/apis/networking/v1alpha1/certificate_types.go] for more information about
-  the Certificate API spec.
-* [/pkg/apis/networking/v1alpha1/certificate_validations.go] for more information
-  about the validation logic for Certificate API spec.
-* [/test/conformance/certificate/README.md] for the Certificate conformance tests
-  and how to run them.
+* [/pkg/apis/networking/v1alpha1/certificate_types.go](/pkg/apis/networking/v1alpha1/certificate_types.go)
+  for more information about the Certificate API spec.
+* [/pkg/apis/networking/v1alpha1/certificate_validations.go](/pkg/apis/networking/v1alpha1/certificate_validations.go)
+  for more information about the validation logic for Certificate API spec.
+* [/test/conformance/certificate/README.md](/test/conformance/certificate/README.md)
+  for the Certificate conformance tests and how to run them.
