@@ -25,19 +25,19 @@ https://knative.dev/docs/install/any-kubernetes-cluster/#installing-the-serving-
 for a list of the current supported KIngress implementations.
 
 Check out:
-- [/pkg/apis/networking/v1alpha1/ingress_types.go](/pkg/apis/networking/v1alpha1/ingress_types.go)
+- [pkg/apis/networking/v1alpha1/ingress_types.go](/pkg/apis/networking/v1alpha1/ingress_types.go)
   for more information about the KIngress API spec.
-- [/pkg/apis/networking/v1alpha1/ingress_validation.go](/pkg/apis/networking/v1alpha1/ingress_validations.go)
+- [pkg/apis/networking/v1alpha1/ingress_validation.go](/pkg/apis/networking/v1alpha1/ingress_validations.go)
   for more information about the validation logic for KIngress API spec.
-- [/test/conformance/ingress/README.md](/test/conformance/ingress/README.md) for
+- [test/conformance/ingress/README.md](/test/conformance/ingress/README.md) for
   the conformance tests and how to run them.
 
 See also:
-- [http://github.com/knative-sandbox/net-contour] for the Contour-based
+- http://github.com/knative-sandbox/net-contour for the Contour-based
   implementation of KIngress.
-- [http://github.com/knative-sandbox/net-kourier] for a dependency-free
+- http://github.com/knative-sandbox/net-kourier for a dependency-free
   implementation of KIngress based on Envoy proxy.
-- [http://github.com/knative-sandbox/net-istio] For the Istio-based
+- http://github.com/knative-sandbox/net-istio For the Istio-based
   implementation of KIngress.
 
 # Knative Certificate aka KCert
@@ -46,7 +46,7 @@ Knative Certificate CRD is a Knative abstraction for various SSL certificate
 provisioning solutions (such as cert-manager or self-signed SSL certificate).
 
 Check out:
-- [/pkg/apis/networking/v1alpha1/certificate_types.go](/pkg/apis/networking/v1alpha1/certificate_types.go)
+- [pkg/apis/networking/v1alpha1/certificate_types.go](/pkg/apis/networking/v1alpha1/certificate_types.go)
   for more information about the Certificate API spec.
-- [/pkg/apis/networking/v1alpha1/certificate_validation.go](/pkg/apis/networking/v1alpha1/certificate_validations.go)
+- [pkg/apis/networking/v1alpha1/certificate_validation.go](/pkg/apis/networking/v1alpha1/certificate_validations.go)
   for more information about the validation logic for Certificate API spec.
