@@ -691,17 +691,17 @@ func CreateIngressReady(t *testing.T, clients *test.Clients, spec v1alpha1.Ingre
 func UpdateIngress(t *testing.T, clients *test.Clients, name string, spec v1alpha1.IngressSpec) {
 	t.Helper()
 
-	ing, err := clients.NetworkingClient.Ingresses.Get(name, metav1.GetOptions{})
-	if err != nil {
-		t.Fatal("Error getting Ingress:", err)
-	}
-
-	ing.Spec = spec
 	if err := reconciler.RetryUpdateConflicts(func(attempts int) error {
-		_, err := clients.NetworkingClient.Ingresses.Update(ing)
+		ing, err := clients.NetworkingClient.Ingresses.Get(name, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		ing.Spec = spec
+		_, err = clients.NetworkingClient.Ingresses.Update(ing)
 		return err
 	}); err != nil {
-		t.Fatal("Error updating Ingress:", err)
+		t.Fatal("Error fetching and updating Ingress:", err)
 	}
 }
 
