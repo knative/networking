@@ -39,8 +39,8 @@ func TestTimeout(t *testing.T) {
 	// The timeout, and an epsilon value to use as jitter for testing requests
 	// either hit or miss the timeout (without getting so close that we flake).
 	const (
-		timeout = 1 * time.Second
-		epsilon = 100 * time.Millisecond
+		timeout = 5 * time.Second
+		epsilon = 200 * time.Millisecond
 	)
 
 	// Create a simple Ingress over the Service.
