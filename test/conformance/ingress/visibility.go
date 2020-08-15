@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"strings"
 	"testing"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -63,6 +64,26 @@ func TestVisibility(t *testing.T) {
 	// Ensure the service is not publicly accessible
 	RuntimeRequestWithExpectations(t, client, "http://"+privateHostName, []ResponseExpectation{StatusCodeExpectation(sets.NewInt(http.StatusNotFound))}, true)
 
+	var testCases = []struct {
+		// name of the test case.
+		name string
+		// suffix to be trimmed from TARGET_HOST.
+		suffix string
+	}{
+		{"fqdn", ""},
+		{"short", ".cluster.local"},
+		{"shortest", ".svc.cluster.local"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			testProxyToHelloworld(t, ingress, clients, name, strings.TrimSuffix(privateHostName, tc.suffix))
+		})
+	}
+}
+
+func testProxyToHelloworld(t *testing.T, ingress *v1alpha1.Ingress, clients *test.Clients, name, privateHostName string) {
+
 	loadbalancerAddress := ingress.Status.PrivateLoadBalancer.Ingress[0].DomainInternal
 	proxyName, proxyPort, cancel := CreateProxyService(t, clients, privateHostName, loadbalancerAddress)
 	defer cancel()
@@ -70,7 +91,7 @@ func TestVisibility(t *testing.T) {
 	// Using fixed hostnames can lead to conflicts when -count=N>1
 	// so pseudo-randomize the hostnames to avoid conflicts.
 	publicHostName := name + ".publicproxy.example.com"
-	_, client, cancel = CreateIngressReady(t, clients, v1alpha1.IngressSpec{
+	_, client, cancel := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{publicHostName},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
