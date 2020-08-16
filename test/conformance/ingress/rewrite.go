@@ -79,6 +79,6 @@ func TestRewriteHost(t *testing.T) {
 	defer cancel()
 
 	for _, host := range hosts {
-		RuntimeRequest(t, client, host)
+		RuntimeRequest(t, client, "http://"+host)
 	}
 }
