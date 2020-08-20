@@ -131,7 +131,9 @@ func TestInsertProbe(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			before := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
+			beforePaths := len(test.ingress.Spec.Rules[0].HTTP.Paths)
+			beforeAppHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
+			beforeMtchHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].Headers)
 			got, err := InsertProbe(test.ingress)
 			if err != nil {
 				t.Errorf("InsertProbe() = %v", err)
@@ -139,9 +141,30 @@ func TestInsertProbe(t *testing.T) {
 			if got != test.want {
 				t.Errorf("InsertProbe() = %s, wanted %s", got, test.want)
 			}
-			after := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
-			if before+1 != after {
-				t.Errorf("InsertProbe() left %d headers, wanted %d", after, before+1)
+
+			afterPaths := len(test.ingress.Spec.Rules[0].HTTP.Paths)
+			if beforePaths+beforePaths != afterPaths {
+				t.Errorf("InsertProbe() %d paths, wanted %d", afterPaths, beforePaths+beforePaths)
+			}
+
+			// Check the matches at the beginning.
+			afterAppHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
+			if beforeAppHdr+1 != afterAppHdr {
+				t.Errorf("InsertProbe() left %d headers, wanted %d", afterAppHdr, beforeAppHdr+1)
+			}
+			afterMtchHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].Headers)
+			if beforeMtchHdr+1 != afterMtchHdr {
+				t.Errorf("InsertProbe() left %d header matches, wanted %d", afterMtchHdr, beforeMtchHdr+1)
+			}
+
+			// Check the matches at the end
+			afterAppHdr = len(test.ingress.Spec.Rules[0].HTTP.Paths[afterPaths-1].AppendHeaders)
+			if beforeAppHdr != afterAppHdr {
+				t.Errorf("InsertProbe() left %d headers, wanted %d", afterAppHdr, beforeAppHdr)
+			}
+			afterMtchHdr = len(test.ingress.Spec.Rules[0].HTTP.Paths[afterPaths-1].Headers)
+			if beforeMtchHdr != afterMtchHdr {
+				t.Errorf("InsertProbe() left %d header matches, wanted %d", afterMtchHdr, beforeMtchHdr)
 			}
 		})
 	}
