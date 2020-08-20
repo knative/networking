@@ -63,7 +63,7 @@ func TestProbeAllHosts(t *testing.T) {
 
 	ing := ingTemplate.DeepCopy()
 	ing.Spec.Rules[0].Hosts = append(ing.Spec.Rules[0].Hosts, hostB)
-	hash, err := ingress.InsertProbe(ing)
+	hash, err := ingress.InsertProbe(ing.DeepCopy())
 	if err != nil {
 		t.Fatal("Failed to insert probe:", err)
 	}
@@ -166,13 +166,17 @@ func TestProbeAllHosts(t *testing.T) {
 		}
 	}()
 
-	// Wait for the probing to eventually succeed
-	<-ready
+	select {
+	case <-ready:
+		// Wait for the probing to eventually succeed
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 }
 
 func TestProbeLifecycle(t *testing.T) {
 	ing := ingTemplate.DeepCopy()
-	hash, err := ingress.InsertProbe(ing)
+	hash, err := ingress.InsertProbe(ing.DeepCopy())
 	if err != nil {
 		t.Fatal("Failed to insert probe:", err)
 	}
@@ -261,8 +265,12 @@ func TestProbeLifecycle(t *testing.T) {
 		}
 	}
 
-	// Wait for the probing to eventually succeed
-	<-ready
+	select {
+	case <-ready:
+		// Wait for the probing to eventually succeed
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 
 	// The subsequent calls to IsReady must succeed and return true
 	for i := 0; i < 5; i++ {
@@ -299,8 +307,12 @@ func TestProbeLifecycle(t *testing.T) {
 	// Wait for the first request (success) to be executed
 	<-probeRequests
 
-	// Wait for the probing to eventually succeed
-	<-ready
+	select {
+	case <-ready:
+		// Wait for the probing to eventually succeed
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 
 	select {
 	// Validate that no requests went through the probe handler
@@ -397,8 +409,12 @@ func TestCancelPodProbing(t *testing.T) {
 		t.Fatal("IsReady() returned true")
 	}
 
-	// Wait for the first probe request
-	<-requests
+	select {
+	case <-requests:
+		// Wait for the first probe request
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 
 	// Create a new version of the Ingress (to replace the original Ingress)
 	const otherDomain = "blabla.net"
@@ -466,7 +482,7 @@ func TestCancelPodProbing(t *testing.T) {
 
 func TestPartialPodCancellation(t *testing.T) {
 	ing := ingTemplate.DeepCopy()
-	hash, err := ingress.InsertProbe(ing)
+	hash, err := ingress.InsertProbe(ing.DeepCopy())
 	if err != nil {
 		t.Fatal("Failed to insert probe:", err)
 	}
@@ -535,8 +551,12 @@ func TestPartialPodCancellation(t *testing.T) {
 		t.Fatal("IsReady() returned true")
 	}
 
-	// Wait for the first probe request
-	<-requests
+	select {
+	case <-requests:
+		// Wait for the first probe request
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 
 	// Check that probing is unsuccessful
 	select {
@@ -605,8 +625,12 @@ func TestCancelIngressProbing(t *testing.T) {
 		t.Fatal("IsReady() returned true")
 	}
 
-	// Wait for the first probe request
-	<-requests
+	select {
+	case <-requests:
+		// Wait for the first probe request
+	case <-time.After(5 * time.Second):
+		t.Error("Timed out waiting for probing to succeed.")
+	}
 
 	const domain = "blabla.net"
 
