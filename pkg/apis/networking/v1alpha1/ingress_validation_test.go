@@ -69,6 +69,13 @@ func TestIngressSpecValidation(t *testing.T) {
 				HTTP: &HTTPIngressRuleValue{
 					Paths: []HTTPIngressPath{{
 						RewriteHost: "some-host.com",
+						Splits: []IngressBackendSplit{{
+							IngressBackend: IngressBackend{
+								ServiceName:      "revision-000",
+								ServiceNamespace: "default",
+								ServicePort:      intstr.FromInt(8080),
+							},
+						}},
 					}},
 				},
 			}},
@@ -156,7 +163,7 @@ func TestIngressSpecValidation(t *testing.T) {
 				},
 			}},
 		},
-		want: apis.ErrMissingOneOf("rules[0].http.paths[0].splits", "rules[0].http.paths[0].rewriteHost"),
+		want: apis.ErrMissingField("rules[0].http.paths[0].splits"),
 	}, {
 		name: "empty-split",
 		is: &IngressSpec{
@@ -173,24 +180,6 @@ func TestIngressSpecValidation(t *testing.T) {
 			}},
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0]"),
-	}, {
-		name: "rewrite-host-with-split",
-		is: &IngressSpec{
-			Rules: []IngressRule{{
-				Hosts: []string{"example.com"},
-				HTTP: &HTTPIngressRuleValue{
-					Paths: []HTTPIngressPath{{
-						RewriteHost: "some-value.com",
-						Splits: []IngressBackendSplit{{
-							IngressBackend: IngressBackend{
-								ServiceName: "service-name",
-							},
-						}},
-					}},
-				},
-			}},
-		},
-		want: apis.ErrMultipleOneOf("rules[0].http.paths[0].splits", "rules[0].http.paths[0].rewriteHost"),
 	}, {
 		name: "missing-split-backend",
 		is: &IngressSpec{
