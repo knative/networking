@@ -633,7 +633,7 @@ func CreateIngress(t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpe
 	}
 
 	if err := ing.Validate(context.Background()); err != nil {
-		t.Fatalf("Invalid ingress: %v", err)
+		t.Fatal("Invalid ingress:", err)
 	}
 
 	t.Cleanup(func() { clients.NetworkingClient.Ingresses.Delete(ing.Name, &metav1.DeleteOptions{}) })
