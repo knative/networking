@@ -7,6 +7,7 @@ require (
 	github.com/google/go-cmp v0.5.1
 	github.com/gorilla/websocket v1.4.2
 	github.com/hashicorp/golang-lru v0.5.4
+	github.com/rs/dnscache v0.0.0-20190621150935-06bb5526f76b
 	go.uber.org/zap v1.15.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
@@ -17,7 +18,7 @@ require (
 	k8s.io/apimachinery v0.18.7-rc.0
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.6
-	knative.dev/pkg v0.0.0-20200820181214-50386ad39634
+	knative.dev/pkg v0.0.0-20200821175947-f0c35fcd5ba4
 	knative.dev/test-infra v0.0.0-20200820231346-543fe3e80c03
 )
 
