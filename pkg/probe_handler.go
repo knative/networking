@@ -48,5 +48,5 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set(HashHeaderName, hh)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(200)
 }
