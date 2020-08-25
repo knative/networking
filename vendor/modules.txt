@@ -765,7 +765,7 @@ k8s.io/kube-openapi/pkg/util/sets
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200822174146-f0f096d81292
+# knative.dev/pkg v0.0.0-20200825005048-1fe808911e69
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -811,7 +811,7 @@ knative.dev/pkg/tracing/config
 knative.dev/pkg/tracing/propagation
 knative.dev/pkg/tracing/propagation/tracecontextb3
 knative.dev/pkg/tracker
-# knative.dev/test-infra v0.0.0-20200820231346-543fe3e80c03
+# knative.dev/test-infra v0.0.0-20200825022047-cb4bb218c5e5
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/yaml v1.2.0
