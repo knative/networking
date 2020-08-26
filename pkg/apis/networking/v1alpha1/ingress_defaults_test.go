@@ -38,24 +38,10 @@ func TestIngressDefaulting(t *testing.T) {
 		name: "empty",
 		in:   &Ingress{},
 		want: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityExternalIP,
-			},
+			Spec: IngressSpec{},
 		},
 	}, {
-		name: "has-visibility",
-		in: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityClusterLocal,
-			},
-		},
-		want: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityClusterLocal,
-			},
-		},
-	}, {
-		name: "split-timeout-defaulting",
+		name: "split-timeout-and-visibility-defaulting",
 		in: &Ingress{
 			Spec: IngressSpec{
 				Rules: []IngressRule{{
@@ -71,12 +57,12 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 		want: &Ingress{
 			Spec: IngressSpec{
 				Rules: []IngressRule{{
+					Visibility: IngressVisibilityExternalIP,
 					HTTP: &HTTPIngressRuleValue{
 						Paths: []HTTPIngressPath{{
 							Splits: []IngressBackendSplit{{
@@ -91,14 +77,14 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 	}, {
-		name: "split-timeout-not-defaulting",
+		name: "split-timeout-and-visibility-defaulting",
 		in: &Ingress{
 			Spec: IngressSpec{
 				Rules: []IngressRule{{
+					Visibility: IngressVisibilityClusterLocal,
 					HTTP: &HTTPIngressRuleValue{
 						Paths: []HTTPIngressPath{{
 							Splits: []IngressBackendSplit{{
@@ -119,12 +105,12 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 		want: &Ingress{
 			Spec: IngressSpec{
 				Rules: []IngressRule{{
+					Visibility: IngressVisibilityClusterLocal,
 					HTTP: &HTTPIngressRuleValue{
 						Paths: []HTTPIngressPath{{
 							Splits: []IngressBackendSplit{{
@@ -147,7 +133,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 	}}
