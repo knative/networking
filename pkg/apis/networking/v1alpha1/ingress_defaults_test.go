@@ -39,21 +39,7 @@ func TestIngressDefaulting(t *testing.T) {
 		name: "empty",
 		in:   &Ingress{},
 		want: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityExternalIP,
-			},
-		},
-	}, {
-		name: "has-visibility",
-		in: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityClusterLocal,
-			},
-		},
-		want: &Ingress{
-			Spec: IngressSpec{
-				Visibility: IngressVisibilityClusterLocal,
-			},
+			Spec: IngressSpec{},
 		},
 	}, {
 		name: "split-timeout-defaulting",
@@ -72,7 +58,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 		want: &Ingress{
@@ -92,7 +77,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 	}, {
@@ -124,7 +108,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 		want: &Ingress{
@@ -157,7 +140,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				Visibility: IngressVisibilityExternalIP,
 			},
 		},
 	}}

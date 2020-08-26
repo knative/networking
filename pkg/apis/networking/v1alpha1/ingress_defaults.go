@@ -35,9 +35,6 @@ func (s *IngressSpec) SetDefaults(ctx context.Context) {
 	for i := range s.Rules {
 		s.Rules[i].SetDefaults(ctx)
 	}
-	if s.Visibility == "" {
-		s.Visibility = IngressVisibilityExternalIP
-	}
 }
 
 // SetDefaults populates default values in IngressTLS

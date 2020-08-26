@@ -110,9 +110,6 @@ type IngressSpec struct {
 	// A list of host rules used to configure the Ingress.
 	// +optional
 	Rules []IngressRule `json:"rules,omitempty"`
-
-	// Visibility setting.
-	Visibility IngressVisibility `json:"visibility,omitempty"`
 }
 
 // IngressVisibility describes whether the Ingress should be exposed to
