@@ -448,9 +448,9 @@ func CreateWebsocketService(ctx context.Context, t *testing.T, clients *test.Cli
 	return name, port, createPodAndService(ctx, t, clients, pod, svc)
 }
 
-// CreateGRPCService creates a Kubernetes service that will upgrade the connection
-// to use GRPC and echo back the received messages with the provided suffix.
-func CreateGRPCService(ctx context.Context, t *testing.T, clients *test.Clients, suffix string) (string, int, context.CancelFunc) {
+// CreateGRPCServiceWithPortName creates a Kubernetes service that will upgrade the connection
+// to use GRPC and echo back the received messages with the provided suffix, using a specific port name.
+func CreateGRPCServiceWithPortName(ctx context.Context, t *testing.T, clients *test.Clients, suffix, portName string) (string, int, context.CancelFunc) {
 	t.Helper()
 	name := test.ObjectNameForTest(t)
 
@@ -476,7 +476,7 @@ func CreateGRPCService(ctx context.Context, t *testing.T, clients *test.Clients,
 				Image:           pkgTest.ImagePath("grpc-ping"),
 				ImagePullPolicy: corev1.PullIfNotPresent,
 				Ports: []corev1.ContainerPort{{
-					Name:          networking.ServicePortNameH2C,
+					Name:          portName,
 					ContainerPort: int32(containerPort),
 				}},
 				// This is needed by the runtime image we are using.
@@ -509,7 +509,7 @@ func CreateGRPCService(ctx context.Context, t *testing.T, clients *test.Clients,
 		Spec: corev1.ServiceSpec{
 			Type: "ClusterIP",
 			Ports: []corev1.ServicePort{{
-				Name:       networking.ServicePortNameH2C,
+				Name:       portName,
 				Port:       int32(port),
 				TargetPort: intstr.FromInt(containerPort),
 			}},
@@ -520,6 +520,13 @@ func CreateGRPCService(ctx context.Context, t *testing.T, clients *test.Clients,
 	}
 
 	return name, port, createPodAndService(ctx, t, clients, pod, svc)
+}
+
+// CreateGRPCService creates a Kubernetes service that will upgrade the connection
+// to use GRPC and echo back the received messages with the provided suffix.
+func CreateGRPCService(ctx context.Context, t *testing.T, clients *test.Clients, suffix string) (string, int, context.CancelFunc) {
+	t.Helper()
+	return CreateGRPCServiceWithPortName(ctx, t, clients, suffix, networking.ServicePortNameH2C)
 }
 
 // createService is a helper for creating the service resource.
