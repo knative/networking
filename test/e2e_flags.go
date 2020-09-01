@@ -40,6 +40,7 @@ type ServingEnvironmentFlags struct {
 	EnableAlphaFeatures bool   // Indicates whether we run tests for alpha features
 	EnableBetaFeatures  bool   // Indicates whether we run tests for beta features
 	SkipTests           string // Indicates the test names we want to skip in alpha or beta features.
+	EnableAutoHttp2     bool   // Indicates whether we run tests for http2/gRPC autodetect
 }
 
 func initializeServingFlags() *ServingEnvironmentFlags {
@@ -90,6 +91,11 @@ func initializeServingFlags() *ServingEnvironmentFlags {
 		"skip-tests",
 		"",
 		"Set this flag to the tests you want to skip in alpha or beta features. Accepts a comma separated list.")
+
+	flag.BoolVar(&f.EnableAutoHttp2,
+		"enable-autohttp2",
+		false,
+		"Set this flag to run tests against http2/gRPC autodetect features")
 
 	return &f
 }

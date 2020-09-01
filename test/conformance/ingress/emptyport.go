@@ -32,11 +32,11 @@ import (
 
 // TestHTTP1AndEmptyPort verifies that an empty port name uses HTTP1. This should be the current behavior.
 func TestHTTP1AndEmptyPort(t *testing.T) {
-	clients := test.Setup(t)
-	name, port, _ := CreateRuntimeService(t, clients, "")
+	ctx, clients := context.Background(), test.Setup(t)
+	name, port, _ := CreateRuntimeService(ctx, t, clients, "")
 
 	// Create a simple Ingress over the Service.
-	_, client, _ := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -54,7 +54,7 @@ func TestHTTP1AndEmptyPort(t *testing.T) {
 		}},
 	})
 
-	ri := RuntimeRequest(t, client, "http://"+name+".example.com")
+	ri := RuntimeRequest(ctx, t, client, "http://"+name+".example.com")
 	if ri == nil {
 		return
 	}
@@ -67,11 +67,11 @@ func TestHTTP1AndEmptyPort(t *testing.T) {
 // TestHTTP2AndEmptyPort verifies that an empty port name uses HTTP2.
 // This is not the current behavior.
 func TestHTTP2AndEmptyPort(t *testing.T) {
-	clients := test.Setup(t)
-	name, port, _ := CreateRuntimeService(t, clients, "")
+	ctx, clients := context.Background(), test.Setup(t)
+	name, port, _ := CreateRuntimeService(ctx, t, clients, "")
 
 	// Create a simple Ingress over the Service.
-	_, client, _ := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -89,13 +89,14 @@ func TestHTTP2AndEmptyPort(t *testing.T) {
 		}},
 	})
 
-	ri := RuntimeRequest(t, client, "http://"+name+".example.com")
+	ri := RuntimeRequest(ctx, t, client, "http://"+name+".example.com")
 	if ri == nil {
 		return
 	}
 
 	if want, got := 2, ri.Request.ProtoMajor; want != got {
-		t.Errorf("ProtoMajor = %d, wanted %d", got, want)
+		// DO NOT SUBMIT
+		t.Fatalf("ProtoMajor = %d, wanted %d", got, want)
 	}
 }
 
@@ -104,15 +105,15 @@ func TestHTTP2AndEmptyPort(t *testing.T) {
 func TestGRPCWithEmptyPort(t *testing.T) {
 	t.Parallel()
 	defer logstream.Start(t)()
-	clients := test.Setup(t)
+	ctx, clients := context.Background(), test.Setup(t)
 
 	const suffix = "- pong"
-	name, port, _ := CreateGRPCServiceWithPortName(t, clients, suffix, "")
+	name, port, _ := CreateGRPCServiceWithPortName(ctx, t, clients, suffix, "")
 
 	domain := name + ".example.com"
 
 	// Create a simple Ingress over the Service.
-	_, dialCtx, _ := CreateIngressReadyDialContext(t, clients, v1alpha1.IngressSpec{
+	_, dialCtx, _ := CreateIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

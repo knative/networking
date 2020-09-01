@@ -67,10 +67,12 @@ func RunConformance(t *testing.T) {
 
 	skipTests := skipTests()
 
-	// TODO (rafaeltc): Move this to Alpha features before merging.
-	t.Run("h2c/http1", TestHTTP1AndEmptyPort)
-	t.Run("h2c/http2", TestHTTP2AndEmptyPort)
-	t.Run("h2c/grpc", TestGRPCWithEmptyPort)
+	t.Run("emptyport/http1", TestHTTP1AndEmptyPort)
+
+	if test.ServingFlags.EnableAutoHttp2 {
+		t.Run("emptyport/http2", TestHTTP2AndEmptyPort)
+		t.Run("emptyport/grpc", TestGRPCWithEmptyPort)
+	}
 
 	// TODO(dprotaso) we'll need something more robust
 	// in the long term that lets downstream
