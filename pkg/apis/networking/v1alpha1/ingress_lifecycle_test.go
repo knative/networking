@@ -61,24 +61,6 @@ func TestIngressGetGroupVersionKind(t *testing.T) {
 	}
 }
 
-func TestIngressIsPublic(t *testing.T) {
-	ci := Ingress{}
-	if !ci.IsPublic() {
-		t.Error("Expected default Ingress to be public, for backward compatibility")
-	}
-	if !ci.IsPublic() {
-		t.Errorf("Expected IsPublic()==true, saw %v", ci.IsPublic())
-	}
-	ci.Spec.Visibility = IngressVisibilityExternalIP
-	if !ci.IsPublic() {
-		t.Errorf("Expected IsPublic()==true, saw %v", ci.IsPublic())
-	}
-	ci.Spec.Visibility = IngressVisibilityClusterLocal
-	if ci.IsPublic() {
-		t.Errorf("Expected IsPublic()==false, saw %v", ci.IsPublic())
-	}
-}
-
 func TestIngressTypicalFlow(t *testing.T) {
 	r := &IngressStatus{}
 	r.InitializeConditions()
