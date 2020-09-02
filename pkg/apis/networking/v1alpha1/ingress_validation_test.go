@@ -49,9 +49,6 @@ func TestIngressSpecValidation(t *testing.T) {
 								ServicePort:      intstr.FromInt(8080),
 							},
 						}},
-						Retries: &HTTPRetry{
-							Attempts: 3,
-						},
 					}},
 				},
 			}},
@@ -274,28 +271,6 @@ func TestIngressSpecValidation(t *testing.T) {
 			Paths:   []string{"rules[0].http.paths[0].splits"},
 		},
 	}, {
-		name: "wrong-retry-attempts",
-		is: &IngressSpec{
-			Rules: []IngressRule{{
-				Hosts: []string{"example.com"},
-				HTTP: &HTTPIngressRuleValue{
-					Paths: []HTTPIngressPath{{
-						Splits: []IngressBackendSplit{{
-							IngressBackend: IngressBackend{
-								ServiceName:      "revision-000",
-								ServiceNamespace: "default",
-								ServicePort:      intstr.FromInt(8080),
-							},
-						}},
-						Retries: &HTTPRetry{
-							Attempts: -1,
-						},
-					}},
-				},
-			}},
-		},
-		want: apis.ErrInvalidValue(-1, "rules[0].http.paths[0].retries.attempts"),
-	}, {
 		name: "empty-tls",
 		is: &IngressSpec{
 			TLS: []IngressTLS{{}},
@@ -400,9 +375,6 @@ func TestIngressValidation(t *testing.T) {
 									ServicePort:      intstr.FromInt(8080),
 								},
 							}},
-							Retries: &HTTPRetry{
-								Attempts: 3,
-							},
 						}},
 					},
 				}},
@@ -432,9 +404,6 @@ func TestIngressValidation(t *testing.T) {
 									ServicePort:      intstr.FromInt(8080),
 								},
 							}},
-							Retries: &HTTPRetry{
-								Attempts: 3,
-							},
 						}},
 					},
 				}},
