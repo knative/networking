@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	"knative.dev/networking/pkg/apis/config"
@@ -96,7 +95,7 @@ func TestIngressDefaulting(t *testing.T) {
 			},
 		},
 	}, {
-		name: "split-timeout-retry-not-defaulting",
+		name: "split-timeout-not-defaulting",
 		in: &Ingress{
 			Spec: IngressSpec{
 				Rules: []IngressRule{{
@@ -117,10 +116,6 @@ func TestIngressDefaulting(t *testing.T) {
 								},
 								Percent: 70,
 							}},
-							Retries: &HTTPRetry{
-								PerTryTimeout: &metav1.Duration{Duration: 10 * time.Second},
-								Attempts:      2,
-							},
 						}},
 					},
 				}},
@@ -149,11 +144,6 @@ func TestIngressDefaulting(t *testing.T) {
 								// Percent is kept intact.
 								Percent: 70,
 							}},
-							// Retries is kept intact.
-							Retries: &HTTPRetry{
-								PerTryTimeout: &metav1.Duration{Duration: 10 * time.Second},
-								Attempts:      2,
-							},
 						}},
 					},
 				}},
