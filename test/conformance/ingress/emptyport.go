@@ -33,11 +33,10 @@ import (
 // TestHTTP1AndEmptyPort verifies that an empty port name uses HTTP1. This should be the current behavior.
 func TestHTTP1AndEmptyPort(t *testing.T) {
 	clients := test.Setup(t)
-	name, port, cancel := CreateRuntimeService(t, clients, "")
-	defer cancel()
+	name, port, _ := CreateRuntimeService(t, clients, "")
 
 	// Create a simple Ingress over the Service.
-	_, client, cancel := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -54,7 +53,6 @@ func TestHTTP1AndEmptyPort(t *testing.T) {
 			},
 		}},
 	})
-	defer cancel()
 
 	ri := RuntimeRequest(t, client, "http://"+name+".example.com")
 	if ri == nil {
@@ -70,11 +68,10 @@ func TestHTTP1AndEmptyPort(t *testing.T) {
 // This is not the current behavior.
 func TestHTTP2AndEmptyPort(t *testing.T) {
 	clients := test.Setup(t)
-	name, port, cancel := CreateRuntimeService(t, clients, "")
-	defer cancel()
+	name, port, _ := CreateRuntimeService(t, clients, "")
 
 	// Create a simple Ingress over the Service.
-	_, client, cancel := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -91,7 +88,6 @@ func TestHTTP2AndEmptyPort(t *testing.T) {
 			},
 		}},
 	})
-	defer cancel()
 
 	ri := RuntimeRequest(t, client, "http://"+name+".example.com")
 	if ri == nil {
@@ -111,13 +107,12 @@ func TestGRPCWithEmptyPort(t *testing.T) {
 	clients := test.Setup(t)
 
 	const suffix = "- pong"
-	name, port, cancel := CreateGRPCServiceWithPortName(t, clients, suffix, "")
-	defer cancel()
+	name, port, _ := CreateGRPCServiceWithPortName(t, clients, suffix, "")
 
 	domain := name + ".example.com"
 
 	// Create a simple Ingress over the Service.
-	_, dialCtx, cancel := CreateIngressReadyDialContext(t, clients, v1alpha1.IngressSpec{
+	_, dialCtx, _ := CreateIngressReadyDialContext(t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -134,7 +129,6 @@ func TestGRPCWithEmptyPort(t *testing.T) {
 			},
 		}},
 	})
-	defer cancel()
 
 	conn, err := grpc.Dial(
 		domain+":80",
