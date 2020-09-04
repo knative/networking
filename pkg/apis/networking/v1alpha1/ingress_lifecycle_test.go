@@ -84,7 +84,6 @@ func TestIngressTypicalFlow(t *testing.T) {
 	// Then ingress has address.
 	r.MarkLoadBalancerReady(
 		[]LoadBalancerIngressStatus{{DomainInternal: "gateway.default.svc"}},
-		[]LoadBalancerIngressStatus{{DomainInternal: "gateway.default.svc"}},
 		[]LoadBalancerIngressStatus{{DomainInternal: "private.gateway.default.svc"}},
 	)
 	apistest.CheckConditionSucceeded(r, IngressConditionLoadBalancerReady, t)
