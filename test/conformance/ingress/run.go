@@ -32,6 +32,7 @@ func RunConformance(t *testing.T) {
 	t.Run("grpc", TestGRPC)
 	t.Run("grpc/split", TestGRPCSplit)
 
+	t.Run("headers/probe", TestProbeHeaders)
 	t.Run("headers/pre-split", TestPreSplitSetHeaders)
 	t.Run("headers/post-split", TestPostSplitSetHeaders)
 
