@@ -58,7 +58,10 @@ func TestProbeHeaders(t *testing.T) {
 		}},
 	})
 
-	bytes, _ := ingress.ComputeHash(ing)
+	bytes, err := ingress.ComputeHash(ing)
+	if err != nil {
+		t.Errorf("Failed to compute hash: %v", err)
+	}
 
 	tests := []struct {
 		name string

@@ -32,7 +32,6 @@ func RunConformance(t *testing.T) {
 	t.Run("grpc", TestGRPC)
 	t.Run("grpc/split", TestGRPCSplit)
 
-	t.Run("headers/probe", TestProbeHeaders)
 	t.Run("headers/pre-split", TestPreSplitSetHeaders)
 	t.Run("headers/post-split", TestPostSplitSetHeaders)
 
@@ -62,9 +61,10 @@ func RunConformance(t *testing.T) {
 	// ie. state - alpha, beta, ga
 	// ie. requirement - must, should, may
 
-	//if test.ServingFlags.EnableBetaFeatures {
-	// Add your conformance test for beta features
-	//}
+	if test.ServingFlags.EnableBetaFeatures {
+		// Add your conformance test for beta features
+		t.Run("headers/probe", TestProbeHeaders)
+	}
 
 	if test.ServingFlags.EnableAlphaFeatures {
 		// Add your conformance test for alpha features
