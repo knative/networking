@@ -874,7 +874,7 @@ func CreateDialContext(t *testing.T, ing *v1alpha1.Ingress, clients *test.Client
 				return nil, err
 			}
 			for _, sp := range svc.Spec.Ports {
-				if fmt.Sprintf("%d", sp.Port) == port {
+				if fmt.Sprint(sp.Port) == port {
 					return dial(ctx, "tcp", fmt.Sprintf("%s:%d", pkgTest.Flags.IngressEndpoint, sp.NodePort))
 				}
 			}
