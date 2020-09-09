@@ -529,7 +529,7 @@ func createService(t *testing.T, clients *test.Clients, svc *corev1.Service) con
 	t.Cleanup(func() {
 		clients.KubeClient.Kube.CoreV1().Services(svc.Namespace).Delete(svc.Name, &metav1.DeleteOptions{})
 	})
-	if err := reconciler.RetryUpdateConflicts(func(attempts int) error {
+	if err := reconciler.RetryTestErrors(func(attempts int) error {
 		_, err := clients.KubeClient.Kube.CoreV1().Services(svc.Namespace).Create(svc)
 		return err
 	}); err != nil {
@@ -572,7 +572,7 @@ func createPodAndService(t *testing.T, clients *test.Clients, pod *corev1.Pod, s
 	t.Helper()
 
 	t.Cleanup(func() { clients.KubeClient.Kube.CoreV1().Pods(pod.Namespace).Delete(pod.Name, &metav1.DeleteOptions{}) })
-	if err := reconciler.RetryUpdateConflicts(func(attempts int) error {
+	if err := reconciler.RetryTestErrors(func(attempts int) error {
 		_, err := clients.KubeClient.Kube.CoreV1().Pods(pod.Namespace).Create(pod)
 		return err
 	}); err != nil {
@@ -582,7 +582,7 @@ func createPodAndService(t *testing.T, clients *test.Clients, pod *corev1.Pod, s
 	t.Cleanup(func() {
 		clients.KubeClient.Kube.CoreV1().Services(svc.Namespace).Delete(svc.Name, &metav1.DeleteOptions{})
 	})
-	if err := reconciler.RetryUpdateConflicts(func(attempts int) error {
+	if err := reconciler.RetryTestErrors(func(attempts int) error {
 		_, err := clients.KubeClient.Kube.CoreV1().Services(svc.Namespace).Create(svc)
 		return err
 	}); err != nil {
@@ -644,7 +644,7 @@ func CreateIngress(t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpe
 	}
 
 	t.Cleanup(func() { clients.NetworkingClient.Ingresses.Delete(ing.Name, &metav1.DeleteOptions{}) })
-	if err := reconciler.RetryUpdateConflicts(func(attempts int) (err error) {
+	if err := reconciler.RetryTestErrors(func(attempts int) (err error) {
 		ing, err = clients.NetworkingClient.Ingresses.Create(ing)
 		return err
 	}); err != nil {
@@ -707,7 +707,7 @@ func CreateIngressReady(t *testing.T, clients *test.Clients, spec v1alpha1.Ingre
 func UpdateIngress(t *testing.T, clients *test.Clients, name string, spec v1alpha1.IngressSpec) {
 	t.Helper()
 
-	if err := reconciler.RetryUpdateConflicts(func(attempts int) error {
+	if err := reconciler.RetryTestErrors(func(attempts int) error {
 		ing, err := clients.NetworkingClient.Ingresses.Get(name, metav1.GetOptions{})
 		if err != nil {
 			return err
