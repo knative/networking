@@ -31,7 +31,7 @@ cleanup
 
 # Save working tree state
 mkdir -p "${TMP_DIFFROOT}/pkg"
-cp -aR "${REPO_ROOT_DIR}/Gopkg.lock" "${REPO_ROOT_DIR}/pkg" "${REPO_ROOT_DIR}/vendor" "${TMP_DIFFROOT}"
+cp -aR "${REPO_ROOT_DIR}"/{Gopkg.lock,pkg,vendor,config} "${TMP_DIFFROOT}"
 
 # TODO(mattmoor): We should be able to rm -rf pkg/client/ and vendor/
 
