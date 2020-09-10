@@ -20,7 +20,6 @@ import (
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
 
 	cm "knative.dev/pkg/configmap"
 )
@@ -71,18 +70,4 @@ type Defaults struct {
 	// This is the timeout set for ingress.
 	// RevisionTimeoutSeconds must be less than this value.
 	MaxRevisionTimeoutSeconds int64
-}
-
-// asQuantity parses the value at key as a *resource.Quantity into the target, if it exists.
-func asQuantity(key string, target **resource.Quantity) cm.ParseFunc {
-	return func(data map[string]string) error {
-		if raw, ok := data[key]; !ok {
-			*target = nil
-		} else if val, err := resource.ParseQuantity(raw); err != nil {
-			return err
-		} else {
-			*target = &val
-		}
-		return nil
-	}
 }

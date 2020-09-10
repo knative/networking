@@ -19,15 +19,10 @@ package v1alpha1
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/google/go-cmp/cmp"
 	"k8s.io/apimachinery/pkg/util/intstr"
-
-	"knative.dev/networking/pkg/apis/config"
 )
-
-var defaultMaxRevisionTimeout = time.Duration(config.DefaultMaxRevisionTimeoutSeconds) * time.Second
 
 func TestIngressDefaulting(t *testing.T) {
 	tests := []struct {
