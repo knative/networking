@@ -639,6 +639,7 @@ func CreateIngress(t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpe
 		Spec: spec,
 	}
 
+	ing.SetDefaults(context.Background())
 	if err := ing.Validate(context.Background()); err != nil {
 		t.Fatal("Invalid ingress:", err)
 	}
