@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2019 The Knative Authors
+# Copyright 2018 The Knative Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-readonly REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
-readonly TMP_DIFFROOT="$(mktemp -d -p ${REPO_ROOT_DIR})"
+source $(dirname $0)/../vendor/knative.dev/test-infra/scripts/library.sh
+
+readonly TMP_DIFFROOT="$(mktemp -d ${REPO_ROOT_DIR}/tmpdiffroot.XXXXXX)"
 
 cleanup() {
   rm -rf "${TMP_DIFFROOT}"
@@ -31,19 +32,19 @@ cleanup
 
 # Save working tree state
 mkdir -p "${TMP_DIFFROOT}/pkg"
-cp -aR "${REPO_ROOT_DIR}"/{Gopkg.lock,pkg,vendor,config} "${TMP_DIFFROOT}"
+cp -aR "${REPO_ROOT_DIR}/go.sum" "${REPO_ROOT_DIR}/pkg" "${REPO_ROOT_DIR}/test" "${REPO_ROOT_DIR}/vendor" "${TMP_DIFFROOT}"
 
 # TODO(mattmoor): We should be able to rm -rf pkg/client/ and vendor/
 
 "${REPO_ROOT_DIR}/hack/update-codegen.sh"
 echo "Diffing ${REPO_ROOT_DIR} against freshly generated codegen"
 ret=0
-diff -Naupr "${REPO_ROOT_DIR}/pkg" "${TMP_DIFFROOT}/pkg" || ret=1
-diff -Naupr --no-dereference "${REPO_ROOT_DIR}/vendor" "${TMP_DIFFROOT}/vendor" || ret=1
+diff -Nupr --no-dereference "${REPO_ROOT_DIR}/pkg" "${TMP_DIFFROOT}/pkg" || ret=1
+diff -Nupr --no-dereference "${REPO_ROOT_DIR}/test" "${TMP_DIFFROOT}/test" || ret=1
+diff -Nupr --no-dereference "${REPO_ROOT_DIR}/vendor" "${TMP_DIFFROOT}/vendor" || ret=1
 
 # Restore working tree state
-rm -fr "${TMP_DIFFROOT}/config"
-rm -fr "${REPO_ROOT_DIR}/Gopkg.lock" "${REPO_ROOT_DIR}/pkg" "${REPO_ROOT_DIR}/vendor"
+rm -fr "${REPO_ROOT_DIR}/go.sum" "${REPO_ROOT_DIR}/pkg" "${REPO_ROOT_DIR}/vendor"
 cp -aR "${TMP_DIFFROOT}"/* "${REPO_ROOT_DIR}"
 
 if [[ $ret -eq 0 ]]
