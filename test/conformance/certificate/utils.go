@@ -39,7 +39,7 @@ import (
 // CreateCertificate creates a Certificate with the given DNS names. The
 // certificate is automatically cleaned up when the test ends or is
 // interrupted.
-func CreateCertificate(t *testing.T, clients *test.Clients, dnsNames []string) *v1alpha1.Certificate {
+func CreateCertificate(ctx context.Context, t *testing.T, clients *test.Clients, dnsNames []string) *v1alpha1.Certificate {
 	t.Helper()
 
 	name := test.ObjectNameForTest(t)
@@ -58,11 +58,11 @@ func CreateCertificate(t *testing.T, clients *test.Clients, dnsNames []string) *
 	}
 
 	test.EnsureCleanup(t, func() {
-		clients.NetworkingClient.Certificates.Delete(cert.Name, &metav1.DeleteOptions{})
-		clients.KubeClient.Kube.CoreV1().Secrets(test.ServingNamespace).Delete(cert.Spec.SecretName, &metav1.DeleteOptions{})
+		clients.NetworkingClient.Certificates.Delete(ctx, cert.Name, metav1.DeleteOptions{})
+		clients.KubeClient.Kube.CoreV1().Secrets(test.ServingNamespace).Delete(ctx, cert.Spec.SecretName, metav1.DeleteOptions{})
 	})
 
-	cert, err := clients.NetworkingClient.Certificates.Create(cert)
+	cert, err := clients.NetworkingClient.Certificates.Create(ctx, cert, metav1.CreateOptions{})
 	if err != nil {
 		t.Fatal("Error creating Certificate:", err)
 	}
@@ -78,13 +78,12 @@ func IsCertificateReady(c *v1alpha1.Certificate) (bool, error) {
 
 // WaitForCertificateSecret polls the status of the Secret for the provided Certificate
 // until it exists or the timeout is exceeded. It then validates its contents
-func WaitForCertificateSecret(t *testing.T, client *test.Clients, cert *v1alpha1.Certificate, desc string) error {
+func WaitForCertificateSecret(ctx context.Context, t *testing.T, client *test.Clients, cert *v1alpha1.Certificate, desc string) error {
 	span := logging.GetEmitableSpan(context.Background(), fmt.Sprintf("WaitForCertificateSecret/%s/%s", cert.Spec.SecretName, desc))
 	defer span.End()
 
 	return wait.PollImmediate(test.PollInterval, test.PollTimeout, func() (bool, error) {
-		secret, err := client.KubeClient.Kube.CoreV1().Secrets(test.ServingNamespace).Get(cert.Spec.SecretName, metav1.GetOptions{})
-
+		secret, err := client.KubeClient.Kube.CoreV1().Secrets(test.ServingNamespace).Get(ctx, cert.Spec.SecretName, metav1.GetOptions{})
 		if apierrs.IsNotFound(err) {
 			return false, nil
 		} else if err != nil {
@@ -115,14 +114,14 @@ func WaitForCertificateSecret(t *testing.T, client *test.Clients, cert *v1alpha1
 // every PollInterval until inState returns `true` indicating it is done, returns an
 // error or PollTimeout. desc will be used to name the metric that is emitted to
 // track how long it took for name to get into the state checked by inState.
-func WaitForCertificateState(client *test.NetworkingClients, name string, inState func(r *v1alpha1.Certificate) (bool, error), desc string) error {
+func WaitForCertificateState(ctx context.Context, client *test.NetworkingClients, name string, inState func(r *v1alpha1.Certificate) (bool, error), desc string) error {
 	span := logging.GetEmitableSpan(context.Background(), fmt.Sprintf("WaitForCertificateState/%s/%s", name, desc))
 	defer span.End()
 
 	var lastState *v1alpha1.Certificate
 	return wait.PollImmediate(test.PollInterval, test.PollTimeout, func() (bool, error) {
 		var err error
-		lastState, err = client.Certificates.Get(name, metav1.GetOptions{})
+		lastState, err = client.Certificates.Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return true, err
 		}
@@ -132,7 +131,7 @@ func WaitForCertificateState(client *test.NetworkingClients, name string, inStat
 
 // VerifyChallenges verifies that the given certificate has the correct number
 // of HTTP01challenges and they contain valid data.
-func VerifyChallenges(t *testing.T, client *test.Clients, cert *v1alpha1.Certificate) {
+func VerifyChallenges(ctx context.Context, t *testing.T, client *test.Clients, cert *v1alpha1.Certificate) {
 	t.Helper()
 
 	certDomains := sets.NewString(cert.Spec.DNSNames...)
@@ -145,7 +144,7 @@ func VerifyChallenges(t *testing.T, client *test.Clients, cert *v1alpha1.Certifi
 		if !certDomains.Has(challenge.URL.Host) {
 			t.Errorf("HTTP01 Challenge host %s is not one of: %v", challenge.URL.Host, cert.Spec.DNSNames)
 		}
-		_, err := client.KubeClient.Kube.CoreV1().Services(challenge.ServiceNamespace).Get(challenge.ServiceName, metav1.GetOptions{})
+		_, err := client.KubeClient.Kube.CoreV1().Services(challenge.ServiceNamespace).Get(ctx, challenge.ServiceName, metav1.GetOptions{})
 		if apierrs.IsNotFound(err) {
 			t.Errorf("failed to find solver service for challenge: %v", err)
 		}
