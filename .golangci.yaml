@@ -7,9 +7,6 @@ run:
   skip-dirs:
     - pkg/client
 
-  skip-files:
-    - ".pb.go$"
-
 linters:
   enable:
     - unconvert
