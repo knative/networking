@@ -56,14 +56,42 @@ func TestTimeout(t *testing.T) {
 
 	const timeout = 10 * time.Second
 
-	resp, err := client.Get(fmt.Sprintf("http://%s.example.com?initialTimeout=%d",
-		name, timeout.Milliseconds()))
+	tests := []struct {
+		name         string
+		code         int
+		initialDelay time.Duration
+		delay        time.Duration
+	}{{
+		name: "no delays is OK",
+		code: http.StatusOK,
+	}, {
+		name:         "large delay before headers is ok",
+		code:         http.StatusOK,
+		initialDelay: timeout,
+	}, {
+		name:  "large delay after headers is ok",
+		code:  http.StatusOK,
+		delay: timeout,
+	}}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			checkTimeout(ctx, t, client, name, test.code, test.initialDelay, test.delay)
+		})
+	}
+}
+
+func checkTimeout(ctx context.Context, t *testing.T, client *http.Client, name string, code int, initial time.Duration, timeout time.Duration) {
+	t.Helper()
+
+	resp, err := client.Get(fmt.Sprintf("http://%s.example.com?initialTimeout=%d&timeout=%d",
+		name, initial.Milliseconds(), timeout.Milliseconds()))
 	if err != nil {
 		t.Fatal("Error making GET request:", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Unexpected status code: %d, wanted %d", resp.StatusCode, http.StatusOK)
+	if resp.StatusCode != code {
+		t.Errorf("Unexpected status code: %d, wanted %d", resp.StatusCode, code)
 		DumpResponse(ctx, t, resp)
 	}
 }
