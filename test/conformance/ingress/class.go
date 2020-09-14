@@ -30,7 +30,7 @@ import (
 	"knative.dev/pkg/reconciler"
 )
 
-// TestIngressClass verifies that kingrress does not picck ingress up when ingress.class annotation is incorrect.
+// TestIngressClass verifies that kingrress does not pick ingress up when ingress.class annotation is incorrect.
 func TestIngressClass(t *testing.T) {
 	t.Parallel()
 	ctx, clients := context.Background(), test.Setup(t)
@@ -61,13 +61,13 @@ func TestIngressClass(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			createIngressWithAnnotations(ctx, t, clients, test.annotations, ingressBackend)
+			verifyIngressWithAnnotations(ctx, t, clients, test.annotations, ingressBackend)
 		})
 	}
 
 }
 
-func createIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients, annotations map[string]string, backend *v1alpha1.IngressBackend) {
+func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients, annotations map[string]string, backend *v1alpha1.IngressBackend) {
 	t.Helper()
 
 	original, _ := CreateIngress(ctx, t, clients,
