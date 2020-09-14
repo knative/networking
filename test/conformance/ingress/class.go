@@ -47,10 +47,9 @@ func TestIngressClass(t *testing.T) {
 		name        string
 		annotations map[string]string
 	}{{
-		name:        "nil",
-		annotations: nil,
+		name: "nil",
 	}, {
-		name:        "ommited",
+		name:        "omitted",
 		annotations: map[string]string{},
 	}, {
 		name:        "incorrect",
