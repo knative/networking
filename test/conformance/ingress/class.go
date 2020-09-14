@@ -105,7 +105,7 @@ func createIngressWithAnnotations(ctx context.Context, t *testing.T, clients *te
 			}
 			// Verify ingress is not changed.
 			if !cmp.Equal(original, ing) {
-				t.Fatalf("Update = %v, want = %v, diff(-want;+got)\n%s", ing, original, cmp.Diff(original, ing))
+				t.Fatalf("Unexpected update: diff(-want;+got)\n%s", cmp.Diff(original, ing))
 			}
 		case <-time.After(duration):
 			break
