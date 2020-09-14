@@ -742,7 +742,7 @@ k8s.io/kube-openapi/pkg/util/sets
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20200911145400-2d4efecc6bc1
+# knative.dev/pkg v0.0.0-20200914134901-948ac9f2ce99
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -789,7 +789,7 @@ knative.dev/pkg/tracing/config
 knative.dev/pkg/tracing/propagation
 knative.dev/pkg/tracing/propagation/tracecontextb3
 knative.dev/pkg/tracker
-# knative.dev/test-infra v0.0.0-20200910231400-cfba2288403d
+# knative.dev/test-infra v0.0.0-20200911201000-3f90e7c8f2fa
 ## explicit
 knative.dev/test-infra/scripts
 # sigs.k8s.io/structured-merge-diff/v3 v3.0.1-0.20200706213357-43c19bbb7fba
