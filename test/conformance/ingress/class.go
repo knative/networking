@@ -21,7 +21,7 @@ import (
 	"testing"
 	"time"
 
-	"k8s.io/apimachinery/pkg/api/equality"
+	"github.com/google/go-cmp/cmp"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
@@ -37,58 +37,60 @@ func TestIngressClass(t *testing.T) {
 
 	// Create a backend service to create valid ingress except for invalid ingress.class.
 	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	ingressBackend := &v1alpha1.IngressBackend{
+		ServiceName:      name,
+		ServiceNamespace: test.ServingNamespace,
+		ServicePort:      intstr.FromInt(port),
+	}
 
 	tests := []struct {
-		name  string
-		class map[string]string
+		name        string
+		annotations map[string]string
 	}{{
-		name:  "ommited",
-		class: map[string]string{},
+		name:        "nil",
+		annotations: nil,
 	}, {
-		name:  "incorrect",
-		class: map[string]string{networking.IngressClassAnnotationKey: "incorrect"},
+		name:        "ommited",
+		annotations: map[string]string{},
 	}, {
-		name:  "empty",
-		class: map[string]string{networking.IngressClassAnnotationKey: ""},
+		name:        "incorrect",
+		annotations: map[string]string{networking.IngressClassAnnotationKey: "incorrect"},
+	}, {
+		name:        "empty",
+		annotations: map[string]string{networking.IngressClassAnnotationKey: ""},
 	}}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			createIngressWithClass(ctx, t, clients, test.class, name, port)
+			createIngressWithAnnotations(ctx, t, clients, test.annotations, ingressBackend)
 		})
 	}
 
 }
 
-func createIngressWithClass(ctx context.Context, t *testing.T, clients *test.Clients, class map[string]string, name string, port int) {
+func createIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients, annotations map[string]string, backend *v1alpha1.IngressBackend) {
 	t.Helper()
 
-	org, cancel := CreateIngress(ctx, t, clients, v1alpha1.IngressSpec{
-		Rules: []v1alpha1.IngressRule{{
-			Hosts:      []string{name + ".example.com"},
-			Visibility: v1alpha1.IngressVisibilityExternalIP,
-			HTTP: &v1alpha1.HTTPIngressRuleValue{
-				Paths: []v1alpha1.HTTPIngressPath{{
-					Splits: []v1alpha1.IngressBackendSplit{{
-						IngressBackend: v1alpha1.IngressBackend{
-							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
-							ServicePort:      intstr.FromInt(port),
-						},
+	original, _ := CreateIngress(ctx, t, clients,
+		v1alpha1.IngressSpec{
+			Rules: []v1alpha1.IngressRule{{
+				Hosts:      []string{backend.ServiceName + ".example.com"},
+				Visibility: v1alpha1.IngressVisibilityExternalIP,
+				HTTP: &v1alpha1.HTTPIngressRuleValue{
+					Paths: []v1alpha1.HTTPIngressPath{{
+						Splits: []v1alpha1.IngressBackendSplit{{
+							IngressBackend: *backend,
+						}},
 					}},
-				}},
-			},
-		}},
-	},
-		// Override ingress.class annotation
-		func(ing *v1alpha1.Ingress) {
-			ing.Annotations = class
+				},
+			}},
 		},
+		OverrideIngressAnnotation(annotations),
 	)
 
 	const (
 		interval = 2 * time.Second
-		duration = 6 * time.Second
+		duration = 30 * time.Second
 	)
 	ticker := time.NewTicker(interval)
 	for {
@@ -96,16 +98,15 @@ func createIngressWithClass(ctx context.Context, t *testing.T, clients *test.Cli
 		case <-ticker.C:
 			var ing *v1alpha1.Ingress
 			err := reconciler.RetryTestErrors(func(attempts int) (err error) {
-				ing, err = clients.NetworkingClient.Ingresses.Get(ctx, org.Name, metav1.GetOptions{})
+				ing, err = clients.NetworkingClient.Ingresses.Get(ctx, original.Name, metav1.GetOptions{})
 				return err
 			})
 			if err != nil {
-				cancel()
 				t.Fatal("Error getting Ingress:", err)
 			}
 			// Verify ingress is not changed.
-			if !equality.Semantic.DeepEqual(org, ing) {
-				t.Fatalf("Unexpected update, want=%v, got=%v", org, ing)
+			if !cmp.Equal(original, ing) {
+				t.Fatalf("Update = %v, want = %v, diff(-want;+got)\n%s", ing, original, cmp.Diff(original, ing))
 			}
 		case <-time.After(duration):
 			break
