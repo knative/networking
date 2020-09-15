@@ -40,6 +40,15 @@ func TestGetExpandedHosts(t *testing.T) {
 			"service.namespace.svc.cluster.local",
 		),
 	}, {
+		name: "cluster local service in all-numeric namespace",
+		hosts: sets.NewString(
+			"service.1234.svc.cluster.local",
+		),
+		want: sets.NewString(
+			"service.1234.svc",
+			"service.1234.svc.cluster.local",
+		),
+	}, {
 		name: "example.com service",
 		hosts: sets.NewString(
 			"foo.bar.example.com",
