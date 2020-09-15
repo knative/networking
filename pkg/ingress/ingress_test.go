@@ -17,6 +17,7 @@ limitations under the License.
 package ingress
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -47,6 +48,15 @@ func TestGetExpandedHosts(t *testing.T) {
 		want: sets.NewString(
 			"service.1234.svc",
 			"service.1234.svc.cluster.local",
+		),
+	}, {
+		name: "cluster local service somehow has a very long tld",
+		hosts: sets.NewString(
+			"service." + strings.Repeat("s", 64) + ".svc.cluster.local",
+		),
+		want: sets.NewString(
+			"service."+strings.Repeat("s", 64)+".svc",
+			"service."+strings.Repeat("s", 64)+".svc.cluster.local",
 		),
 	}, {
 		name: "example.com service",
@@ -80,7 +90,7 @@ func TestGetExpandedHosts(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := ExpandedHosts(test.hosts)
 			if diff := cmp.Diff(got, test.want); diff != "" {
-				t.Errorf("Unexpected (-want +got): %v", diff)
+				t.Errorf("Unexpected (-want +got):\n%s", diff)
 			}
 		})
 	}
