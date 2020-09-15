@@ -31,23 +31,27 @@ func TestGetExpandedHosts(t *testing.T) {
 		hosts sets.String
 		want  sets.String
 	}{{
-		name: "cluster local service in non-default namespace",
-		hosts: sets.NewString(
-			"service.namespace.svc.cluster.local",
-		),
+		name:  "cluster local service in non-default namespace",
+		hosts: sets.NewString("service.name-space.svc.cluster.local"),
 		want: sets.NewString(
-			"service.namespace",
-			"service.namespace.svc",
-			"service.namespace.svc.cluster.local",
+			"service.name-space",
+			"service.name-space.svc",
+			"service.name-space.svc.cluster.local",
 		),
 	}, {
-		name: "cluster local service in all-numeric namespace",
-		hosts: sets.NewString(
-			"service.1234.svc.cluster.local",
-		),
+		name:  "cluster local service in all-numeric namespace",
+		hosts: sets.NewString("service.1234.svc.cluster.local"),
 		want: sets.NewString(
 			"service.1234.svc",
 			"service.1234.svc.cluster.local",
+		),
+	}, {
+		name:  "funky namespace",
+		hosts: sets.NewString("service.1-1.svc.cluster.local"),
+		want: sets.NewString(
+			"service.1-1",
+			"service.1-1.svc",
+			"service.1-1.svc.cluster.local",
 		),
 	}, {
 		name: "cluster local service somehow has a very long tld",
@@ -59,21 +63,15 @@ func TestGetExpandedHosts(t *testing.T) {
 			"service."+strings.Repeat("s", 64)+".svc.cluster.local",
 		),
 	}, {
-		name: "example.com service",
-		hosts: sets.NewString(
-			"foo.bar.example.com",
-		),
+		name:  "example.com service",
+		hosts: sets.NewString("foo.bar.example.com"),
 		want: sets.NewString(
 			"foo.bar.example.com",
 		),
 	}, {
-		name: "default.example.com service",
-		hosts: sets.NewString(
-			"foo.default.example.com",
-		),
-		want: sets.NewString(
-			"foo.default.example.com",
-		),
+		name:  "default.example.com service",
+		hosts: sets.NewString("foo.default.example.com"),
+		want:  sets.NewString("foo.default.example.com"),
 	}, {
 		name: "mix",
 		hosts: sets.NewString(
@@ -89,8 +87,8 @@ func TestGetExpandedHosts(t *testing.T) {
 	}} {
 		t.Run(test.name, func(t *testing.T) {
 			got := ExpandedHosts(test.hosts)
-			if diff := cmp.Diff(got, test.want); diff != "" {
-				t.Errorf("Unexpected (-want +got):\n%s", diff)
+			if !got.Equal(test.want) {
+				t.Errorf("ExpandedHosts diff(-want +got):\n%s", cmp.Diff(got.List(), test.want.List()))
 			}
 		})
 	}

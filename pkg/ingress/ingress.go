@@ -121,8 +121,7 @@ func isValidTopLevelDomain(domain string) bool {
 		return false
 	}
 	for _, c := range []byte(tld) {
-		c -= '0'
-		if c > 9 {
+		if c == '-' || c > '9' {
 			return true
 		}
 	}
