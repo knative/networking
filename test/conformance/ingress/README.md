@@ -30,9 +30,10 @@ This directory contains Ingress conformance tests for Knative Ingress resource.
    ```bash
    export NETWORKING_ROOT=<where-you-checked-out-knative/networking>
    ```
-1. (Recommended) Knative [net-istio](https://github.com/knative-sandbox/net-istio)
-   source code checked out. This contains an invocation of `RunConformance` that
-   easily allows to run tests.
+1. (Recommended) Knative
+   [net-istio](https://github.com/knative-sandbox/net-istio) source code checked
+   out. This contains an invocation of `RunConformance` that easily allows to
+   run tests.
 1. (For setup only) Knative Serving source code check out at `${SERVING_ROOT}`.
    Often this is `$GOPATH/src/go/knative.dev/serving`. This contains the
    `knative-testing` resources.
