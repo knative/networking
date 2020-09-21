@@ -67,10 +67,11 @@ func TestIngressClass(t *testing.T) {
 
 }
 
-func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients, annotations map[string]string, backend *v1alpha1.IngressBackend) {
+func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients,
+	annotations map[string]string, backend *v1alpha1.IngressBackend) {
 	t.Helper()
 
-	original, _ := CreateIngress(ctx, t, clients,
+	original, cancel := createIngress(ctx, t, clients,
 		v1alpha1.IngressSpec{
 			Rules: []v1alpha1.IngressRule{{
 				Hosts:      []string{backend.ServiceName + ".example.com"},
@@ -86,6 +87,7 @@ func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *te
 		},
 		OverrideIngressAnnotation(annotations),
 	)
+	t.Cleanup(cancel)
 
 	const (
 		interval = 2 * time.Second
