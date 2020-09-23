@@ -45,9 +45,5 @@ func (m *FakeStatusManager) IsReady(ctx context.Context, ing *v1alpha1.Ingress) 
 
 // IsReadyCallCount returns how many times IsReady has been called for a given ingress
 func (m *FakeStatusManager) IsReadyCallCount(ing *v1alpha1.Ingress) int {
-	if m.isReadyCallCount == nil {
-		return 0
-	}
-
 	return m.isReadyCallCount[status.IngressKey(ing)]
 }
