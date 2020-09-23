@@ -17,13 +17,13 @@ limitations under the License.
 package status
 
 import (
-	context "context"
+	"context"
 
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/pkg/status"
 )
 
-// FakeStatusManager implements status.Manager
+// FakeStatusManager implements status.Manager for use in unit tests.
 type FakeStatusManager struct {
 	FakeIsReady func(ctx context.Context, ing *v1alpha1.Ingress) (bool, error)
 
@@ -35,7 +35,7 @@ var _ status.Manager = (*FakeStatusManager)(nil)
 // IsReady implements IsReady
 func (m *FakeStatusManager) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, error) {
 	if m.isReadyCallCount == nil {
-		m.isReadyCallCount = map[string]int{}
+		m.isReadyCallCount = make(map[string]int, 1)
 	}
 
 	m.isReadyCallCount[status.IngressKey(ing)]++
