@@ -30,6 +30,8 @@ type FakeStatusManager struct {
 	isReadyCallCount map[string]int
 }
 
+var _ status.Manager = (*FakeStatusManager)(nil)
+
 // IsReady implements IsReady
 func (m *FakeStatusManager) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, error) {
 	if m.isReadyCallCount == nil {
