@@ -57,3 +57,17 @@ func TestIsReadyCallCount(t *testing.T) {
 			statusManager.IsReadyCallCount(&ingress3), 0)
 	}
 }
+
+func TestIsReadyNeverCalled(t *testing.T) {
+	statusManager := FakeStatusManager{
+		FakeIsReady: func(context.Context, *v1alpha1.Ingress) (bool, error) {
+			return true, nil
+		},
+	}
+	ingress1 := v1alpha1.Ingress{ObjectMeta: metav1.ObjectMeta{Namespace: "ns1", Name: "name1"}}
+
+	if statusManager.IsReadyCallCount(&ingress1) != 0 {
+		t.Errorf("statusManager.IsReadyCallCount(&ingress1) = %v, want %v",
+			statusManager.IsReadyCallCount(&ingress1), 0)
+	}
+}
