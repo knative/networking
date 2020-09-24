@@ -95,8 +95,7 @@ func TestHTTP2AndEmptyPort(t *testing.T) {
 	}
 
 	if want, got := 2, ri.Request.ProtoMajor; want != got {
-		// DO NOT SUBMIT
-		t.Fatalf("ProtoMajor = %d, wanted %d", got, want)
+		t.Errorf("ProtoMajor = %d, wanted %d", got, want)
 	}
 }
 
