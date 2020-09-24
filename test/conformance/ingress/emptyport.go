@@ -113,7 +113,7 @@ func TestGRPCWithEmptyPort(t *testing.T) {
 	domain := name + ".example.com"
 
 	// Create a simple Ingress over the Service.
-	_, dialCtx, _ := CreateIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
+	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
