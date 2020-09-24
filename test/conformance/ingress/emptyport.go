@@ -100,7 +100,6 @@ func TestHTTP2AndEmptyPort(t *testing.T) {
 }
 
 // TestGRPCWithEmptyPort verifies that a nameless port can establish a basic GRPC connection.
-// DO NOT SUBMIT: This breaks.
 func TestGRPCWithEmptyPort(t *testing.T) {
 	t.Parallel()
 	defer logstream.Start(t)()
