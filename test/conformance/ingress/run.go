@@ -65,11 +65,7 @@ func RunConformance(t *testing.T) {
 		t.Run(name, test)
 	}
 
-	skipTests := strings.Split(test.ServingFlags.SkipTests, ",")
-	for _, name := range skipTests {
-		delete(alphaTests, name)
-		delete(betaTests, name)
-	}
+	skipTests := skipTests()
 
 	// TODO(dprotaso) we'll need something more robust
 	// in the long term that lets downstream
@@ -80,14 +76,34 @@ func RunConformance(t *testing.T) {
 	// ie. requirement - must, should, may
 	if test.ServingFlags.EnableBetaFeatures {
 		for name, test := range betaTests {
+			if _, ok := skipTests[name]; ok {
+				t.Run(name, skipFunc)
+				continue
+			}
 			t.Run(name, test)
 		}
 	}
 
 	if test.ServingFlags.EnableAlphaFeatures {
 		for name, test := range alphaTests {
+			if _, ok := skipTests[name]; ok {
+				t.Run(name, skipFunc)
+				continue
+			}
 			t.Run(name, test)
 		}
 	}
+}
 
+var skipFunc = func(t *testing.T) {
+	t.Skip("Skipping the test in skip-test flag")
+}
+
+func skipTests() map[string]struct{} {
+	skipArray := strings.Split(test.ServingFlags.SkipTests, ",")
+	skipMap := make(map[string]struct{}, len(skipArray))
+	for _, name := range skipArray {
+		skipMap[name] = struct{}{}
+	}
+	return skipMap
 }
