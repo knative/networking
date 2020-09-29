@@ -146,7 +146,7 @@ func VerifyChallenges(ctx context.Context, t *testing.T, client *test.Clients, c
 		}
 		_, err := client.KubeClient.Kube.CoreV1().Services(challenge.ServiceNamespace).Get(ctx, challenge.ServiceName, metav1.GetOptions{})
 		if apierrs.IsNotFound(err) {
-			t.Errorf("failed to find solver service for challenge: %v", err)
+			t.Error("failed to find solver service for challenge:", err)
 		}
 	}
 }

@@ -57,7 +57,7 @@ func TestIngressGetGroupVersionKind(t *testing.T) {
 	ci := Ingress{}
 	expected := SchemeGroupVersion.WithKind("Ingress")
 	if diff := cmp.Diff(expected, ci.GetGroupVersionKind()); diff != "" {
-		t.Errorf("Unexpected diff (-want, +got) = %v", diff)
+		t.Error("Unexpected diff (-want, +got) =", diff)
 	}
 }
 

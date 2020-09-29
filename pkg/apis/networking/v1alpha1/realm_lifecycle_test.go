@@ -34,6 +34,6 @@ func TestRealmGetGroupVersionKind(t *testing.T) {
 	r := Realm{}
 	expected := SchemeGroupVersion.WithKind("Realm")
 	if !cmp.Equal(expected, r.GetGroupVersionKind()) {
-		t.Errorf("Unexpected diff (-want, +got) = %v", cmp.Diff(expected, r.GetGroupVersionKind()))
+		t.Error("Unexpected diff (-want, +got) =", cmp.Diff(expected, r.GetGroupVersionKind()))
 	}
 }

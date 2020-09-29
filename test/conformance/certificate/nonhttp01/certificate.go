@@ -38,6 +38,6 @@ func TestSecret(t *testing.T) {
 
 	err := utils.WaitForCertificateSecret(ctx, t, clients, cert, t.Name())
 	if err != nil {
-		t.Errorf("Failed to wait for secret: %v", err)
+		t.Error("Failed to wait for secret:", err)
 	}
 }

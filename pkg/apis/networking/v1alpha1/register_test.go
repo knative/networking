@@ -51,6 +51,6 @@ func TestRegisterHelpers(t *testing.T) {
 
 	scheme := runtime.NewScheme()
 	if err := addKnownTypes(scheme); err != nil {
-		t.Errorf("addKnownTypes() = %v", err)
+		t.Error("addKnownTypes() =", err)
 	}
 }
