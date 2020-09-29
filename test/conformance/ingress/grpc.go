@@ -179,7 +179,7 @@ func TestGRPCSplit(t *testing.T) {
 
 func findGRPCSuffix(t *testing.T, stream ping.PingService_PingStreamClient) string {
 	// Establish the suffix that corresponds to this stream.
-	message := fmt.Sprintf("ping - %d", rand.Intn(1000))
+	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := stream.Send(&ping.Request{Msg: message}); err != nil {
 		t.Error("Error sending request:", err)
 		return ""
@@ -199,7 +199,7 @@ func findGRPCSuffix(t *testing.T, stream ping.PingService_PingStreamClient) stri
 }
 
 func checkGRPCRoundTrip(t *testing.T, stream ping.PingService_PingStreamClient, suffix string) {
-	message := fmt.Sprintf("ping - %d", rand.Intn(1000))
+	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := stream.Send(&ping.Request{Msg: message}); err != nil {
 		t.Error("Error sending request:", err)
 		return

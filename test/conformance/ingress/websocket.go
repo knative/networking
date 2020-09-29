@@ -163,7 +163,7 @@ func TestWebsocketSplit(t *testing.T) {
 func findWebsocketSuffix(ctx context.Context, t *testing.T, conn *websocket.Conn) string {
 	t.Helper()
 	// Establish the suffix that corresponds to this socket.
-	message := fmt.Sprintf("ping - %d", rand.Intn(1000))
+	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return ""
@@ -184,7 +184,7 @@ func findWebsocketSuffix(ctx context.Context, t *testing.T, conn *websocket.Conn
 
 func checkWebsocketRoundTrip(ctx context.Context, t *testing.T, conn *websocket.Conn, suffix string) {
 	t.Helper()
-	message := fmt.Sprintf("ping - %d", rand.Intn(1000))
+	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return
