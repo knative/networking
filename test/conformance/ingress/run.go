@@ -67,13 +67,6 @@ func RunConformance(t *testing.T) {
 
 	skipTests := skipTests()
 
-	t.Run("emptyport/http1", TestHTTP1AndEmptyPort)
-
-	if test.ServingFlags.EnableAutoHttp2 {
-		t.Run("emptyport/http2", TestHTTP2AndEmptyPort)
-		t.Run("emptyport/grpc", TestGRPCWithEmptyPort)
-	}
-
 	// TODO(dprotaso) we'll need something more robust
 	// in the long term that lets downstream
 	// implementations to better select which tests
@@ -99,6 +92,14 @@ func RunConformance(t *testing.T) {
 			}
 			t.Run(name, test)
 		}
+	}
+
+	// TODO(rafaeltc): Once the feature is partially implemented,
+	// move to alphaTests and remove flag.
+	if test.ServingFlags.EnableAutoHttp2 {
+		t.Run("emptyport/http1", TestHTTP1AndEmptyPort)
+		t.Run("emptyport/http2", TestHTTP2AndEmptyPort)
+		t.Run("emptyport/grpc", TestGRPCWithEmptyPort)
 	}
 }
 
