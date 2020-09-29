@@ -40,10 +40,10 @@ func TestOurConfig(t *testing.T) {
 	cm, example := ConfigMapsFromTestFile(t, ConfigName)
 
 	if _, err := NewConfigFromConfigMap(cm); err != nil {
-		t.Errorf("NewConfigFromConfigMap(actual) = %v", err)
+		t.Error("NewConfigFromConfigMap(actual) =", err)
 	}
 	if got, err := NewConfigFromConfigMap(example); err != nil {
-		t.Errorf("NewConfigFromConfigMap(example) = %v", err)
+		t.Error("NewConfigFromConfigMap(example) =", err)
 	} else if want := defaultConfig(); !cmp.Equal(got, want) {
 		t.Errorf("ExampleConfig does not match default confif: (-want,+got):\n%s", cmp.Diff(want, got))
 	}

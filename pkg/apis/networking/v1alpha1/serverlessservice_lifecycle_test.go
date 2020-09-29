@@ -56,7 +56,7 @@ func TestGetGroupVersionKind(t *testing.T) {
 	ss := ServerlessService{}
 	expected := SchemeGroupVersion.WithKind("ServerlessService")
 	if diff := cmp.Diff(expected, ss.GetGroupVersionKind()); diff != "" {
-		t.Errorf("Unexpected diff (-want, +got) = %v", diff)
+		t.Error("Unexpected diff (-want, +got) =", diff)
 	}
 }
 

@@ -57,7 +57,7 @@ func TestCertificateGetGroupVersionKind(t *testing.T) {
 	c := Certificate{}
 	expected := SchemeGroupVersion.WithKind("Certificate")
 	if diff := cmp.Diff(expected, c.GetGroupVersionKind()); diff != "" {
-		t.Errorf("Unexpected diff (-want, +got) = %s", diff)
+		t.Error("Unexpected diff (-want, +got) =", diff)
 	}
 }
 

@@ -153,7 +153,7 @@ func TestInsertProbe(t *testing.T) {
 			beforeMtchHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].Headers)
 			got, err := InsertProbe(test.ingress)
 			if err != nil {
-				t.Errorf("InsertProbe() = %v", err)
+				t.Error("InsertProbe() =", err)
 			}
 			if got != test.want {
 				t.Errorf("InsertProbe() = %s, wanted %s", got, test.want)
@@ -276,7 +276,7 @@ func TestHostsPerVisibility(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := HostsPerVisibility(test.ingress, test.in)
 			if !cmp.Equal(got, test.want) {
-				t.Errorf("HostsPerVisibility (-want, +got) = %s", cmp.Diff(test.want, got))
+				t.Error("HostsPerVisibility (-want, +got) =", cmp.Diff(test.want, got))
 			}
 		})
 	}

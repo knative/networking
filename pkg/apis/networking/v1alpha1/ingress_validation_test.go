@@ -341,7 +341,7 @@ func TestIngressSpecValidation(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := test.is.Validate(ctx)
 			if diff := cmp.Diff(test.want.Error(), got.Error()); diff != "" {
-				t.Errorf("Validate (-want, +got) = %v", diff)
+				t.Error("Validate (-want, +got) =", diff)
 			}
 		})
 	}
@@ -419,7 +419,7 @@ func TestIngressValidation(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := test.ci.Validate(context.Background())
 			if diff := cmp.Diff(test.want.Error(), got.Error()); diff != "" {
-				t.Errorf("Validate (-want, +got) = %v", diff)
+				t.Error("Validate (-want, +got) =", diff)
 			}
 		})
 	}

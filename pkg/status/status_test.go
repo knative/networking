@@ -454,7 +454,7 @@ func TestCancelPodProbing(t *testing.T) {
 
 	// Drain requests for the old version
 	for req := range requests {
-		t.Logf("req.Host: %s", req.Host)
+		t.Log("req.Host:", req.Host)
 		if strings.HasPrefix(req.Host, otherDomain) {
 			break
 		}
@@ -655,7 +655,7 @@ func TestCancelIngressProbing(t *testing.T) {
 
 	// Drain requests for the old version.
 	for req := range requests {
-		t.Logf("req.Host: %s", req.Host)
+		t.Log("req.Host:", req.Host)
 		if strings.HasPrefix(req.Host, domain) {
 			break
 		}

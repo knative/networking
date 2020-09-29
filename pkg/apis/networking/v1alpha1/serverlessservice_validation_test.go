@@ -163,14 +163,14 @@ func TestServerlessServiceSpecValidation(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := test.skss.Validate(context.Background())
 			if diff := cmp.Diff(test.want.Error(), got.Error()); diff != "" {
-				t.Errorf("Validate (-want, +got) = %v", diff)
+				t.Error("Validate (-want, +got) =", diff)
 			}
 			// Now validate via parent object
 			got = (&ServerlessService{
 				Spec: *test.skss,
 			}).Validate(context.Background())
 			if diff := cmp.Diff(test.want.ViaField("spec").Error(), got.Error()); diff != "" {
-				t.Errorf("Validate (-want, +got) = %v", diff)
+				t.Error("Validate (-want, +got) =", diff)
 			}
 		})
 	}

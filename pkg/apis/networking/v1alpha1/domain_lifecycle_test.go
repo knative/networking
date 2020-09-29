@@ -34,6 +34,6 @@ func TestDomainGetGroupVersionKind(t *testing.T) {
 	d := Domain{}
 	expected := SchemeGroupVersion.WithKind("Domain")
 	if !cmp.Equal(expected, d.GetGroupVersionKind()) {
-		t.Errorf("Unexpected diff (-want, +got) = %v", cmp.Diff(expected, d.GetGroupVersionKind()))
+		t.Error("Unexpected diff (-want, +got) =", cmp.Diff(expected, d.GetGroupVersionKind()))
 	}
 }
