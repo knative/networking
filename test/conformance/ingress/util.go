@@ -627,18 +627,18 @@ func createPodAndService(ctx context.Context, t *testing.T, clients *test.Client
 	}
 }
 
-// IngressOption enables further configuration of a Ingress.
-type IngressOption func(*v1alpha1.Ingress)
+// Option enables further configuration of a Ingress.
+type Option func(*v1alpha1.Ingress)
 
 // OverrideIngressAnnotation overrides the Ingress annotation.
-func OverrideIngressAnnotation(annotations map[string]string) IngressOption {
+func OverrideIngressAnnotation(annotations map[string]string) Option {
 	return func(ing *v1alpha1.Ingress) {
 		ing.Annotations = annotations
 	}
 }
 
 // createIngress creates a Knative Ingress resource
-func createIngress(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, io ...IngressOption) (*v1alpha1.Ingress, context.CancelFunc) {
+func createIngress(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, io ...Option) (*v1alpha1.Ingress, context.CancelFunc) {
 	t.Helper()
 
 	name := test.ObjectNameForTest(t)
