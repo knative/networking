@@ -31,7 +31,7 @@ var ServingFlags = initializeServingFlags()
 // ServingEnvironmentFlags holds the e2e flags needed only by the serving repo.
 type ServingEnvironmentFlags struct {
 	ResolvableDomain    bool   // Resolve Route controller's `domainSuffix`
-	Https               bool   // Indicates where the test service will be created with https
+	HTTPS               bool   // Indicates where the test service will be created with https
 	IngressClass        string // Indicates the class of Ingress provider to test.
 	CertificateClass    string // Indicates the class of Certificate provider to test.
 	SystemNamespace     string // Indicates the system namespace, in which Knative Serving is installed.
@@ -51,7 +51,7 @@ func initializeServingFlags() *ServingEnvironmentFlags {
 		false,
 		"Set this flag to true if you have configured the `domainSuffix` on your Route controller to a domain that will resolve to your test cluster.")
 
-	flag.BoolVar(&f.Https,
+	flag.BoolVar(&f.HTTPS,
 		"https",
 		false,
 		"Set this flag to true to run all tests with https.")
