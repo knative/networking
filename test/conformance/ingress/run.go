@@ -94,7 +94,7 @@ func RunConformance(t *testing.T) {
 		}
 	}
 
-	// TODO(rafaeltc): Once the feature is partially implemented,
+	// TODO(knative/serving#4283): Once the feature is partially implemented,
 	// move to alphaTests and remove flag.
 	if test.ServingFlags.EnableAutoHttp2 {
 		t.Run("emptyport/http1", TestHTTP1AndEmptyPort)

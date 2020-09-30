@@ -32,6 +32,7 @@ import (
 
 // TestHTTP1AndEmptyPort verifies that an empty port name uses HTTP1. This should be the current behavior.
 func TestHTTP1AndEmptyPort(t *testing.T) {
+	t.Parallel()
 	ctx, clients := context.Background(), test.Setup(t)
 	name, port, _ := CreateRuntimeService(ctx, t, clients, "")
 
@@ -67,6 +68,7 @@ func TestHTTP1AndEmptyPort(t *testing.T) {
 // TestHTTP2AndEmptyPort verifies that an empty port name uses HTTP2.
 // This is not the current behavior.
 func TestHTTP2AndEmptyPort(t *testing.T) {
+	t.Parallel()
 	ctx, clients := context.Background(), test.Setup(t)
 	name, port, _ := CreateRuntimeService(ctx, t, clients, "")
 
