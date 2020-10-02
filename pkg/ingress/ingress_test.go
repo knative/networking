@@ -164,10 +164,10 @@ func TestInsertProbe(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			ingress := test.ingress.DeepCopy()
 			got, err := InsertProbe(test.ingress)
+			if test.wantErr == (err == nil) {
+				t.Errorf("InsertProbe() err = %v, wantErr = %t", err, test.wantErr)
+			}
 			if err != nil {
-				if !test.wantErr {
-					t.Errorf("InsertProbe() = %v, expect no error", err)
-				}
 				return
 			}
 			beforePaths := len(ingress.Spec.Rules[0].HTTP.Paths)
