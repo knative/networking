@@ -156,7 +156,6 @@ func TestInsertProbe(t *testing.T) {
 				}},
 			},
 		},
-		want:    "",
 		wantErr: true,
 	}}
 
