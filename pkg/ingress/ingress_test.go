@@ -99,6 +99,7 @@ func TestInsertProbe(t *testing.T) {
 		name    string
 		ingress *v1alpha1.Ingress
 		want    string
+		wantErr bool
 	}{{
 		name: "with rules, no append header",
 		ingress: &v1alpha1.Ingress{
@@ -144,17 +145,34 @@ func TestInsertProbe(t *testing.T) {
 			},
 		},
 		want: "6b652c7abed871354affd4a9cb699d33816f24541fac942149b91ad872fe63ca",
+	}, {
+		name: "rule missing HTTP block",
+		ingress: &v1alpha1.Ingress{
+			Spec: v1alpha1.IngressSpec{
+				Rules: []v1alpha1.IngressRule{{
+					Hosts: []string{
+						"example.com",
+					},
+				}},
+			},
+		},
+		want:    "",
+		wantErr: true,
 	}}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			beforePaths := len(test.ingress.Spec.Rules[0].HTTP.Paths)
-			beforeAppHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
-			beforeMtchHdr := len(test.ingress.Spec.Rules[0].HTTP.Paths[0].Headers)
+			ingress := test.ingress.DeepCopy()
 			got, err := InsertProbe(test.ingress)
 			if err != nil {
-				t.Error("InsertProbe() =", err)
+				if !test.wantErr {
+					t.Errorf("InsertProbe() = %v, expect no error", err)
+				}
+				return
 			}
+			beforePaths := len(ingress.Spec.Rules[0].HTTP.Paths)
+			beforeAppHdr := len(ingress.Spec.Rules[0].HTTP.Paths[0].AppendHeaders)
+			beforeMtchHdr := len(ingress.Spec.Rules[0].HTTP.Paths[0].Headers)
 			if got != test.want {
 				t.Errorf("InsertProbe() = %s, wanted %s", got, test.want)
 			}
