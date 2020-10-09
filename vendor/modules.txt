@@ -741,7 +741,7 @@ k8s.io/kube-openapi/pkg/util/sets
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20201008052621-c0496d5e1b2b
+# knative.dev/pkg v0.0.0-20201009153721-3eb7d13daebe
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
