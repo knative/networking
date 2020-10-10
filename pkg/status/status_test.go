@@ -24,7 +24,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"testing"
 	"time"
 
@@ -32,6 +31,7 @@ import (
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/pkg/ingress"
 
+	"go.uber.org/atomic"
 	"go.uber.org/zap/zaptest"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -59,7 +59,7 @@ var (
 func TestProbeAllHosts(t *testing.T) {
 	const hostA = "foo.bar.com"
 	const hostB = "ksvc.test.dev"
-	hostBEnabled := int32(0)
+	var hostBEnabled atomic.Bool
 
 	ing := ingTemplate.DeepCopy()
 	ing.Spec.Rules[0].Hosts = append(ing.Spec.Rules[0].Hosts, hostB)
@@ -83,7 +83,7 @@ func TestProbeAllHosts(t *testing.T) {
 	finalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		probeRequests <- r
 		if !strings.HasPrefix(r.Host, hostA) &&
-			(atomic.LoadInt32(&hostBEnabled) == 0 || !strings.HasPrefix(r.Host, hostB)) {
+			(!hostBEnabled.Load() || !strings.HasPrefix(r.Host, hostB)) {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -158,7 +158,7 @@ func TestProbeAllHosts(t *testing.T) {
 	}
 
 	// Make probes to hostB succeed
-	atomic.StoreInt32(&hostBEnabled, 1)
+	hostBEnabled.Store(true)
 
 	// Just drain the requests in the channel to not block the handler
 	go func() {
