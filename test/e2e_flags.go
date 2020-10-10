@@ -28,6 +28,10 @@ import (
 // NetworkingFlags holds the flags or defaults for knative/networking settings in the user's environment.
 var NetworkingFlags = initializeNetworkingFlags()
 
+// ServingFlags is an alias of NetworkingFlags.
+// TODO: Delete this variable once all downstream migrate it to NetworkingFlags.
+var ServingFlags = NetworkingFlags
+
 // NetworkingEnvironmentFlags holds the e2e flags needed only by the networking repo.
 type NetworkingEnvironmentFlags struct {
 	ResolvableDomain    bool   // Resolve Route controller's `domainSuffix`
