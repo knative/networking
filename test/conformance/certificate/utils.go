@@ -48,7 +48,7 @@ func CreateCertificate(ctx context.Context, t *testing.T, clients *test.Clients,
 			Name:      name,
 			Namespace: test.ServingNamespace,
 			Annotations: map[string]string{
-				networking.CertificateClassAnnotationKey: test.ServingFlags.CertificateClass,
+				networking.CertificateClassAnnotationKey: test.NetworkingFlags.CertificateClass,
 			},
 		},
 		Spec: v1alpha1.CertificateSpec{
