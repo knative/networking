@@ -51,13 +51,13 @@ func TestDomainSpecValidation(t *testing.T) {
 		},
 		want: apis.ErrMissingField("spec.ingressClass"),
 	}, {
-		name: "loadbalacers arent specified",
+		name: "loadbalancers arent specified",
 		ds: DomainSpec{
 			IngressClass: "test-ingress-class",
 		},
 		want: apis.ErrMissingField("spec.loadBalancers"),
 	}, {
-		name: "at least one field in loadbalacer is specified",
+		name: "at least one field in loadbalancer is specified",
 		ds: DomainSpec{
 			IngressClass: "test-ingress-class",
 			LoadBalancers: []LoadBalancerIngressSpec{{
