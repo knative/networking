@@ -3,6 +3,7 @@ module knative.dev/networking
 go 1.14
 
 require (
+	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
 	github.com/gogo/protobuf v1.3.1
 	github.com/google/go-cmp v0.5.2
 	github.com/gorilla/websocket v1.4.2
@@ -20,7 +21,7 @@ require (
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.8
 	knative.dev/pkg v0.0.0-20201012221417-e3b4e9c22943
-	knative.dev/test-infra v0.0.0-20201009204121-322fb08edae7
+	knative.dev/test-infra v0.0.0-20201013100530-45e0761df397
 )
 
 replace (
@@ -37,4 +38,7 @@ replace (
 	k8s.io/client-go => k8s.io/client-go v0.18.8
 	k8s.io/code-generator => k8s.io/code-generator v0.18.8
 	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20200410145947-61e04a5be9a6
+
+	// DO NOT SUBMIT
+	knative.dev/pkg => ../pkg
 )
