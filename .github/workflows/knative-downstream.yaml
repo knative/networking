@@ -20,12 +20,13 @@ on:
 
 jobs:
 
-  downstream-serving:
-    name: Serving
+  downstream-knative:
+    name: knative
     strategy:
       matrix:
         go-version: [1.14.x]
         platform: [ubuntu-latest]
+        repository: [serving]
 
     runs-on: ${{ matrix.platform }}
 
@@ -52,21 +53,22 @@ jobs:
     - name: Checkout Downstream
       uses: actions/checkout@v2
       with:
-        repository: knative/serving
-        path: ./src/knative.dev/serving
+        repository: knative/${{ matrix.repository }}
+        path: ./src/knative.dev/${{ matrix.repository }}
 
     - name: Test Downstream
       uses: knative-sandbox/downstream-test-go@v1.0.1
       with:
         upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/serving
+        downstream-module: knative.dev/${{ matrix.repository }}
 
-  downstream-net-istio:
-    name: Net Istio
+  downstream-knative-sandbox:
+    name: knative-sandbox
     strategy:
       matrix:
         go-version: [1.14.x]
         platform: [ubuntu-latest]
+        repository: [net-istio, net-contour, net-kourier, net-certmanager, net-http01]
 
     runs-on: ${{ matrix.platform }}
 
@@ -93,175 +95,11 @@ jobs:
     - name: Checkout Downstream
       uses: actions/checkout@v2
       with:
-        repository: knative-sandbox/net-istio
-        path: ./src/knative.dev/net-istio
+        repository: knative-sandbox/${{ matrix.repository }}
+        path: ./src/knative.dev/${{ matrix.repository }}
 
     - name: Test Downstream
       uses: knative-sandbox/downstream-test-go@v1.0.1
       with:
         upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/net-istio
-
-  downstream-net-contour:
-    name: Net Contour
-    strategy:
-      matrix:
-        go-version: [1.14.x]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
-
-    env:
-      GOPATH: ${{ github.workspace }}
-
-    steps:
-
-    - name: Set up Go ${{ matrix.go-version }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
-      id: go
-
-    - name: Install Dependencies
-      run: |
-        go get github.com/google/go-licenses
-
-    - name: Checkout Upstream
-      uses: actions/checkout@v2
-      with:
-        path: ./src/knative.dev/${{ github.event.repository.name }}
-
-    - name: Checkout Downstream
-      uses: actions/checkout@v2
-      with:
-        repository: knative-sandbox/net-contour
-        path: ./src/knative.dev/net-contour
-
-    - name: Test Downstream
-      uses: knative-sandbox/downstream-test-go@v1.0.1
-      with:
-        upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/net-contour
-
-  downstream-net-kourier:
-    name: Net Kourier
-    strategy:
-      matrix:
-        go-version: [1.14.x]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
-
-    env:
-      GOPATH: ${{ github.workspace }}
-
-    steps:
-
-    - name: Set up Go ${{ matrix.go-version }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
-      id: go
-
-    - name: Install Dependencies
-      run: |
-        go get github.com/google/go-licenses
-
-    - name: Checkout Upstream
-      uses: actions/checkout@v2
-      with:
-        path: ./src/knative.dev/${{ github.event.repository.name }}
-
-    - name: Checkout Downstream
-      uses: actions/checkout@v2
-      with:
-        repository: knative-sandbox/net-kourier
-        path: ./src/knative.dev/net-kourier
-
-    - name: Test Downstream
-      uses: knative-sandbox/downstream-test-go@v1.0.1
-      with:
-        upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/net-kourier
-
-  downstream-net-certmanager:
-    name: Net Certmanager
-    strategy:
-      matrix:
-        go-version: [1.14.x]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
-
-    env:
-      GOPATH: ${{ github.workspace }}
-
-    steps:
-
-    - name: Set up Go ${{ matrix.go-version }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
-      id: go
-
-    - name: Install Dependencies
-      run: |
-        go get github.com/google/go-licenses
-
-    - name: Checkout Upstream
-      uses: actions/checkout@v2
-      with:
-        path: ./src/knative.dev/${{ github.event.repository.name }}
-
-    - name: Checkout Downstream
-      uses: actions/checkout@v2
-      with:
-        repository: knative-sandbox/net-certmanager
-        path: ./src/knative.dev/net-certmanager
-
-    - name: Test Downstream
-      uses: knative-sandbox/downstream-test-go@v1.0.1
-      with:
-        upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/net-certmanager
-
-  downstream-net-http01:
-    name: Net HTTP01
-    strategy:
-      matrix:
-        go-version: [1.14.x]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
-
-    env:
-      GOPATH: ${{ github.workspace }}
-
-    steps:
-
-    - name: Set up Go ${{ matrix.go-version }}
-      uses: actions/setup-go@v2
-      with:
-        go-version: ${{ matrix.go-version }}
-      id: go
-
-    - name: Install Dependencies
-      run: |
-        go get github.com/google/go-licenses
-
-    - name: Checkout Upstream
-      uses: actions/checkout@v2
-      with:
-        path: ./src/knative.dev/${{ github.event.repository.name }}
-
-    - name: Checkout Downstream
-      uses: actions/checkout@v2
-      with:
-        repository: knative-sandbox/net-http01
-        path: ./src/knative.dev/net-http01
-
-    - name: Test Downstream
-      uses: knative-sandbox/downstream-test-go@v1.0.1
-      with:
-        upstream-module: knative.dev/${{ github.event.repository.name }}
-        downstream-module: knative.dev/net-http01
+        downstream-module: knative.dev/${{ matrix.repository }}
