@@ -21,7 +21,7 @@ on:
 jobs:
 
   downstream-knative:
-    name: knative
+    name: knative-${{ matrix.repository }}
     strategy:
       matrix:
         go-version: [1.14.x]
@@ -63,7 +63,7 @@ jobs:
         downstream-module: knative.dev/${{ matrix.repository }}
 
   downstream-knative-sandbox:
-    name: knative-sandbox
+    name: knative-sandbox-${{ matrix.repository }}
     strategy:
       matrix:
         go-version: [1.14.x]
