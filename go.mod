@@ -14,7 +14,6 @@ require (
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e
 	google.golang.org/grpc v1.31.1
-	istio.io/client-go v0.0.0-20200513000250-b1d6e9886b7b
 	k8s.io/api v0.18.8
 	k8s.io/apimachinery v0.18.8
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
