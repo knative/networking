@@ -18,8 +18,12 @@ limitations under the License.
 
 package http01
 
-import "testing"
+import (
+	"testing"
+
+	"knative.dev/networking/test/globals"
+)
 
 func TestCertificateConformance(t *testing.T) {
-	RunConformance(t)
+	RunConformance(globals.NewT(t))
 }

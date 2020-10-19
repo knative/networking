@@ -16,8 +16,9 @@ limitations under the License.
 
 package nonhttp01
 
-import "testing"
+import "knative.dev/networking/test"
 
-func RunConformance(t *testing.T) {
+func RunConformance(t *test.T) {
+	// TODO - is this stable?
 	t.Run("secret", TestSecret)
 }

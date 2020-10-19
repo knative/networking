@@ -18,7 +18,6 @@ package ingress
 
 import (
 	"context"
-	"testing"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
@@ -27,11 +26,11 @@ import (
 )
 
 // TestMultipleHosts verifies that an Ingress can respond to multiple hosts.
-func TestMultipleHosts(t *testing.T) {
+func TestMultipleHosts(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
-	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// TODO(mattmoor): Once .svc.cluster.local stops being a special case
 	// for Visibility, add it here.
@@ -49,7 +48,7 @@ func TestMultipleHosts(t *testing.T) {
 	}
 
 	// Create a simple Ingress over the Service.
-	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      hosts,
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

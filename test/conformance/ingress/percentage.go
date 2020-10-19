@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"math"
-	"testing"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"knative.dev/networking/pkg/apis/networking"
@@ -31,9 +30,9 @@ import (
 
 // TestPercentage verifies that an Ingress splitting over multiple backends respects
 // the given percentage distribution.
-func TestPercentage(t *testing.T) {
+func TestPercentage(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
 	// Use a post-split injected header to establish which split we are sending traffic to.
 	const headerName = "Foo-Bar-Baz"
@@ -45,7 +44,7 @@ func TestPercentage(t *testing.T) {
 	// give the last route the remainder.
 	percent, total := 1, 0
 	for i := 0; i < 10; i++ {
-		name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+		name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 		backends = append(backends, v1alpha1.IngressBackendSplit{
 			IngressBackend: v1alpha1.IngressBackend{
 				ServiceName:      name,
@@ -72,7 +71,7 @@ func TestPercentage(t *testing.T) {
 
 	// Create a simple Ingress over the 10 Services.
 	name := test.ObjectNameForTest(t)
-	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

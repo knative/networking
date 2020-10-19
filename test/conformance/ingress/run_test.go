@@ -18,8 +18,12 @@ limitations under the License.
 
 package ingress
 
-import "testing"
+import (
+	"testing"
+
+	"knative.dev/networking/test/globals"
+)
 
 func TestIngressConformance(t *testing.T) {
-	RunConformance(t)
+	RunConformance(globals.NewT(t))
 }

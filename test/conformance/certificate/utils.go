@@ -22,7 +22,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	corev1 "k8s.io/api/core/v1"
@@ -39,7 +38,7 @@ import (
 // CreateCertificate creates a Certificate with the given DNS names. The
 // certificate is automatically cleaned up when the test ends or is
 // interrupted.
-func CreateCertificate(ctx context.Context, t *testing.T, clients *test.Clients, dnsNames []string) *v1alpha1.Certificate {
+func CreateCertificate(ctx context.Context, t *test.T, clients *test.Clients, dnsNames []string) *v1alpha1.Certificate {
 	t.Helper()
 
 	name := test.ObjectNameForTest(t)
@@ -48,7 +47,7 @@ func CreateCertificate(ctx context.Context, t *testing.T, clients *test.Clients,
 			Name:      name,
 			Namespace: test.ServingNamespace,
 			Annotations: map[string]string{
-				networking.CertificateClassAnnotationKey: test.NetworkingFlags.CertificateClass,
+				networking.CertificateClassAnnotationKey: t.CertificateClass,
 			},
 		},
 		Spec: v1alpha1.CertificateSpec{
@@ -78,7 +77,7 @@ func IsCertificateReady(c *v1alpha1.Certificate) (bool, error) {
 
 // WaitForCertificateSecret polls the status of the Secret for the provided Certificate
 // until it exists or the timeout is exceeded. It then validates its contents
-func WaitForCertificateSecret(ctx context.Context, t *testing.T, client *test.Clients, cert *v1alpha1.Certificate, desc string) error {
+func WaitForCertificateSecret(ctx context.Context, t *test.T, client *test.Clients, cert *v1alpha1.Certificate, desc string) error {
 	span := logging.GetEmitableSpan(context.Background(), fmt.Sprintf("WaitForCertificateSecret/%s/%s", cert.Spec.SecretName, desc))
 	defer span.End()
 
@@ -131,7 +130,7 @@ func WaitForCertificateState(ctx context.Context, client *test.NetworkingClients
 
 // VerifyChallenges verifies that the given certificate has the correct number
 // of HTTP01challenges and they contain valid data.
-func VerifyChallenges(ctx context.Context, t *testing.T, client *test.Clients, cert *v1alpha1.Certificate) {
+func VerifyChallenges(ctx context.Context, t *test.T, client *test.Clients, cert *v1alpha1.Certificate) {
 	t.Helper()
 
 	certDomains := sets.NewString(cert.Spec.DNSNames...)

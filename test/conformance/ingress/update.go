@@ -19,7 +19,6 @@ package ingress
 import (
 	"context"
 	"net/http"
-	"testing"
 	"time"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -32,15 +31,15 @@ import (
 const updateHeaderName = "Who-Are-You"
 
 // TestUpdate verifies that when the network programming changes that traffic isn't dropped.
-func TestUpdate(t *testing.T) {
+func TestUpdate(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
-	firstName, firstPort, firstCancel := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	firstName, firstPort, firstCancel := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// Create a simple Ingress over the Service.
 	hostname := test.ObjectNameForTest(t)
-	ing, client, cancel := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+	ing, client, cancel := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{hostname + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -85,7 +84,7 @@ func TestUpdate(t *testing.T) {
 		t.Logf("Rolling out %q w/ %q", firstName, sentinel)
 
 		// Update the Ingress, and wait for it to report ready.
-		UpdateIngressReady(ctx, t, clients, ing.Name, v1alpha1.IngressSpec{
+		UpdateIngressReady(ctx, t, t.Clients, ing.Name, v1alpha1.IngressSpec{
 			Rules: []v1alpha1.IngressRule{{
 				Hosts:      []string{hostname + ".example.com"},
 				Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -123,12 +122,12 @@ func TestUpdate(t *testing.T) {
 	}
 	for i := 0; i < 10; i++ {
 		sentinel := test.ObjectNameForTest(t)
-		nextName, nextPort, nextCancel := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+		nextName, nextPort, nextCancel := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 		t.Logf("Rolling out %q w/ %q", nextName, sentinel)
 
 		// Update the Ingress, and wait for it to report ready.
-		UpdateIngressReady(ctx, t, clients, ing.Name, v1alpha1.IngressSpec{
+		UpdateIngressReady(ctx, t, t.Clients, ing.Name, v1alpha1.IngressSpec{
 			Rules: []v1alpha1.IngressRule{{
 				Hosts:      []string{hostname + ".example.com"},
 				Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -168,7 +167,7 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-func checkOK(ctx context.Context, t *testing.T, url string, client *http.Client) context.CancelFunc {
+func checkOK(ctx context.Context, t *test.T, url string, client *http.Client) context.CancelFunc {
 	stopCh := make(chan struct{})
 	doneCh := make(chan struct{})
 

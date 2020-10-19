@@ -59,9 +59,8 @@ func CleanupOnInterrupt(cleanup func()) {
 	cf.f = append(cf.f, cleanup)
 }
 
-// EnsureCleanup will run the provided cleanup function when the test ends,
 // either via t.Cleanup or on interrupt via CleanupOnInterrupt.
-func EnsureCleanup(t *testing.T, cleanup func()) {
+func EnsureCleanup(t testing.TB, cleanup func()) {
 	t.Cleanup(cleanup)
 	CleanupOnInterrupt(cleanup)
 }

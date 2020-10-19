@@ -25,11 +25,11 @@ import (
 	"net/url"
 	"sync"
 	"testing"
+	"time"
 
 	"go.uber.org/atomic"
 	"golang.org/x/sync/errgroup"
 
-	pkgTest "knative.dev/pkg/test"
 	"knative.dev/pkg/test/logging"
 	"knative.dev/pkg/test/spoof"
 )
@@ -108,6 +108,12 @@ type manager struct {
 	m                sync.RWMutex
 	probes           map[*url.URL]Prober
 	transportOptions []spoof.TransportOption
+
+	resolvableDomain bool
+	ingressEndpoint  string
+
+	requestInternal time.Duration
+	requestTimeout  time.Duration
 }
 
 var _ ProberManager = (*manager)(nil)
@@ -140,7 +146,9 @@ func (m *manager) Spawn(url *url.URL) Prober {
 	m.probes[url] = p
 
 	errGrp.Go(func() error {
-		client, err := pkgTest.NewSpoofingClient(ctx, m.clients.KubeClient, m.logf, url.Hostname(), NetworkingFlags.ResolvableDomain, m.transportOptions...)
+		client, err := spoof.New(ctx, m.clients.KubeClient, m.logf, url.Hostname(), m.resolvableDomain, m.ingressEndpoint,
+			m.requestInternal, m.requestTimeout, m.transportOptions...)
+
 		if err != nil {
 			return fmt.Errorf("failed to generate client: %w", err)
 		}

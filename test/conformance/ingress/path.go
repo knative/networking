@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"math"
-	"testing"
 
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -31,25 +30,25 @@ import (
 )
 
 // TestPath verifies that an Ingress properly dispatches to backends based on the path of the URL.
-func TestPath(t *testing.T) {
+func TestPath(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
 	// For /foo
-	fooName, fooPort, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	fooName, fooPort, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// For /bar
-	barName, barPort, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	barName, barPort, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// For /baz
-	bazName, bazPort, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	bazName, bazPort, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
-	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// Use a post-split injected header to establish which split we are sending traffic to.
 	const headerName = "Which-Backend"
 
-	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -127,7 +126,7 @@ func TestPath(t *testing.T) {
 	}
 
 	for path, want := range tests {
-		t.Run(path, func(t *testing.T) {
+		t.Run(path, func(t *test.T) {
 			ri := RuntimeRequest(ctx, t, client, "http://"+name+".example.com"+path)
 			if ri == nil {
 				return
@@ -141,20 +140,20 @@ func TestPath(t *testing.T) {
 	}
 }
 
-func TestPathAndPercentageSplit(t *testing.T) {
+func TestPathAndPercentageSplit(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
-	fooName, fooPort, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	fooName, fooPort, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
-	barName, barPort, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	barName, barPort, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
-	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	// Use a post-split injected header to establish which split we are sending traffic to.
 	const headerName = "Which-Backend"
 
-	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

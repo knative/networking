@@ -22,7 +22,6 @@ import (
 	"math/rand"
 	"net"
 	"strings"
-	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -35,17 +34,17 @@ import (
 )
 
 // TestGRPC verifies that GRPC may be used via a simple Ingress.
-func TestGRPC(t *testing.T) {
+func TestGRPC(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
 	const suffix = "- pong"
-	name, port, _ := CreateGRPCService(ctx, t, clients, suffix)
+	name, port, _ := CreateGRPCService(ctx, t, t.Clients, suffix)
 
 	domain := name + ".example.com"
 
 	// Create a simple Ingress over the Service.
-	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
+	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -90,15 +89,15 @@ func TestGRPC(t *testing.T) {
 }
 
 // TestGRPCSplit verifies that websockets may be used across a traffic split.
-func TestGRPCSplit(t *testing.T) {
+func TestGRPCSplit(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
 	const suffixBlue = "- blue"
-	blueName, bluePort, _ := CreateGRPCService(ctx, t, clients, suffixBlue)
+	blueName, bluePort, _ := CreateGRPCService(ctx, t, t.Clients, suffixBlue)
 
 	const suffixGreen = "- green"
-	greenName, greenPort, _ := CreateGRPCService(ctx, t, clients, suffixGreen)
+	greenName, greenPort, _ := CreateGRPCService(ctx, t, t.Clients, suffixGreen)
 
 	// The suffixes we expect to see.
 	want := sets.NewString(suffixBlue, suffixGreen)
@@ -106,7 +105,7 @@ func TestGRPCSplit(t *testing.T) {
 	// Create a simple Ingress over the Service.
 	name := test.ObjectNameForTest(t)
 	domain := name + ".example.com"
-	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
+	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -177,7 +176,7 @@ func TestGRPCSplit(t *testing.T) {
 	t.Errorf("(over %d requests) (-want, +got) = %s", maxRequests, cmp.Diff(want, got))
 }
 
-func findGRPCSuffix(t *testing.T, stream ping.PingService_PingStreamClient) string {
+func findGRPCSuffix(t *test.T, stream ping.PingService_PingStreamClient) string {
 	// Establish the suffix that corresponds to this stream.
 	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := stream.Send(&ping.Request{Msg: message}); err != nil {
@@ -198,7 +197,7 @@ func findGRPCSuffix(t *testing.T, stream ping.PingService_PingStreamClient) stri
 	return strings.TrimSpace(strings.TrimPrefix(gotMsg, message))
 }
 
-func checkGRPCRoundTrip(t *testing.T, stream ping.PingService_PingStreamClient, suffix string) {
+func checkGRPCRoundTrip(t *test.T, stream ping.PingService_PingStreamClient, suffix string) {
 	message := fmt.Sprint("ping -", rand.Intn(1000))
 	if err := stream.Send(&ping.Request{Msg: message}); err != nil {
 		t.Error("Error sending request:", err)

@@ -17,93 +17,35 @@ limitations under the License.
 package ingress
 
 import (
-	"strings"
-	"testing"
-
 	"knative.dev/networking/test"
 )
-
-var stableTests = map[string]func(t *testing.T){
-	"basics":                       TestBasics,
-	"basics/http2":                 TestBasicsHTTP2,
-	"grpc":                         TestGRPC,
-	"grpc/split":                   TestGRPCSplit,
-	"headers/pre-split":            TestPreSplitSetHeaders,
-	"headers/post-split":           TestPostSplitSetHeaders,
-	"hosts/multiple":               TestMultipleHosts,
-	"dispatch/path":                TestPath,
-	"dispatch/percentage":          TestPercentage,
-	"dispatch/path_and_percentage": TestPathAndPercentageSplit,
-	"timeout":                      TestTimeout,
-	"tls":                          TestIngressTLS,
-	"update":                       TestUpdate,
-	"visibility":                   TestVisibility,
-	"visibility/split":             TestVisibilitySplit,
-	"visibility/path":              TestVisibilityPath,
-	"ingressclass":                 TestIngressClass,
-	"websocket":                    TestWebsocket,
-	"websocket/split":              TestWebsocketSplit,
-}
-
-var betaTests = map[string]func(t *testing.T){
-	// Add your conformance test for beta features
-	"headers/probe": TestProbeHeaders,
-}
-
-var alphaTests = map[string]func(t *testing.T){
-	// Add your conformance test for alpha features
-	"headers/tags": TestTagHeaders,
-	"host-rewrite": TestRewriteHost,
-}
 
 // RunConformance will run ingress conformance tests
 //
 // Depending on the options it may test alpha and beta features
-func RunConformance(t *testing.T) {
+func RunConformance(t *test.T) {
+	t.Stable("basics", TestBasics)
+	t.Stable("basics/http2", TestBasicsHTTP2)
+	t.Stable("grpc", TestGRPC)
+	t.Stable("grpc/split", TestGRPCSplit)
+	t.Stable("headers/pre-split", TestPreSplitSetHeaders)
+	t.Stable("headers/post-split", TestPostSplitSetHeaders)
+	t.Stable("hosts/multiple", TestMultipleHosts)
+	t.Stable("dispatch/path", TestPath)
+	t.Stable("dispatch/percentage", TestPercentage)
+	t.Stable("dispatch/path_and_percentage", TestPathAndPercentageSplit)
+	t.Stable("timeout", TestTimeout)
+	t.Stable("tls", TestIngressTLS)
+	t.Stable("update", TestUpdate)
+	t.Stable("visibility", TestVisibility)
+	t.Stable("visibility/split", TestVisibilitySplit)
+	t.Stable("visibility/path", TestVisibilityPath)
+	t.Stable("ingressclass", TestIngressClass)
+	t.Stable("websocket", TestWebsocket)
+	t.Stable("websocket/split", TestWebsocketSplit)
 
-	for name, test := range stableTests {
-		t.Run(name, test)
-	}
+	t.Beta("headers/probe", TestProbeHeaders)
 
-	skipTests := skipTests()
-
-	// TODO(dprotaso) we'll need something more robust
-	// in the long term that lets downstream
-	// implementations to better select which tests
-	// should be run -  selection across various
-	// dimensions
-	// ie. state - alpha, beta, ga
-	// ie. requirement - must, should, may
-	if test.NetworkingFlags.EnableBetaFeatures {
-		for name, test := range betaTests {
-			if _, ok := skipTests[name]; ok {
-				t.Run(name, skipFunc)
-				continue
-			}
-			t.Run(name, test)
-		}
-	}
-
-	if test.NetworkingFlags.EnableAlphaFeatures {
-		for name, test := range alphaTests {
-			if _, ok := skipTests[name]; ok {
-				t.Run(name, skipFunc)
-				continue
-			}
-			t.Run(name, test)
-		}
-	}
-}
-
-var skipFunc = func(t *testing.T) {
-	t.Skip("Skipping the test in skip-test flag")
-}
-
-func skipTests() map[string]struct{} {
-	skipArray := strings.Split(test.NetworkingFlags.SkipTests, ",")
-	skipMap := make(map[string]struct{}, len(skipArray))
-	for _, name := range skipArray {
-		skipMap[name] = struct{}{}
-	}
-	return skipMap
+	t.Alpha("headers/tag", TestTagHeaders)
+	t.Alpha("host-rewrite", TestRewriteHost)
 }

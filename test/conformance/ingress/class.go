@@ -18,7 +18,6 @@ package ingress
 
 import (
 	"context"
-	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
@@ -31,19 +30,19 @@ import (
 )
 
 // TestIngressClass verifies that kingress does not pick ingress up when ingress.class annotation is incorrect.
-func TestIngressClass(t *testing.T) {
+func TestIngressClass(t *test.T) {
 	t.Parallel()
-	ctx, clients := context.Background(), test.Setup(t)
+	ctx := context.Background()
 
 	// Create a backend service to create valid ingress except for invalid ingress.class.
-	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+	name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
 	ingressBackend := &v1alpha1.IngressBackend{
 		ServiceName:      name,
 		ServiceNamespace: test.ServingNamespace,
 		ServicePort:      intstr.FromInt(port),
 	}
 
-	tests := []struct {
+	cases := []struct {
 		name        string
 		annotations map[string]string
 	}{{
@@ -59,15 +58,15 @@ func TestIngressClass(t *testing.T) {
 		annotations: map[string]string{networking.IngressClassAnnotationKey: ""},
 	}}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			verifyIngressWithAnnotations(ctx, t, clients, test.annotations, ingressBackend)
+	for _, c := range cases {
+		t.Run(c.name, func(t *test.T) {
+			verifyIngressWithAnnotations(ctx, t, t.Clients, c.annotations, ingressBackend)
 		})
 	}
 
 }
 
-func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients,
+func verifyIngressWithAnnotations(ctx context.Context, t *test.T, clients *test.Clients,
 	annotations map[string]string, backend *v1alpha1.IngressBackend) {
 	t.Helper()
 

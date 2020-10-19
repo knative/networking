@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Knative Authors
+Copyright 2020 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,14 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package logstream
+package globals
 
-type null struct{}
+import (
+	"flag"
+	"testing"
 
-var _ streamer = (*null)(nil)
+	"knative.dev/networking/test"
+)
 
-// Start implements streamer
-func (*null) Start(t ti) Canceler {
-	t.Log("logstream was requested, but SYSTEM_NAMESPACE was unset.")
-	return func() {}
+// This package is here for convenience of downstream tests runners
+var conformanceT *test.T
+
+func init() {
+	conformanceT = &test.T{}
+	conformanceT.AddFlags(flag.CommandLine)
+}
+
+// Return a shallow copy
+func NewT(t *testing.T) *test.T {
+	c := *conformanceT
+	test.Init(&c, t)
+	return &c
 }
