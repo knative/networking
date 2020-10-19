@@ -30,12 +30,11 @@ import (
 // TestTimeout verifies that an Ingress implements "no timeout".
 func TestTimeout(t *test.T) {
 	t.Parallel()
-	ctx := context.Background()
 
-	name, port, _ := CreateTimeoutService(ctx, t, t.Clients)
+	name, port, _ := CreateTimeoutService(t.C, t, t.Clients)
 
 	// Create a simple Ingress over the Service.
-	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(t.C, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -75,7 +74,7 @@ func TestTimeout(t *test.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *test.T) {
-			checkTimeout(ctx, t, client, name, c.code, c.initialDelay, c.delay)
+			checkTimeout(t.C, t, client, name, c.code, c.initialDelay, c.delay)
 		})
 	}
 }

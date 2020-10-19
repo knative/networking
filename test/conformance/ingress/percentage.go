@@ -17,7 +17,6 @@ limitations under the License.
 package ingress
 
 import (
-	"context"
 	"errors"
 	"math"
 
@@ -32,7 +31,6 @@ import (
 // the given percentage distribution.
 func TestPercentage(t *test.T) {
 	t.Parallel()
-	ctx := context.Background()
 
 	// Use a post-split injected header to establish which split we are sending traffic to.
 	const headerName = "Foo-Bar-Baz"
@@ -44,7 +42,7 @@ func TestPercentage(t *test.T) {
 	// give the last route the remainder.
 	percent, total := 1, 0
 	for i := 0; i < 10; i++ {
-		name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
+		name, port, _ := CreateRuntimeService(t.C, t, t.Clients, networking.ServicePortNameHTTP1)
 		backends = append(backends, v1alpha1.IngressBackendSplit{
 			IngressBackend: v1alpha1.IngressBackend{
 				ServiceName:      name,
@@ -71,7 +69,7 @@ func TestPercentage(t *test.T) {
 
 	// Create a simple Ingress over the 10 Services.
 	name := test.ObjectNameForTest(t)
-	_, client, _ := CreateIngressReady(ctx, t, t.Clients, v1alpha1.IngressSpec{
+	_, client, _ := CreateIngressReady(t.C, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -101,7 +99,7 @@ func TestPercentage(t *test.T) {
 
 	for i := 0.0; i < totalRequests; i++ {
 		wg.Go(func() error {
-			ri := RuntimeRequest(ctx, t, client, "http://"+name+".example.com")
+			ri := RuntimeRequest(t.C, t, client, "http://"+name+".example.com")
 			if ri == nil {
 				return errors.New("failed to request")
 			}

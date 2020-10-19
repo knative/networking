@@ -32,10 +32,9 @@ import (
 // TestIngressClass verifies that kingress does not pick ingress up when ingress.class annotation is incorrect.
 func TestIngressClass(t *test.T) {
 	t.Parallel()
-	ctx := context.Background()
 
 	// Create a backend service to create valid ingress except for invalid ingress.class.
-	name, port, _ := CreateRuntimeService(ctx, t, t.Clients, networking.ServicePortNameHTTP1)
+	name, port, _ := CreateRuntimeService(t.C, t, t.Clients, networking.ServicePortNameHTTP1)
 	ingressBackend := &v1alpha1.IngressBackend{
 		ServiceName:      name,
 		ServiceNamespace: test.ServingNamespace,
@@ -60,7 +59,7 @@ func TestIngressClass(t *test.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *test.T) {
-			verifyIngressWithAnnotations(ctx, t, t.Clients, c.annotations, ingressBackend)
+			verifyIngressWithAnnotations(t.C, t, t.Clients, c.annotations, ingressBackend)
 		})
 	}
 
