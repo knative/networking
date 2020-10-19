@@ -79,12 +79,6 @@ func (ua *uaRoundTripper) RoundTrip(rq *http.Request) (*http.Response, error) {
 	return ua.RoundTripper.RoundTrip(rq)
 }
 
-type t interface {
-	Helper()
-	Logf(format string, args ...interface{})
-	Name() string
-}
-
 // CreateRuntimeService creates a Kubernetes service that will respond to the protocol
 // specified with the given portName.  It returns the service name, the port on
 // which the service is listening, and a "cancel" function to clean up the
