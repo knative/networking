@@ -17,10 +17,6 @@ limitations under the License.
 package test
 
 import (
-	"testing"
-	// For our e2e testing, we want this linked first so that our
-	// systen namespace environment variable is defaulted prior to
-	// logstream initialization.
 	"flag"
 	"os"
 	"strings"
