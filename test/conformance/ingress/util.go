@@ -98,7 +98,7 @@ func CreateRuntimeService(ctx context.Context, t *test.T, clients *test.Clients,
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -132,7 +132,7 @@ func CreateRuntimeService(ctx context.Context, t *test.T, clients *test.Clients,
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -171,7 +171,7 @@ func CreateProxyService(ctx context.Context, t *test.T, clients *test.Clients, t
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -198,7 +198,7 @@ func CreateProxyService(ctx context.Context, t *test.T, clients *test.Clients, t
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -243,7 +243,7 @@ func CreateTimeoutService(ctx context.Context, t *test.T, clients *test.Clients)
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -276,7 +276,7 @@ func CreateTimeoutService(ctx context.Context, t *test.T, clients *test.Clients)
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -314,7 +314,7 @@ func CreateFlakyService(ctx context.Context, t *test.T, clients *test.Clients, p
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -351,7 +351,7 @@ func CreateFlakyService(ctx context.Context, t *test.T, clients *test.Clients, p
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -389,7 +389,7 @@ func CreateWebsocketService(ctx context.Context, t *test.T, clients *test.Client
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -426,7 +426,7 @@ func CreateWebsocketService(ctx context.Context, t *test.T, clients *test.Client
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -464,7 +464,7 @@ func CreateGRPCService(ctx context.Context, t *test.T, clients *test.Clients, su
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -500,7 +500,7 @@ func CreateGRPCService(ctx context.Context, t *test.T, clients *test.Clients, su
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Labels: map[string]string{
 				"test-pod": name,
 			},
@@ -651,7 +651,7 @@ func createIngress(ctx context.Context, t *test.T, clients *test.Clients, spec v
 	ing := &v1alpha1.Ingress{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Annotations: map[string]string{
 				networking.IngressClassAnnotationKey: t.IngressClass,
 			},
@@ -773,7 +773,7 @@ func UpdateIngressReady(ctx context.Context, t *test.T, clients *test.Clients, n
 
 // This is based on https://golang.org/src/crypto/tls/generate_cert.go
 func CreateTLSSecret(ctx context.Context, t *test.T, clients *test.Clients, hosts []string) (string, context.CancelFunc) {
-	return CreateTLSSecretWithCertPool(ctx, t, clients, hosts, test.ServingNamespace, rootCAs)
+	return CreateTLSSecretWithCertPool(ctx, t, clients, hosts, t.TestNamespace, rootCAs)
 }
 
 // CreateTLSSecretWithCertPool creates TLS certificate with given CertPool.

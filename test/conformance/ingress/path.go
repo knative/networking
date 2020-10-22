@@ -56,7 +56,7 @@ func TestPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      fooName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(fooPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -71,7 +71,7 @@ func TestPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      barName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(barPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -86,7 +86,7 @@ func TestPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      bazName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(bazPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -100,7 +100,7 @@ func TestPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 						// Append different headers to each split, which lets us identify
@@ -160,7 +160,7 @@ func TestPathAndPercentageSplit(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      fooName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(fooPort),
 						},
 						AppendHeaders: map[string]string{
@@ -170,7 +170,7 @@ func TestPathAndPercentageSplit(t *test.T) {
 					}, {
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      barName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(barPort),
 						},
 						AppendHeaders: map[string]string{
@@ -182,7 +182,7 @@ func TestPathAndPercentageSplit(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 						// Append different headers to each split, which lets us identify

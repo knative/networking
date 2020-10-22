@@ -38,7 +38,7 @@ func TestVisibility(t *test.T) {
 	name, port, _ := CreateRuntimeService(t.C, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	privateServiceName := test.ObjectNameForTest(t)
-	shortName := privateServiceName + "." + test.ServingNamespace
+	shortName := privateServiceName + "." + t.TestNamespace
 
 	var privateHostNames = map[string]string{
 		"fqdn":     shortName + ".svc." + t.Cluster.DomainName,
@@ -54,7 +54,7 @@ func TestVisibility(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 					}},
@@ -93,7 +93,7 @@ func testProxyToHelloworld(ctx context.Context, t *test.T, ingress *v1alpha1.Ing
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      proxyName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(proxyPort),
 						},
 					}},
@@ -123,7 +123,7 @@ func TestVisibilitySplit(t *test.T) {
 		backends = append(backends, v1alpha1.IngressBackendSplit{
 			IngressBackend: v1alpha1.IngressBackend{
 				ServiceName:      name,
-				ServiceNamespace: test.ServingNamespace,
+				ServiceNamespace: t.TestNamespace,
 				ServicePort:      intstr.FromInt(port),
 			},
 			// Append different headers to each split, which lets us identify
@@ -147,7 +147,7 @@ func TestVisibilitySplit(t *test.T) {
 	name := test.ObjectNameForTest(t)
 
 	// Create a simple Ingress over the 10 Services.
-	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, test.ServingNamespace, t.Cluster.DomainName)
+	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, t.TestNamespace, t.Cluster.DomainName)
 	localIngress, client, _ := CreateIngressReady(t.C, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{privateHostName},
@@ -176,7 +176,7 @@ func TestVisibilitySplit(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      proxyName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(proxyPort),
 						},
 					}},
@@ -250,7 +250,7 @@ func TestVisibilityPath(t *test.T) {
 	const headerName = "Which-Backend"
 
 	name := test.ObjectNameForTest(t)
-	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, test.ServingNamespace, t.Cluster.DomainName)
+	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, t.TestNamespace, t.Cluster.DomainName)
 	localIngress, client, _ := CreateIngressReady(t.C, t, t.Clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{privateHostName},
@@ -261,7 +261,7 @@ func TestVisibilityPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      fooName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(fooPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -276,7 +276,7 @@ func TestVisibilityPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      barName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(barPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -291,7 +291,7 @@ func TestVisibilityPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      bazName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(bazPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -305,7 +305,7 @@ func TestVisibilityPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      mainName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 						// Append different headers to each split, which lets us identify
@@ -338,7 +338,7 @@ func TestVisibilityPath(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      proxyName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(proxyPort),
 						},
 					}},

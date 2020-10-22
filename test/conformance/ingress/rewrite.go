@@ -30,7 +30,7 @@ func TestRewriteHost(t *test.T) {
 	name, port, _ := CreateRuntimeService(t.C, t, t.Clients, networking.ServicePortNameHTTP1)
 
 	privateServiceName := test.ObjectNameForTest(t)
-	privateHostName := privateServiceName + "." + test.ServingNamespace + ".svc.cluster.local"
+	privateHostName := privateServiceName + "." + t.TestNamespace + ".svc.cluster.local"
 
 	// Create a simple Ingress over the Service.
 	ing, _, _ := CreateIngressReady(t.C, t, t.Clients, v1alpha1.IngressSpec{
@@ -42,7 +42,7 @@ func TestRewriteHost(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 					}},
@@ -77,7 +77,7 @@ func TestRewriteHost(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      privateServiceName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(80),
 						},
 					}},

@@ -46,7 +46,7 @@ func TestPercentage(t *test.T) {
 		backends = append(backends, v1alpha1.IngressBackendSplit{
 			IngressBackend: v1alpha1.IngressBackend{
 				ServiceName:      name,
-				ServiceNamespace: test.ServingNamespace,
+				ServiceNamespace: t.TestNamespace,
 				ServicePort:      intstr.FromInt(port),
 			},
 			// Append different headers to each split, which lets us identify

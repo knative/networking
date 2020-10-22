@@ -45,7 +45,7 @@ func CreateCertificate(ctx context.Context, t *test.T, clients *test.Clients, dn
 	cert := &v1alpha1.Certificate{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      name,
-			Namespace: test.ServingNamespace,
+			Namespace: t.TestNamespace,
 			Annotations: map[string]string{
 				networking.CertificateClassAnnotationKey: t.CertificateClass,
 			},
@@ -58,7 +58,7 @@ func CreateCertificate(ctx context.Context, t *test.T, clients *test.Clients, dn
 
 	test.EnsureCleanup(t, func() {
 		clients.NetworkingClient.Certificates.Delete(ctx, cert.Name, metav1.DeleteOptions{})
-		clients.KubeClient.CoreV1().Secrets(test.ServingNamespace).Delete(ctx, cert.Spec.SecretName, metav1.DeleteOptions{})
+		clients.KubeClient.CoreV1().Secrets(t.TestNamespace).Delete(ctx, cert.Spec.SecretName, metav1.DeleteOptions{})
 	})
 
 	cert, err := clients.NetworkingClient.Certificates.Create(ctx, cert, metav1.CreateOptions{})
@@ -82,7 +82,7 @@ func WaitForCertificateSecret(ctx context.Context, t *test.T, client *test.Clien
 	defer span.End()
 
 	return wait.PollImmediate(test.PollInterval, test.PollTimeout, func() (bool, error) {
-		secret, err := client.KubeClient.CoreV1().Secrets(test.ServingNamespace).Get(ctx, cert.Spec.SecretName, metav1.GetOptions{})
+		secret, err := client.KubeClient.CoreV1().Secrets(t.TestNamespace).Get(ctx, cert.Spec.SecretName, metav1.GetOptions{})
 		if apierrs.IsNotFound(err) {
 			return false, nil
 		} else if err != nil {

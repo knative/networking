@@ -52,7 +52,7 @@ func TestGRPC(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 					}},
@@ -112,14 +112,14 @@ func TestGRPCSplit(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      blueName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(bluePort),
 						},
 						Percent: 50,
 					}, {
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      greenName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(greenPort),
 						},
 						Percent: 50,

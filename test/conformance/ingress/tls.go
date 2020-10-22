@@ -42,7 +42,7 @@ func TestIngressTLS(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      name,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(port),
 						},
 					}},
@@ -52,7 +52,7 @@ func TestIngressTLS(t *test.T) {
 		TLS: []v1alpha1.IngressTLS{{
 			Hosts:           hosts,
 			SecretName:      secretName,
-			SecretNamespace: test.ServingNamespace,
+			SecretNamespace: t.TestNamespace,
 		}},
 	})
 

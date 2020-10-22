@@ -37,7 +37,7 @@ func TestIngressClass(t *test.T) {
 	name, port, _ := CreateRuntimeService(t.C, t, t.Clients, networking.ServicePortNameHTTP1)
 	ingressBackend := &v1alpha1.IngressBackend{
 		ServiceName:      name,
-		ServiceNamespace: test.ServingNamespace,
+		ServiceNamespace: t.TestNamespace,
 		ServicePort:      intstr.FromInt(port),
 	}
 

@@ -47,7 +47,7 @@ func TestUpdate(t *test.T) {
 					Splits: []v1alpha1.IngressBackendSplit{{
 						IngressBackend: v1alpha1.IngressBackend{
 							ServiceName:      firstName,
-							ServiceNamespace: test.ServingNamespace,
+							ServiceNamespace: t.TestNamespace,
 							ServicePort:      intstr.FromInt(firstPort),
 						},
 						// Append different headers to each split, which lets us identify
@@ -92,7 +92,7 @@ func TestUpdate(t *test.T) {
 						Splits: []v1alpha1.IngressBackendSplit{{
 							IngressBackend: v1alpha1.IngressBackend{
 								ServiceName:      firstName,
-								ServiceNamespace: test.ServingNamespace,
+								ServiceNamespace: t.TestNamespace,
 								ServicePort:      intstr.FromInt(firstPort),
 							},
 							AppendHeaders: map[string]string{
@@ -135,7 +135,7 @@ func TestUpdate(t *test.T) {
 						Splits: []v1alpha1.IngressBackendSplit{{
 							IngressBackend: v1alpha1.IngressBackend{
 								ServiceName:      nextName,
-								ServiceNamespace: test.ServingNamespace,
+								ServiceNamespace: t.TestNamespace,
 								ServicePort:      intstr.FromInt(nextPort),
 							},
 							AppendHeaders: map[string]string{
