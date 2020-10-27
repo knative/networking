@@ -20,7 +20,7 @@ package tools
 
 import (
 	_ "k8s.io/code-generator"
-	_ "knative.dev/test-infra/scripts"
+	_ "knative.dev/hack"
 
 	// codegen: hack/generate-knative.sh
 	_ "knative.dev/pkg/hack"
