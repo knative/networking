@@ -17,8 +17,8 @@ require (
 	k8s.io/apimachinery v0.18.8
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.18.8
-	knative.dev/hack v0.0.0-20201102193445-9349aeeb6701
-	knative.dev/pkg v0.0.0-20201102194004-c6a8219d518d
+	knative.dev/hack v0.0.0-20201103151104-3d5abc3a0075
+	knative.dev/pkg v0.0.0-20201103150904-7f1970af5b6f
 )
 
 replace (
