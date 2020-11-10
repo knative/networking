@@ -68,7 +68,8 @@ func TestVisibility(t *testing.T) {
 		RuntimeRequestWithExpectations(ctx, t, client, "http://"+privateHostName, []ResponseExpectation{StatusCodeExpectation(sets.NewInt(http.StatusNotFound))}, true)
 	}
 
-	for name, privateHostName := range privateHostNames {
+	for name := range privateHostNames {
+		privateHostName := privateHostNames[name] // avoid the Go iterator capture issue.
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
