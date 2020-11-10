@@ -60,17 +60,11 @@ func TestIngressTLS(t *testing.T) {
 		}},
 	})
 
-	t.Run("verify HTTP", func(t *testing.T) {
-		t.Parallel()
+	// Check without TLS.
+	RuntimeRequest(ctx, t, client, "http://"+name+".example.com")
 
-		RuntimeRequest(ctx, t, client, "http://"+name+".example.com")
-	})
-
-	t.Run("verify HTTPS", func(t *testing.T) {
-		t.Parallel()
-
-		RuntimeRequest(ctx, t, client, "https://"+name+".example.com")
-	})
+	// Check with TLS.
+	RuntimeRequest(ctx, t, client, "https://"+name+".example.com")
 }
 
 // TODO(mattmoor): Consider adding variants where we have multiple hosts with distinct certificates.
