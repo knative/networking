@@ -39,13 +39,11 @@ func TestVisibility(t *testing.T) {
 	// Create the private backend
 	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
 
-	privateServiceName := test.ObjectNameForTest(t)
-	shortName := privateServiceName + "." + test.ServingNamespace
-
+	// Generate a different hostname for each of these tests, so that they do not fail when run concurrently.
 	var privateHostNames = map[string]string{
-		"fqdn":     shortName + ".svc." + test.NetworkingFlags.ClusterSuffix,
-		"short":    shortName + ".svc",
-		"shortest": shortName,
+		"fqdn":     test.ObjectNameForTest(t) + "." + test.ServingNamespace + ".svc." + test.NetworkingFlags.ClusterSuffix,
+		"short":    test.ObjectNameForTest(t) + "." + test.ServingNamespace + ".svc",
+		"shortest": test.ObjectNameForTest(t) + "." + test.ServingNamespace,
 	}
 	ingress, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
 		Rules: []v1alpha1.IngressRule{{
