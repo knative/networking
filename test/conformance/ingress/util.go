@@ -532,7 +532,13 @@ func createService(ctx context.Context, t *testing.T, clients *test.Clients, svc
 		clients.KubeClient.CoreV1().Services(svc.Namespace).Delete(ctx, svc.Name, metav1.DeleteOptions{})
 	})
 	if err := reconciler.RetryTestErrors(func(attempts int) error {
+		if attempts > 0 {
+			t.Logf("Attempt %d creating service %s", attempts, svc.Name)
+		}
 		_, err := clients.KubeClient.CoreV1().Services(svc.Namespace).Create(ctx, svc, metav1.CreateOptions{})
+		if err != nil {
+			t.Logf("Attempt %d creating service failed with: %v", attempts, err)
+		}
 		return err
 	}); err != nil {
 		t.Fatalf("Error creating Service %q: %v", svcName, err)
@@ -547,6 +553,8 @@ func createService(ctx context.Context, t *testing.T, clients *test.Clients, svc
 }
 
 func createExternalNameService(ctx context.Context, t *testing.T, clients *test.Clients, target, gatewayDomain string) context.CancelFunc {
+	t.Helper()
+
 	targetName := strings.SplitN(target, ".", 3)
 	externalNameSvc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -580,7 +588,13 @@ func createPodAndService(ctx context.Context, t *testing.T, clients *test.Client
 		clients.KubeClient.CoreV1().Pods(pod.Namespace).Delete(ctx, pod.Name, metav1.DeleteOptions{})
 	})
 	if err := reconciler.RetryTestErrors(func(attempts int) error {
+		if attempts > 0 {
+			t.Logf("Attempt %d creating pod %s", attempts, pod.Name)
+		}
 		_, err := clients.KubeClient.CoreV1().Pods(pod.Namespace).Create(ctx, pod, metav1.CreateOptions{})
+		if err != nil {
+			t.Logf("Attempt %d creating pod failed with: %v", attempts, err)
+		}
 		return err
 	}); err != nil {
 		t.Fatalf("Error creating Pod %q: %v", podName, err)
@@ -590,7 +604,13 @@ func createPodAndService(ctx context.Context, t *testing.T, clients *test.Client
 		clients.KubeClient.CoreV1().Services(svc.Namespace).Delete(ctx, svc.Name, metav1.DeleteOptions{})
 	})
 	if err := reconciler.RetryTestErrors(func(attempts int) error {
+		if attempts > 0 {
+			t.Logf("Attempt %d creating service %s", attempts, svc.Name)
+		}
 		_, err := clients.KubeClient.CoreV1().Services(svc.Namespace).Create(ctx, svc, metav1.CreateOptions{})
+		if err != nil {
+			t.Logf("Attempt %d creating service failed with: %v", attempts, err)
+		}
 		return err
 	}); err != nil {
 		t.Fatalf("Error creating Service %q: %v", svcName, err)
@@ -673,7 +693,13 @@ func createIngress(ctx context.Context, t *testing.T, clients *test.Clients, spe
 
 	t.Cleanup(func() { clients.NetworkingClient.Ingresses.Delete(ctx, ing.Name, metav1.DeleteOptions{}) })
 	if err := reconciler.RetryTestErrors(func(attempts int) (err error) {
+		if attempts > 0 {
+			t.Logf("Attempt %d creating ingress %s", attempts, ing.Name)
+		}
 		ing, err = clients.NetworkingClient.Ingresses.Create(ctx, ing, metav1.CreateOptions{})
+		if err != nil {
+			t.Logf("Attempt %d creating ingress failed with: %v", attempts, err)
+		}
 		return err
 	}); err != nil {
 		t.Fatalf("Error creating Ingress %q: %v", ingName, err)
