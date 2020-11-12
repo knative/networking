@@ -68,15 +68,15 @@ func TestProbeAllHosts(t *testing.T) {
 		t.Fatal("Failed to insert probe:", err)
 	}
 
-	// Dummy handler returning HTTP 500 (it should never be called during probing)
-	dummyRequests := make(chan *http.Request)
-	dummyHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		dummyRequests <- r
+	// Test handler returning HTTP 500 (it should never be called during probing)
+	testRequests := make(chan *http.Request)
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		testRequests <- r
 		w.WriteHeader(500)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(dummyHandler)
+	probeHandler := network.NewProbeHandler(testHandler)
 
 	// Probes to hostA always succeed and probes to hostB only succeed if hostBEnabled is true
 	probeRequests := make(chan *http.Request)
@@ -191,17 +191,17 @@ func TestProbeLifecycle(t *testing.T) {
 		}
 	}()
 
-	// Dummy handler returning HTTP 500 (it should never be called during probing)
-	dummyRequests := make(chan *http.Request)
-	dummyHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		dummyRequests <- r
+	// Test handler returning HTTP 500 (it should never be called during probing)
+	testRequests := make(chan *http.Request)
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		testRequests <- r
 		w.WriteHeader(500)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(dummyHandler)
+	probeHandler := network.NewProbeHandler(testHandler)
 
-	// Dummy handler keeping track of received requests, mimicking AppendHeader of K-Network-Hash
+	// Test handler keeping track of received requests, mimicking AppendHeader of K-Network-Hash
 	// and simulate a non-existing host by returning 404.
 	probeRequests := make(chan *http.Request)
 	finalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -290,7 +290,7 @@ func TestProbeLifecycle(t *testing.T) {
 	case <-probeRequests:
 		t.Fatal("An unexpected probe request was received")
 	// Validate that no requests went through the probe handler
-	case <-dummyRequests:
+	case <-testRequests:
 		t.Fatal("An unexpected request went through the probe handler")
 	default:
 	}
@@ -316,7 +316,7 @@ func TestProbeLifecycle(t *testing.T) {
 
 	select {
 	// Validate that no requests went through the probe handler
-	case <-dummyRequests:
+	case <-testRequests:
 		t.Fatal("An unexpected request went through the probe handler")
 	default:
 		break
