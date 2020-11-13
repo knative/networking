@@ -206,6 +206,7 @@ go.opencensus.io/trace/tracestate
 ## explicit
 go.uber.org/atomic
 # go.uber.org/multierr v1.6.0
+## explicit
 go.uber.org/multierr
 # go.uber.org/zap v1.16.0
 ## explicit
@@ -735,10 +736,10 @@ k8s.io/kube-openapi/pkg/util/sets
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20201103151104-3d5abc3a0075
+# knative.dev/hack v0.0.0-20201112185459-01a34c573bd8
 ## explicit
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20201103150904-7f1970af5b6f
+# knative.dev/pkg v0.0.0-20201112201059-93fedf141385
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
