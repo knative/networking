@@ -55,7 +55,7 @@ func TestBufferPoolInReverseProxy(t *testing.T) {
 
 	pool.Put([]byte("I'm polluting this pool with a buffer that's not empty."))
 	pool.Put([]byte("I'm adding a little less."))
-	pool.Put([]byte("And I'm even adding more info than the first message did, for sanity."))
+	pool.Put([]byte("And I'm even adding more info than the first message did, for testing."))
 
 	recorder := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, url.String(), nil)
