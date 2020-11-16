@@ -68,15 +68,15 @@ func TestProbeAllHosts(t *testing.T) {
 		t.Fatal("Failed to insert probe:", err)
 	}
 
-	// Test handler returning HTTP 500 (it should never be called during probing)
-	testRequests := make(chan *http.Request)
-	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		testRequests <- r
+	// failing handler returning HTTP 500 (it should never be called during probing)
+	failedRequests := make(chan *http.Request)
+	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		failedRequests <- r
 		w.WriteHeader(500)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(testHandler)
+	probeHandler := network.NewProbeHandler(failHandler)
 
 	// Probes to hostA always succeed and probes to hostB only succeed if hostBEnabled is true
 	probeRequests := make(chan *http.Request)
@@ -192,14 +192,14 @@ func TestProbeLifecycle(t *testing.T) {
 	}()
 
 	// Test handler returning HTTP 500 (it should never be called during probing)
-	testRequests := make(chan *http.Request)
-	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		testRequests <- r
+	failedRequests := make(chan *http.Request)
+	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		failedRequests <- r
 		w.WriteHeader(500)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(testHandler)
+	probeHandler := network.NewProbeHandler(failHandler)
 
 	// Test handler keeping track of received requests, mimicking AppendHeader of K-Network-Hash
 	// and simulate a non-existing host by returning 404.
@@ -290,7 +290,7 @@ func TestProbeLifecycle(t *testing.T) {
 	case <-probeRequests:
 		t.Fatal("An unexpected probe request was received")
 	// Validate that no requests went through the probe handler
-	case <-testRequests:
+	case <-failedRequests:
 		t.Fatal("An unexpected request went through the probe handler")
 	default:
 	}
@@ -316,7 +316,7 @@ func TestProbeLifecycle(t *testing.T) {
 
 	select {
 	// Validate that no requests went through the probe handler
-	case <-testRequests:
+	case <-failedRequests:
 		t.Fatal("An unexpected request went through the probe handler")
 	default:
 		break
