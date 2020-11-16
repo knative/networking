@@ -68,7 +68,7 @@ func TestProbeAllHosts(t *testing.T) {
 		t.Fatal("Failed to insert probe:", err)
 	}
 
-	// failing handler returning HTTP 500 (it should never be called during probing)
+	// Failing handler returning HTTP 500 (it should never be called during probing)
 	failedRequests := make(chan *http.Request)
 	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		failedRequests <- r
@@ -191,7 +191,7 @@ func TestProbeLifecycle(t *testing.T) {
 		}
 	}()
 
-	// Test handler returning HTTP 500 (it should never be called during probing)
+	// Failing handler returning HTTP 500 (it should never be called during probing)
 	failedRequests := make(chan *http.Request)
 	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		failedRequests <- r
