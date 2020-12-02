@@ -19,26 +19,12 @@ package probe
 import (
 	"fmt"
 	"net/http"
+
+	"knative.dev/networking/pkg"
 )
 
-const (
-	// headerName is the name of a header that can be added to
-	// requests to probe the knative networking layer.  Requests
-	// with this header will not be passed to the user container or
-	// included in request metrics.
-	headerName = "K-Network-Probe"
-
-	// proxyHeaderName is the name of an internal header that activator
-	// uses to mark requests going through it.
-	proxyHeaderName = "K-Proxy-Request"
-
-	// hashHeaderName is the name of an internal header that Ingress controller
-	// uses to find out which version of the networking config is deployed.
-	hashHeaderName = "K-Network-Hash"
-
-	// headerValue is the value used in 'K-Network-Probe'
-	headerValue = "probe"
-)
+// headerValue is the value used in 'K-Network-Probe'
+const headerValue = "probe"
 
 type handler struct {
 	next http.Handler
@@ -52,8 +38,8 @@ func NewHandler(next http.Handler) http.Handler {
 // ServeHTTP handles probing requests, or passes to the next handler in
 // chain if not a probe.
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if ph := r.Header.Get(headerName); ph != headerValue {
-		r.Header.Del(hashHeaderName)
+	if ph := r.Header.Get(pkg.ProbeHeaderName); ph != headerValue {
+		r.Header.Del(pkg.HashHeaderName)
 		h.next.ServeHTTP(w, r)
 		return
 	}
@@ -62,12 +48,15 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // ServeHTTP is a standalone probe handler.
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	hh := r.Header.Get(hashHeaderName)
+	hh := r.Header.Get(pkg.HashHeaderName)
 	if hh == "" {
-		http.Error(w, fmt.Sprintf("a probe request must contain a non-empty %q header", hashHeaderName), http.StatusBadRequest)
+		http.Error(w,
+			fmt.Sprintf("a probe request must contain a non-empty %q header",
+				pkg.HashHeaderName),
+			http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set(hashHeaderName, hh)
+	w.Header().Set(pkg.HashHeaderName, hh)
 	w.WriteHeader(http.StatusOK)
 }
