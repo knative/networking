@@ -22,22 +22,22 @@ import (
 )
 
 const (
-	// HeaderName is the name of a header that can be added to
+	// headerName is the name of a header that can be added to
 	// requests to probe the knative networking layer.  Requests
 	// with this header will not be passed to the user container or
 	// included in request metrics.
-	HeaderName = "K-Network-Probe"
+	headerName = "K-Network-Probe"
 
-	// ProxyHeaderName is the name of an internal header that activator
+	// proxyHeaderName is the name of an internal header that activator
 	// uses to mark requests going through it.
-	ProxyHeaderName = "K-Proxy-Request"
+	proxyHeaderName = "K-Proxy-Request"
 
-	// HashHeaderName is the name of an internal header that Ingress controller
+	// hashHeaderName is the name of an internal header that Ingress controller
 	// uses to find out which version of the networking config is deployed.
-	HashHeaderName = "K-Network-Hash"
+	hashHeaderName = "K-Network-Hash"
 
-	// HeaderValue is the value used in 'K-Network-Probe'
-	HeaderValue = "probe"
+	// headerValue is the value used in 'K-Network-Probe'
+	headerValue = "probe"
 )
 
 type handler struct {
@@ -52,8 +52,8 @@ func NewHandler(next http.Handler) http.Handler {
 // ServeHTTP handles probing requests, or passes to the next handler in
 // chain if not a probe.
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if ph := r.Header.Get(HeaderName); ph != HeaderValue {
-		r.Header.Del(HashHeaderName)
+	if ph := r.Header.Get(headerName); ph != headerValue {
+		r.Header.Del(hashHeaderName)
 		h.next.ServeHTTP(w, r)
 		return
 	}
@@ -62,12 +62,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // ServeHTTP is a standalone probe handler.
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	hh := r.Header.Get(HashHeaderName)
+	hh := r.Header.Get(hashHeaderName)
 	if hh == "" {
-		http.Error(w, fmt.Sprintf("a probe request must contain a non-empty %q header", HashHeaderName), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("a probe request must contain a non-empty %q header", hashHeaderName), http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set(HashHeaderName, hh)
+	w.Header().Set(hashHeaderName, hh)
 	w.WriteHeader(http.StatusOK)
 }
