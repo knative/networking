@@ -59,6 +59,8 @@ github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/beorn7/perks v1.0.1
 github.com/beorn7/perks/quantile
+# github.com/blendle/zapdriver v1.3.1
+github.com/blendle/zapdriver
 # github.com/census-instrumentation/opencensus-proto v0.3.0
 github.com/census-instrumentation/opencensus-proto/gen-go/agent/common/v1
 github.com/census-instrumentation/opencensus-proto/gen-go/agent/metrics/v1
@@ -739,7 +741,7 @@ k8s.io/utils/trace
 # knative.dev/hack v0.0.0-20201201234937-fddbf732e450
 ## explicit
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20201130192436-e5346d90e980
+# knative.dev/pkg v0.0.0-20201203193109-a536174bdf99
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -767,7 +769,6 @@ knative.dev/pkg/logging/testing
 knative.dev/pkg/metrics
 knative.dev/pkg/metrics/metricskey
 knative.dev/pkg/network
-knative.dev/pkg/network/prober
 knative.dev/pkg/pool
 knative.dev/pkg/ptr
 knative.dev/pkg/reconciler
