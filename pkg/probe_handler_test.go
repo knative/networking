@@ -23,13 +23,13 @@ import (
 	"strconv"
 	"testing"
 
+	"knative.dev/networking/pkg/prober"
 	"knative.dev/pkg/network"
-	"knative.dev/pkg/network/prober"
 	_ "knative.dev/pkg/system/testing"
 )
 
 func TestProbeHandlerSuccessfulProbe(t *testing.T) {
-	body := "Inner Body"
+	const body = "Inner Body"
 	cases := []struct {
 		name    string
 		options []interface{}
@@ -71,7 +71,6 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
-		want:   false,
 		expErr: true,
 	}}
 
