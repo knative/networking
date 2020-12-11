@@ -52,6 +52,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: nil,
 	}, {
@@ -76,6 +77,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: nil,
 	}, {
@@ -89,12 +91,14 @@ func TestIngressSpecValidation(t *testing.T) {
 				SecretName:      "secret-name",
 				SecretNamespace: "secret-namespace",
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules"),
 	}, {
 		name: "empty-rule",
 		is: &IngressSpec{
-			Rules: []IngressRule{{}},
+			Rules:      []IngressRule{{}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0]"),
 	}, {
@@ -103,6 +107,7 @@ func TestIngressSpecValidation(t *testing.T) {
 			Rules: []IngressRule{{
 				Hosts: []string{"example.com"},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http"),
 	}, {
@@ -112,6 +117,7 @@ func TestIngressSpecValidation(t *testing.T) {
 				Hosts: []string{"example.com"},
 				HTTP:  &HTTPIngressRuleValue{},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths"),
 	}, {
@@ -123,6 +129,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					Paths: []HTTPIngressPath{{}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0]"),
 	}, {
@@ -143,6 +150,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrInvalidValue(199, "rules[0].http.paths[0].splits[0].percent"),
 	}, {
@@ -159,6 +167,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits"),
 	}, {
@@ -175,6 +184,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0]"),
 	}, {
@@ -191,6 +201,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0]"),
 	}, {
@@ -209,6 +220,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0].serviceName"),
 	}, {
@@ -227,6 +239,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0].serviceNamespace"),
 	}, {
@@ -245,6 +258,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("rules[0].http.paths[0].splits[0].servicePort"),
 	}, {
@@ -265,6 +279,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: &apis.FieldError{
 			Message: "traffic split percentage must total to 100, but was 30",
@@ -288,6 +303,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("tls[0]"),
 	}, {
@@ -310,6 +326,7 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("tls[0].secretNamespace"),
 	}, {
@@ -332,8 +349,33 @@ func TestIngressSpecValidation(t *testing.T) {
 					}},
 				},
 			}},
+			HTTPOption: HTTPOptionEnabled,
 		},
 		want: apis.ErrMissingField("tls[0].secretName"),
+	}, {
+		name: "invalid-httpOption",
+		is: &IngressSpec{
+			TLS: []IngressTLS{{
+				SecretNamespace: "secret-space",
+				SecretName:      "secret",
+			}},
+			Rules: []IngressRule{{
+				Hosts: []string{"example.com"},
+				HTTP: &HTTPIngressRuleValue{
+					Paths: []HTTPIngressPath{{
+						Splits: []IngressBackendSplit{{
+							IngressBackend: IngressBackend{
+								ServiceName:      "revision-000",
+								ServiceNamespace: "default",
+								ServicePort:      intstr.FromInt(8080),
+							},
+						}},
+					}},
+				},
+			}},
+			HTTPOption: "xyz",
+		},
+		want: apis.ErrInvalidValue("xyz", "httpOption"),
 	}}
 
 	ctx := apis.WithinParent(context.Background(), metav1.ObjectMeta{Namespace: "default", Name: "test-ingress"})
@@ -378,6 +420,7 @@ func TestIngressValidation(t *testing.T) {
 						}},
 					},
 				}},
+				HTTPOption: HTTPOptionEnabled,
 			},
 		},
 		want: nil,
@@ -407,6 +450,7 @@ func TestIngressValidation(t *testing.T) {
 						}},
 					},
 				}},
+				HTTPOption: HTTPOptionEnabled,
 			},
 		},
 		want: &apis.FieldError{
