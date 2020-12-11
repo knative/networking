@@ -105,6 +105,6 @@ data:
     # http connections, asking the clients to use HTTPS.
     httpProtocol: "Enabled"
 
-    # rolloutDuration containes the minimal duration in seconds over which the
+    # rolloutDuration contains the minimal duration in seconds over which the
     # Configuration traffic targets are rolled out to the newest revision.
     rolloutDuration: "0"
