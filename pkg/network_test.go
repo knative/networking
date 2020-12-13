@@ -74,6 +74,28 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with non-default rolout duration",
+		data: map[string]string{
+			RolloutDurationKey: "211",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.RolloutDurationSecs = 211
+			return c
+		}(),
+	}, {
+		name: "network configuration with bad rollout duration",
+		data: map[string]string{
+			RolloutDurationKey: "mil novecientos ochenta y dos",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with negative rollout duration",
+		data: map[string]string{
+			RolloutDurationKey: "-444",
+		},
+		wantErr: true,
+	}, {
 		name: "network configuration with non-Cert-Manager Certificate type",
 		data: map[string]string{
 			DefaultCertificateClassKey: "foo-cert",
