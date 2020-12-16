@@ -33,9 +33,7 @@ func TestIngressDefaulting(t *testing.T) {
 		name: "empty",
 		in:   &Ingress{},
 		want: &Ingress{
-			Spec: IngressSpec{
-				HTTPOption: HTTPOptionEnabled,
-			},
+			Spec: IngressSpec{},
 		},
 	}, {
 		name: "split-timeout-and-visibility-defaulting",
@@ -80,7 +78,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				HTTPOption: HTTPOptionEnabled,
 			},
 		},
 	}, {
@@ -137,7 +134,6 @@ func TestIngressDefaulting(t *testing.T) {
 						}},
 					},
 				}},
-				HTTPOption: HTTPOptionEnabled,
 			},
 		},
 	}}
