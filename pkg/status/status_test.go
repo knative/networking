@@ -691,6 +691,7 @@ func TestProbeVerifier(t *testing.T) {
 		url:      nil,
 		podIP:    "",
 		podPort:  "",
+		logger:   zaptest.NewLogger(t).Sugar(),
 	})
 	cases := []struct {
 		name string
