@@ -334,6 +334,30 @@ func TestIngressSpecValidation(t *testing.T) {
 			}},
 		},
 		want: apis.ErrMissingField("tls[0].secretName"),
+	}, {
+		name: "invalid-httpOption",
+		is: &IngressSpec{
+			TLS: []IngressTLS{{
+				SecretNamespace: "secret-space",
+				SecretName:      "secret",
+			}},
+			Rules: []IngressRule{{
+				Hosts: []string{"example.com"},
+				HTTP: &HTTPIngressRuleValue{
+					Paths: []HTTPIngressPath{{
+						Splits: []IngressBackendSplit{{
+							IngressBackend: IngressBackend{
+								ServiceName:      "revision-000",
+								ServiceNamespace: "default",
+								ServicePort:      intstr.FromInt(8080),
+							},
+						}},
+					}},
+				},
+			}},
+			HTTPOption: "xyz",
+		},
+		want: apis.ErrInvalidValue("xyz", "httpOption"),
 	}}
 
 	ctx := apis.WithinParent(context.Background(), metav1.ObjectMeta{Namespace: "default", Name: "test-ingress"})
