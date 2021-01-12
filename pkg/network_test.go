@@ -74,7 +74,7 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with non-default rolout duration",
+		name: "network configuration with non-default rollout duration",
 		data: map[string]string{
 			RolloutDurationKey: "211",
 		},
@@ -93,6 +93,23 @@ func TestConfiguration(t *testing.T) {
 		name: "network configuration with negative rollout duration",
 		data: map[string]string{
 			RolloutDurationKey: "-444",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with non-default autocreateClusterDomainClaim value",
+		data: map[string]string{
+			AutocreateClusterDomainClaimsKey: "false",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.AutocreateClusterDomainClaims = false
+			return c
+		}(),
+	}, {
+		name: "network configuration with invalid autocreateClusterDomainClaim value",
+		data: map[string]string{
+			AutocreateClusterDomainClaimsKey: "salad",
 		},
 		wantErr: true,
 	}, {
