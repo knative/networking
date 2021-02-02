@@ -112,8 +112,8 @@ func TestProbeAllHosts(t *testing.T) {
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	done := make(chan struct{})
@@ -235,8 +235,8 @@ func TestProbeLifecycle(t *testing.T) {
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	done := make(chan struct{})
@@ -330,8 +330,8 @@ func TestProbeListerFail(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		notFoundLister{},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	// If we can't list, this  must fail and return false
@@ -389,8 +389,8 @@ func TestCancelPodProbing(t *testing.T) {
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	done := make(chan struct{})
@@ -532,8 +532,8 @@ func TestPartialPodCancellation(t *testing.T) {
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	done := make(chan struct{})
@@ -606,8 +606,8 @@ func TestCancelIngressProbing(t *testing.T) {
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
-		func(ing *v1alpha1.Ingress) {
-			ready <- ing
+		func(ing interface{}) {
+			ready <- ing.(*v1alpha1.Ingress)
 		})
 
 	done := make(chan struct{})
@@ -677,8 +677,8 @@ func TestProbeVerifier(t *testing.T) {
 	const hash = "Hi! I am hash!"
 	prober := NewProber(zaptest.NewLogger(t).Sugar(), nil, nil)
 	verifier := prober.probeVerifier(&workItem{
-		ingressState: &ingressState{
-			ing: &v1alpha1.Ingress{
+		targetStates: &targetState{
+			obj: &v1alpha1.Ingress{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace: "foo",
 					Name:      "bar",
@@ -761,7 +761,8 @@ func TestProbeVerifier(t *testing.T) {
 
 type fakeProbeTargetLister []ProbeTarget
 
-func (l fakeProbeTargetLister) ListProbeTargets(ctx context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
+func (l fakeProbeTargetLister) ListProbeTargets(ctx context.Context, obj interface{}) ([]ProbeTarget, error) {
+	ing := obj.(*v1alpha1.Ingress)
 	targets := []ProbeTarget{}
 	for _, target := range l {
 		newTarget := ProbeTarget{
@@ -783,6 +784,6 @@ func (l fakeProbeTargetLister) ListProbeTargets(ctx context.Context, ing *v1alph
 
 type notFoundLister struct{}
 
-func (l notFoundLister) ListProbeTargets(ctx context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
+func (l notFoundLister) ListProbeTargets(ctx context.Context, obj interface{}) ([]ProbeTarget, error) {
 	return nil, errors.New("not found")
 }

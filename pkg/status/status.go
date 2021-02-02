@@ -57,10 +57,10 @@ const (
 
 var dialContext = (&net.Dialer{Timeout: probeTimeout}).DialContext
 
-// ingressState represents the probing state of an Ingress
-type ingressState struct {
+// targetState represents the probing state of an Ingress
+type targetState struct {
 	hash string
-	ing  *v1alpha1.Ingress
+	obj  interface{}
 
 	// pendingCount is the number of pods that haven't been successfully probed yet
 	pendingCount atomic.Int32
@@ -84,7 +84,7 @@ type cancelContext struct {
 }
 
 type workItem struct {
-	ingressState *ingressState
+	targetStates *targetState
 	podState     *podState
 	context      context.Context
 	url          *url.URL
@@ -104,12 +104,12 @@ type ProbeTarget struct {
 // ProbeTargetLister lists all the targets that requires probing.
 type ProbeTargetLister interface {
 	// ListProbeTargets returns a list of targets to be probed.
-	ListProbeTargets(ctx context.Context, ingress *v1alpha1.Ingress) ([]ProbeTarget, error)
+	ListProbeTargets(ctx context.Context, obj interface{}) ([]ProbeTarget, error)
 }
 
 // Manager provides a way to check if an Ingress is ready
 type Manager interface {
-	IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, error)
+	IsReady(ctx context.Context, obj interface{}) (bool, error)
 }
 
 // Prober provides a way to check if a VirtualService is ready by probing the Envoy pods
@@ -117,16 +117,16 @@ type Manager interface {
 type Prober struct {
 	logger *zap.SugaredLogger
 
-	// mu guards ingressStates and podContexts
-	mu            sync.Mutex
-	ingressStates map[types.NamespacedName]*ingressState
-	podContexts   map[string]cancelContext
+	// mu guards targetStates and podContexts
+	mu           sync.Mutex
+	targetStates map[types.NamespacedName]*targetState
+	podContexts  map[string]cancelContext
 
 	workQueue workqueue.RateLimitingInterface
 
 	targetLister ProbeTargetLister
 
-	readyCallback func(*v1alpha1.Ingress)
+	readyCallback func(interface{})
 
 	probeConcurrency int
 }
@@ -135,11 +135,11 @@ type Prober struct {
 func NewProber(
 	logger *zap.SugaredLogger,
 	targetLister ProbeTargetLister,
-	readyCallback func(*v1alpha1.Ingress)) *Prober {
+	readyCallback func(interface{})) *Prober {
 	return &Prober{
-		logger:        logger,
-		ingressStates: make(map[types.NamespacedName]*ingressState),
-		podContexts:   make(map[string]cancelContext),
+		logger:       logger,
+		targetStates: make(map[types.NamespacedName]*targetState),
+		podContexts:  make(map[string]cancelContext),
 		workQueue: workqueue.NewNamedRateLimitingQueue(
 			workqueue.NewMaxOfRateLimiter(
 				// Per item exponential backoff
@@ -159,7 +159,8 @@ func NewProber(
 // will be called in the order of reconciliation. This means that if IsReady is called on an Ingress,
 // this Ingress is the latest known version and therefore anything related to older versions can be ignored.
 // Also, it means that IsReady is not called concurrently.
-func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, error) {
+func (m *Prober) IsReady(ctx context.Context, obj interface{}) (bool, error) {
+	ing := obj.(*v1alpha1.Ingress)
 	ingressKey := types.NamespacedName{Namespace: ing.Namespace, Name: ing.Name}
 	logger := logging.FromContext(ctx)
 
@@ -172,7 +173,7 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 	if ready, ok := func() (bool, bool) {
 		m.mu.Lock()
 		defer m.mu.Unlock()
-		if state, ok := m.ingressStates[ingressKey]; ok {
+		if state, ok := m.targetStates[ingressKey]; ok {
 			if state.hash == hash {
 				state.lastAccessed = time.Now()
 				return state.pendingCount.Load() == 0, true
@@ -180,7 +181,7 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 
 			// Cancel the polling for the outdated version
 			state.cancel()
-			delete(m.ingressStates, ingressKey)
+			delete(m.targetStates, ingressKey)
 		}
 		return false, false
 	}(); ok {
@@ -188,9 +189,9 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 	}
 
 	ingCtx, cancel := context.WithCancel(context.Background())
-	ingressState := &ingressState{
+	ingressState := &targetState{
 		hash:         hash,
-		ing:          ing,
+		obj:          ing,
 		lastAccessed: time.Now(),
 		cancel:       cancel,
 	}
@@ -205,7 +206,7 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 		for ip := range target.PodIPs {
 			for _, url := range target.URLs {
 				workItems[ip] = append(workItems[ip], &workItem{
-					ingressState: ingressState,
+					targetStates: ingressState,
 					url:          url,
 					podIP:        ip,
 					podPort:      target.PodPort,
@@ -271,7 +272,7 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 	func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
-		m.ingressStates[ingressKey] = ingressState
+		m.targetStates[ingressKey] = ingressState
 	}()
 	return len(workItems) == 0, nil
 }
@@ -315,9 +316,9 @@ func (m *Prober) CancelIngressProbing(obj interface{}) {
 	key := types.NamespacedName{Namespace: acc.GetNamespace(), Name: acc.GetName()}
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if state, ok := m.ingressStates[key]; ok {
+	if state, ok := m.targetStates[key]; ok {
 		state.cancel()
-		delete(m.ingressStates, key)
+		delete(m.targetStates, key)
 	}
 }
 
@@ -398,12 +399,12 @@ func (m *Prober) processWorkItem() bool {
 		item.logger.Errorf("Probing of %s failed, IP: %s:%s, ready: %t, error: %v (depth: %d)",
 			item.url, item.podIP, item.podPort, ok, err, m.workQueue.Len())
 	} else {
-		m.onProbingSuccess(item.ingressState, item.podState)
+		m.onProbingSuccess(item.targetStates, item.podState)
 	}
 	return true
 }
 
-func (m *Prober) onProbingSuccess(ingressState *ingressState, podState *podState) {
+func (m *Prober) onProbingSuccess(ingressState *targetState, podState *podState) {
 	// The last probe call for the Pod succeeded, the Pod is ready
 	if podState.pendingCount.Dec() == 0 {
 		// Unlock the goroutine blocked on <-podCtx.Done()
@@ -411,12 +412,12 @@ func (m *Prober) onProbingSuccess(ingressState *ingressState, podState *podState
 
 		// This is the last pod being successfully probed, the Ingress is ready
 		if ingressState.pendingCount.Dec() == 0 {
-			m.readyCallback(ingressState.ing)
+			m.readyCallback(ingressState.obj)
 		}
 	}
 }
 
-func (m *Prober) onProbingCancellation(ingressState *ingressState, podState *podState) {
+func (m *Prober) onProbingCancellation(ingressState *targetState, podState *podState) {
 	for {
 		pendingCount := podState.pendingCount.Load()
 		if pendingCount <= 0 {
@@ -428,7 +429,7 @@ func (m *Prober) onProbingCancellation(ingressState *ingressState, podState *pod
 		if podState.pendingCount.CAS(pendingCount, 0) {
 			// This is the last pod being successfully probed, the Ingress is ready
 			if ingressState.pendingCount.Dec() == 0 {
-				m.readyCallback(ingressState.ing)
+				m.readyCallback(ingressState.obj)
 			}
 			return
 		}
@@ -453,10 +454,10 @@ func (m *Prober) probeVerifier(item *workItem) prober.Verifier {
 				item.logger.Errorf("Probing of %s abandoned, IP: %s:%s: the response doesn't contain the %q header",
 					item.url, item.podIP, item.podPort, network.HashHeaderName)
 				return true, nil
-			case item.ingressState.hash:
+			case item.targetStates.hash:
 				return true, nil
 			default:
-				return false, fmt.Errorf("unexpected hash: want %q, got %q", item.ingressState.hash, hash)
+				return false, fmt.Errorf("unexpected hash: want %q, got %q", item.targetStates.hash, hash)
 			}
 
 		case http.StatusNotFound, http.StatusServiceUnavailable:

@@ -26,7 +26,7 @@ import (
 
 // FakeStatusManager implements status.Manager for use in unit tests.
 type FakeStatusManager struct {
-	FakeIsReady func(ctx context.Context, ing *v1alpha1.Ingress) (bool, error)
+	FakeIsReady func(ctx context.Context, obj interface{}) (bool, error)
 
 	isReadyCallCount map[types.NamespacedName]int
 }
@@ -34,7 +34,8 @@ type FakeStatusManager struct {
 var _ status.Manager = (*FakeStatusManager)(nil)
 
 // IsReady implements IsReady
-func (m *FakeStatusManager) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, error) {
+func (m *FakeStatusManager) IsReady(ctx context.Context, obj interface{}) (bool, error) {
+	ing := obj.(*v1alpha1.Ingress)
 	if m.isReadyCallCount == nil {
 		m.isReadyCallCount = make(map[types.NamespacedName]int, 1)
 	}
