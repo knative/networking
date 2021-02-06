@@ -59,8 +59,8 @@ func TestRetry(t *testing.T) {
 		t.Errorf("Error making GET request: %v", err)
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode == http.StatusOK {
-		t.Error("Got OK status, expected failure")
+	if resp.StatusCode != http.StatusServiceUnavailable {
+		t.Errorf("Got status %d, expected %d", resp.StatusCode, http.StatusServiceUnavailable)
 		DumpResponse(ctx, t, resp)
 	}
 
