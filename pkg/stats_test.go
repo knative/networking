@@ -114,6 +114,29 @@ func TestRequestStats(t *testing.T) {
 			RequestCount:       0,
 		}},
 	}, {
+		name: "request across multiple reportings",
+		events: func(in, out, inP, outP, report func(int64)) {
+			in(0)
+			report(1000)
+			report(2000)
+			report(3000)
+			out(3500)
+			report(4000)
+		},
+		want: []RequestStatsReport{{
+			AverageConcurrency: 1,
+			RequestCount:       1,
+		}, {
+			AverageConcurrency: 1,
+			RequestCount:       0,
+		}, {
+			AverageConcurrency: 1,
+			RequestCount:       0,
+		}, {
+			AverageConcurrency: 0.5,
+			RequestCount:       0,
+		}},
+	}, {
 		name: "1 request, proxied, entire time",
 		events: func(in, out, inP, outP, report func(int64)) {
 			inP(0)
@@ -153,6 +176,19 @@ func TestRequestStats(t *testing.T) {
 			AverageProxiedConcurrency: 0.5,
 			RequestCount:              2,
 			ProxiedRequestCount:       1,
+		}},
+	}, {
+		name: "ignore 'negative' requests",
+		events: func(in, out, inP, outP, report func(int64)) {
+			in(500)
+			in(499)
+			out(1000)
+			out(999)
+			report(1000)
+		},
+		want: []RequestStatsReport{{
+			AverageConcurrency: 1,
+			RequestCount:       2,
 		}},
 	}}
 
