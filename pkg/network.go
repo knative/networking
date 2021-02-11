@@ -175,6 +175,11 @@ const (
 	// already using labels for domain, it probably best to keep this
 	// consistent.
 	VisibilityLabelKey = "networking.knative.dev/visibility"
+
+	// DirectLoadbalancingHeaderName is the name of a header that signifies to
+	// loadbalancers that the respective request should not be loadbalanced again but
+	// sent to the request's target directly.
+	DirectLoadbalancingHeaderName = "K-Direct-Lb"
 )
 
 // DomainTemplateValues are the available properties people can choose from
