@@ -17,6 +17,7 @@ approvers:
 # Networking Reviewers
 reviewers:
 - andrew-su
+- arturenault
 - JRBANCEL
 - markusthoemmes
 - mdemirhan
