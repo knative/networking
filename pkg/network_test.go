@@ -226,6 +226,16 @@ func TestConfiguration(t *testing.T) {
 			HTTPProtocolKey: "under-the-bridge",
 		},
 		wantErr: true,
+	}, {
+		name: "network configuration with enabled pod-addressability",
+		data: map[string]string{
+			EnableMeshPodAddressabilityKey: "true",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.EnableMeshPodAddressability = true
+			return c
+		}(),
 	}}
 
 	for _, tt := range networkConfigTests {
