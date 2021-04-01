@@ -1,11 +1,36 @@
 aliases:
-  productivity-approvers:
-  - chaodaiG
-  - chizhg
+  technical-oversight-committee:
+  - evankanderson
+  - grantr
+  - markusthoemmes
+  - rhuss
+
+  networking-reviewers:
+  - JRBANCEL
+  - ZhiminXiang
+  - andrew-su
+  - arturenault
+  - markusthoemmes
+  - nak3
+  - shashwathi
+  - tcnghia
+  - vagababov
+  - yanweiguo
+
+  networking-writers:
+  - JRBANCEL
+  - ZhiminXiang
+  - nak3
+  - tcnghia
+  - vagababov
+
   productivity-reviewers:
-  - chaodaiG
   - coryrc
-  - chizhg
+  - evankanderson
   - steuhs
   - yt3liu
+
+  productivity-writers:
+  - chizhg
+  - n3wscott
 

@@ -1,29 +1,9 @@
 # The OWNERS file is used by prow to automatically merge approved PRs.
 
 approvers:
-# TOC
-- evankanderson
-- grantr
-- markusthoemmes
-- mattmoor
-- tcnghia
-# Networking Approvers
-- JRBANCEL
-- mdemirhan
-- nak3
-- vagababov
-- ZhiminXiang
+- technical-oversight-committee
+- networking-writers
 
 # Networking Reviewers
 reviewers:
-- andrew-su
-- arturenault
-- JRBANCEL
-- markusthoemmes
-- mdemirhan
-- nak3
-- shashwathi
-- tcnghia
-- vagababov
-- yanweiguo
-- ZhiminXiang
+- networking-reviewers
