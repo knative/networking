@@ -3,49 +3,24 @@
 aliases:
   api-core-wg-leads:
   - dprotaso
-  autoscaling-reviewers:
-  - taragu
   autoscaling-wg-leads:
   - markusthoemmes
   - vagababov
-  autoscaling-writers:
-  - julz
-  - markusthoemmes
-  - vagababov
-  - yanweiguo
   channel-wg-leads:
   - matzew
   - slinkydeveloper
-  client-reviewers:
-  - itsmurugappan
   client-wg-leads:
   - navidshaikh
   - rhuss
   client-writers:
-  - dsimansk
-  - maximilien
   - navidshaikh
   - rhuss
   conformance-wg-leads:
   - tayarani
   conformance-writers:
   - tayarani
-  docs-reviewers:
-  - RichardJJG
-  - jonatasbaldin
-  - mpetason
-  - omerbensaadon
-  - snneji
   docs-wg-leads: []
-  docs-writers:
-  - abrennan89
-  - carieshmarie
-  - richieescarez
-  eventing-reviewers:
-  - aslom
-  - nlopezgi
-  - tayarani
-  - tommyreddad
+  docs-writers: []
   eventing-triage:
   - akashrv
   - antoineco
@@ -60,7 +35,6 @@ aliases:
   - vaikas
   eventing-writers:
   - akashrv
-  - aliok
   - antoineco
   - devguyio
   - grantr
@@ -68,7 +42,6 @@ aliases:
   - lionelvillard
   - matzew
   - n3wscott
-  - pierDipi
   - slinkydeveloper
   - vaikas
   - zhongduo
@@ -121,82 +94,19 @@ aliases:
   - knative-prow-releaser-robot
   - knative-prow-robot
   - knative-test-reporter-robot
-  networking-reviewers:
-  - JRBANCEL
-  - ZhiminXiang
-  - andrew-su
-  - arturenault
-  - markusthoemmes
-  - nak3
-  - shashwathi
-  - tcnghia
-  - vagababov
-  - yanweiguo
   networking-wg-leads:
   - ZhiminXiang
   - nak3
   - tcnghia
-  networking-writers:
-  - JRBANCEL
-  - ZhiminXiang
-  - nak3
-  - tcnghia
-  - vagababov
-  operations-reviewers:
-  - Cynocracy
-  - aliok
-  - houshengbo
-  - jcrossley3
-  - markusthoemmes
-  - matzew
-  - n3wscott
-  - trshafer
   operations-wg-leads:
   - houshengbo
   operations-writers:
-  - Cynocracy
-  - aliok
   - houshengbo
-  - jcrossley3
-  - markusthoemmes
-  - matzew
-  - n3wscott
-  - trshafer
-  pkg-configmap-reviewers:
-  - dprotaso
-  - mattmoor
-  - mdemirhan
-  - vagababov
-  pkg-configmap-writers:
-  - dprotaso
-  - mattmoor
-  - mdemirhan
-  - vagababov
-  pkg-controller-reviewers:
-  - grantr
-  - mattmoor
-  - tcnghia
-  - vagababov
-  - whaught
-  pkg-controller-writers:
-  - grantr
-  - mattmoor
-  - tcnghia
-  - vagababov
-  productivity-reviewers:
-  - coryrc
-  - efiturri
-  - evankanderson
-  - peterfeifanchen
-  - steuhs
-  - yt3liu
   productivity-wg-leads:
   - chizhg
   - n3wscott
   productivity-writers:
-  - chaodaiG
   - chizhg
-  - coryrc
   - n3wscott
   security-wg-leads:
   - evankanderson
@@ -204,19 +114,11 @@ aliases:
   security-writers:
   - evankanderson
   - julz
-  serving-observability-reviewers:
-  - mdemirhan
-  - skonto
-  - yanweiguo
-  serving-observability-writers:
-  - mdemirhan
-  - yanweiguo
-  serving-reviewers:
-  - julz
-  - whaught
   serving-writers:
+  - ZhiminXiang
   - dprotaso
   - markusthoemmes
+  - nak3
   - tcnghia
   - vagababov
   source-wg-leads:
