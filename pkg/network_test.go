@@ -19,6 +19,7 @@ package pkg
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -671,6 +672,34 @@ func TestPortNumberForName(t *testing.T) {
 			}
 			if tc.err == nil && portNumber != tc.portNumber {
 				t.Errorf("PortNumber = %d, want: %d", portNumber, tc.portNumber)
+			}
+		})
+	}
+}
+
+func TestIsPotentialMeshErrorResponse(t *testing.T) {
+	for _, test := range []struct {
+		statusCode int
+		expect     bool
+	}{{
+		statusCode: 404,
+		expect:     false,
+	}, {
+		statusCode: 200,
+		expect:     false,
+	}, {
+		statusCode: 200,
+		expect:     false,
+	}, {
+		statusCode: 503,
+		expect:     true,
+	}} {
+		t.Run(fmt.Sprintf("statusCode=%d", test.statusCode), func(t *testing.T) {
+			resp := &http.Response{
+				StatusCode: test.statusCode,
+			}
+			if got := IsPotentialMeshErrorResponse(resp); got != test.expect {
+				t.Errorf("IsPotentialMeshErrorResponse({StatusCode: %d}) = %v, expected %v", resp.StatusCode, got, test.expect)
 			}
 		})
 	}
