@@ -3,6 +3,7 @@
 approvers:
 - technical-oversight-committee
 - networking-writers
+- knative-release-leads
 
 # Networking Reviewers
 reviewers:
