@@ -56,6 +56,7 @@ var betaTests = map[string]func(t *testing.T){
 
 var alphaTests = map[string]func(t *testing.T){
 	// Add your conformance test for alpha features
+	"httoption": TestHTTPOption,
 }
 
 // RunConformance will run ingress conformance tests
