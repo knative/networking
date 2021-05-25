@@ -37,15 +37,15 @@ func TestHTTPOption(t *testing.T) {
 	tests := []struct {
 		name       string
 		httpOption v1alpha1.HTTPOption
-		codes      []int
+		code       int
 	}{{
 		name:       "enabled",
 		httpOption: v1alpha1.HTTPOptionEnabled,
-		codes:      []int{http.StatusOK},
+		code:       http.StatusOK,
 	}, {
 		name:       "redirected",
 		httpOption: v1alpha1.HTTPOptionRedirected,
-		codes:      []int{http.StatusMovedPermanently /*301*/, http.StatusFound /*302*/},
+		code:       http.StatusMovedPermanently,
 	}}
 
 	for _, test := range tests {
@@ -53,12 +53,12 @@ func TestHTTPOption(t *testing.T) {
 			// net-istio cannot support parallel option as one HTTPOption effects globally.
 			// https://github.com/knative-sandbox/net-istio/issues/637
 			// t.Parallel()
-			checkHTTPOption(ctx, t, clients, test.httpOption, test.codes)
+			checkHTTPOption(ctx, t, clients, test.httpOption, test.code)
 		})
 	}
 }
 
-func checkHTTPOption(ctx context.Context, t *testing.T, clients *test.Clients, httpOption v1alpha1.HTTPOption, codes []int) {
+func checkHTTPOption(ctx context.Context, t *testing.T, clients *test.Clients, httpOption v1alpha1.HTTPOption, code int) {
 	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
 
 	hosts := []string{name + ".example.com"}
@@ -101,17 +101,10 @@ func checkHTTPOption(ctx context.Context, t *testing.T, clients *test.Clients, h
 	if err != nil {
 		t.Fatal("Error making GET request:", err)
 	}
-	failed := true
+
 	defer resp.Body.Close()
-	for _, code := range codes {
-		if resp.StatusCode == code {
-			failed = false
-			break
-		}
-	}
-	if failed {
-		t.Errorf("Unexpected status code: %d, wanted one of %v", resp.StatusCode, codes)
+	if resp.StatusCode != code {
+		t.Errorf("Unexpected status code: %d, wanted %v", resp.StatusCode, code)
 		DumpResponse(ctx, t, resp)
 	}
-
 }
