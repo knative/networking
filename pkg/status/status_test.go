@@ -742,6 +742,12 @@ func TestProbeVerifier(t *testing.T) {
 		},
 		want: false,
 	}, {
+		name: "HTTP 301",
+		resp: &http.Response{
+			StatusCode: http.StatusMovedPermanently,
+		},
+		want: true,
+	}, {
 		name: "HTTP 302",
 		resp: &http.Response{
 			StatusCode: http.StatusFound,
