@@ -41,6 +41,7 @@ func TestUpdate(t *testing.T) {
 	// Create a simple Ingress over the Service.
 	hostname := test.ObjectNameForTest(t)
 	ing, client, cancel := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{hostname + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -86,6 +87,7 @@ func TestUpdate(t *testing.T) {
 
 		// Update the Ingress, and wait for it to report ready.
 		UpdateIngressReady(ctx, t, clients, ing.Name, v1alpha1.IngressSpec{
+			HTTPOption: v1alpha1.HTTPOptionEnabled,
 			Rules: []v1alpha1.IngressRule{{
 				Hosts:      []string{hostname + ".example.com"},
 				Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -129,6 +131,7 @@ func TestUpdate(t *testing.T) {
 
 		// Update the Ingress, and wait for it to report ready.
 		UpdateIngressReady(ctx, t, clients, ing.Name, v1alpha1.IngressSpec{
+			HTTPOption: v1alpha1.HTTPOptionEnabled,
 			Rules: []v1alpha1.IngressRule{{
 				Hosts:      []string{hostname + ".example.com"},
 				Visibility: v1alpha1.IngressVisibilityExternalIP,

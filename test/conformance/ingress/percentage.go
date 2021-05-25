@@ -73,6 +73,7 @@ func TestPercentage(t *testing.T) {
 	// Create a simple Ingress over the 10 Services.
 	name := test.ObjectNameForTest(t)
 	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{name + ".example.com"},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

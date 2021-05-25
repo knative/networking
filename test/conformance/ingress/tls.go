@@ -38,6 +38,7 @@ func TestIngressTLS(t *testing.T) {
 	secretName, _ := CreateTLSSecret(ctx, t, clients, hosts)
 
 	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      hosts,
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

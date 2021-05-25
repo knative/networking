@@ -38,6 +38,7 @@ func TestRewriteHost(t *testing.T) {
 
 	// Create a simple Ingress over the Service.
 	ing, _, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Visibility: v1alpha1.IngressVisibilityClusterLocal,
 			Hosts:      []string{privateHostName},
@@ -72,6 +73,7 @@ func TestRewriteHost(t *testing.T) {
 
 	// Now create a RewriteHost ingress to point a custom Host at the Service
 	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
+		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      hosts,
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
