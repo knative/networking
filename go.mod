@@ -20,5 +20,5 @@ require (
 	k8s.io/client-go v0.19.7
 	k8s.io/code-generator v0.19.7
 	knative.dev/hack v0.0.0-20210428122153-93ad9129c268
-	knative.dev/pkg v0.0.0-20210525142738-ea766de6bdd1
+	knative.dev/pkg v0.0.0-20210526081028-980a33719a10
 )
