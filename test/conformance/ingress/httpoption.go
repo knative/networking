@@ -29,36 +29,37 @@ import (
 
 // TestHTTPOption verifies that the Ingress properly handles HTTPOption field.
 func TestHTTPOption(t *testing.T) {
-	// net-istio cannot support parallel option as one HTTPOption effects globally.
-	// https://github.com/knative-sandbox/net-istio/issues/637
-	// t.Parallel()
+	t.Parallel()
 	ctx, clients := context.Background(), test.Setup(t)
 
 	tests := []struct {
-		name       string
 		httpOption v1alpha1.HTTPOption
 		code       int
 	}{{
-		name:       "enabled",
 		httpOption: v1alpha1.HTTPOptionEnabled,
 		code:       http.StatusOK,
 	}, {
-		name:       "redirected",
 		httpOption: v1alpha1.HTTPOptionRedirected,
 		code:       http.StatusMovedPermanently,
 	}}
 
+	hostCode := make(map[string]int, len(tests))
+	var client *http.Client
+	// Create multiple ingress with different HTTP option at the same time.
+	// This makes sure that each Ingress's HTTP option does not effect on globally.
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			// net-istio cannot support parallel option as one HTTPOption effects globally.
-			// https://github.com/knative-sandbox/net-istio/issues/637
-			// t.Parallel()
-			checkHTTPOption(ctx, t, clients, test.httpOption, test.code)
-		})
+		var host string
+		host, client = create(ctx, t, clients, test.httpOption)
+		hostCode[host] = test.code
+	}
+
+	// Request to each Ingress.
+	for host, code := range hostCode {
+		checkHTTPOption(ctx, t, client, host, code)
 	}
 }
 
-func checkHTTPOption(ctx context.Context, t *testing.T, clients *test.Clients, httpOption v1alpha1.HTTPOption, code int) {
+func create(ctx context.Context, t *testing.T, clients *test.Clients, httpOption v1alpha1.HTTPOption) (string, *http.Client) {
 	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
 
 	hosts := []string{name + ".example.com"}
@@ -88,16 +89,19 @@ func checkHTTPOption(ctx context.Context, t *testing.T, clients *test.Clients, h
 			SecretNamespace: test.ServingNamespace,
 		}},
 	})
+	return hosts[0], client
+}
 
+func checkHTTPOption(ctx context.Context, t *testing.T, client *http.Client, hostname string, code int) {
 	// Check with TLS.
-	RuntimeRequest(ctx, t, client, "https://"+name+".example.com")
+	RuntimeRequest(ctx, t, client, "https://"+hostname)
 
 	// Check without TLS.
 	client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		// Do not follow redirect.
 		return http.ErrUseLastResponse
 	}
-	resp, err := client.Get("http://" + name + ".example.com")
+	resp, err := client.Get("http://" + hostname)
 	if err != nil {
 		t.Fatal("Error making GET request:", err)
 	}
