@@ -48,7 +48,7 @@ type NetworkingClients struct {
 // NewClients instantiates and returns several clientsets required for making request to the
 // Knative Serving cluster specified by the combination of clusterName and configPath. Clients can
 // make requests within namespace.
-func NewClients(cfg *rest.Config, namespace string) (*Clients, error) {
+func NewClientsFromConfig(cfg *rest.Config, namespace string) (*Clients, error) {
 	// We poll, so set our limits high.
 	cfg.QPS = 100
 	cfg.Burst = 200

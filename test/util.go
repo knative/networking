@@ -58,7 +58,7 @@ func Setup(t testing.TB) *Clients {
 		t.Fatal("couldn't get REST config:", err)
 	}
 
-	clients, err := NewClients(cfg, ServingNamespace)
+	clients, err := NewClientsFromConfig(cfg, ServingNamespace)
 	if err != nil {
 		t.Fatal("Couldn't initialize clients", "error", err.Error())
 	}
