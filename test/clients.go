@@ -45,7 +45,7 @@ type NetworkingClients struct {
 	Certificates       networkingv1alpha1.CertificateInterface
 }
 
-// NewClients instantiates and returns several clientsets required for making request to the
+// NewClientsFromConfig instantiates and returns several clientsets required for making request to the
 // Knative Serving cluster specified by the combination of clusterName and configPath. Clients can
 // make requests within namespace.
 func NewClientsFromConfig(cfg *rest.Config, namespace string) (*Clients, error) {
