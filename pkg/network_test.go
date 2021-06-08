@@ -237,6 +237,18 @@ func TestConfiguration(t *testing.T) {
 			c.EnableMeshPodAddressability = true
 			return c
 		}(),
+	}, {
+		name: "network configuration with overridden external and internal scheme",
+		data: map[string]string{
+			OverrideExternalSchemeKey: "https",
+			OverrideInternalSchemeKey: "ws",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.OverrideExternalScheme = "https"
+			c.OverrideInternalScheme = "ws"
+			return c
+		}(),
 	}}
 
 	for _, tt := range networkConfigTests {
