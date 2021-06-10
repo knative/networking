@@ -240,13 +240,11 @@ func TestConfiguration(t *testing.T) {
 	}, {
 		name: "network configuration with overridden external and internal scheme",
 		data: map[string]string{
-			OverrideExternalSchemeKey: "https",
-			OverrideInternalSchemeKey: "ws",
+			DefaultExternalSchemeKey: "https",
 		},
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.OverrideExternalScheme = "https"
-			c.OverrideInternalScheme = "ws"
+			c.DefaultExternalScheme = "https"
 			return c
 		}(),
 	}}
