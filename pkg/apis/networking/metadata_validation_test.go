@@ -48,6 +48,11 @@ func TestValidateObjectMetadata(t *testing.T) {
 		annotations: map[string]string{
 			CertificateClassAnnotationKey: "certificate-class",
 		},
+	}, {
+		name: "valid http option annotation key",
+		annotations: map[string]string{
+			HTTPOptionAnnotationKey: "Redirected",
+		},
 	}}
 
 	for _, c := range cases {
