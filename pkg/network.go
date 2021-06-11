@@ -263,8 +263,8 @@ type Config struct {
 	// accordingly, i.e. to drop fallback solutions for non-pod-addressable systems.
 	EnableMeshPodAddressability bool
 
-	// DefaultExternalScheme defines the scheme used in external URLs. Defaults to "http".
-	// AutoTLS scheme semantics are left untouched.
+	// DefaultExternalScheme defines the scheme used in external URLs if AutoTLS is
+	// not enabled. Defaults to "http".
 	DefaultExternalScheme string
 }
 
