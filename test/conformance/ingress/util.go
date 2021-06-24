@@ -686,6 +686,8 @@ func CreateIngress(ctx context.Context, t *testing.T, clients *test.Clients, spe
 		t.Fatalf("Invalid ingress %q: %v", ingName, err)
 	}
 
+	setDefaultsForTest(ing)
+
 	t.Cleanup(func() { clients.NetworkingClient.Ingresses.Delete(ctx, ing.Name, metav1.DeleteOptions{}) })
 	if err := reconciler.RetryTestErrors(func(attempts int) (err error) {
 		if attempts > 0 {
@@ -705,6 +707,13 @@ func CreateIngress(ctx context.Context, t *testing.T, clients *test.Clients, spe
 		if err != nil {
 			t.Errorf("Error cleaning up Ingress %q: %v", ingName, err)
 		}
+	}
+}
+
+// setDefaultsForTest sets the default values used for testing.
+func setDefaultsForTest(ing *v1alpha1.Ingress) {
+	if ing.Spec.HTTPOption == "" {
+		ing.Spec.HTTPOption = v1alpha1.HTTPOptionEnabled
 	}
 }
 
