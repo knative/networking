@@ -686,6 +686,7 @@ func CreateIngress(ctx context.Context, t *testing.T, clients *test.Clients, spe
 		t.Fatalf("Invalid ingress %q: %v", ingName, err)
 	}
 
+	// TODO: set the HTTPOption in SetDefaults after release 0.24
 	setDefaultsForTest(ing)
 
 	t.Cleanup(func() { clients.NetworkingClient.Ingresses.Delete(ctx, ing.Name, metav1.DeleteOptions{}) })
