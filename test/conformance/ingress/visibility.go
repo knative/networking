@@ -46,7 +46,6 @@ func TestVisibility(t *testing.T) {
 		"shortest": test.ObjectNameForTest(t) + "." + test.ServingNamespace,
 	}
 	ingress, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{privateHostNames["fqdn"], privateHostNames["short"], privateHostNames["shortest"]},
 			Visibility: v1alpha1.IngressVisibilityClusterLocal,
@@ -89,7 +88,6 @@ func testProxyToHelloworld(ctx context.Context, t *testing.T, ingress *v1alpha1.
 	publicHostName := test.ObjectNameForTest(t) + ".publicproxy.example.com"
 
 	_, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{publicHostName},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -155,7 +153,6 @@ func TestVisibilitySplit(t *testing.T) {
 	// Create a simple Ingress over the 10 Services.
 	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, test.ServingNamespace, test.NetworkingFlags.ClusterSuffix)
 	localIngress, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{privateHostName},
 			Visibility: v1alpha1.IngressVisibilityClusterLocal,
@@ -175,7 +172,6 @@ func TestVisibilitySplit(t *testing.T) {
 
 	publicHostName := fmt.Sprintf("%s.%s", name, "example.com")
 	_, client, _ = CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{publicHostName},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -261,7 +257,6 @@ func TestVisibilityPath(t *testing.T) {
 	name := test.ObjectNameForTest(t)
 	privateHostName := fmt.Sprintf("%s.%s.svc.%s", name, test.ServingNamespace, test.NetworkingFlags.ClusterSuffix)
 	localIngress, client, _ := CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{privateHostName},
 			Visibility: v1alpha1.IngressVisibilityClusterLocal,
@@ -340,7 +335,6 @@ func TestVisibilityPath(t *testing.T) {
 
 	publicHostName := fmt.Sprintf("%s.%s", name, "example.com")
 	_, client, _ = CreateIngressReady(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{publicHostName},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

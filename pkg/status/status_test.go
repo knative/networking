@@ -45,7 +45,6 @@ var (
 			Name:      "whatever",
 		},
 		Spec: v1alpha1.IngressSpec{
-			HTTPOption: v1alpha1.HTTPOptionEnabled,
 			Rules: []v1alpha1.IngressRule{{
 				Hosts: []string{
 					"foo.bar.com",

@@ -46,7 +46,6 @@ func TestGRPC(t *testing.T) {
 
 	// Create a simple Ingress over the Service.
 	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,
@@ -108,7 +107,6 @@ func TestGRPCSplit(t *testing.T) {
 	name := test.ObjectNameForTest(t)
 	domain := name + ".example.com"
 	_, dialCtx, _ := createIngressReadyDialContext(ctx, t, clients, v1alpha1.IngressSpec{
-		HTTPOption: v1alpha1.HTTPOptionEnabled,
 		Rules: []v1alpha1.IngressRule{{
 			Hosts:      []string{domain},
 			Visibility: v1alpha1.IngressVisibilityExternalIP,

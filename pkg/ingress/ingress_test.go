@@ -104,7 +104,6 @@ func TestInsertProbe(t *testing.T) {
 		name: "with rules, no append header",
 		ingress: &v1alpha1.Ingress{
 			Spec: v1alpha1.IngressSpec{
-				HTTPOption: v1alpha1.HTTPOptionEnabled,
 				Rules: []v1alpha1.IngressRule{{
 					Hosts: []string{
 						"example.com",
@@ -126,7 +125,6 @@ func TestInsertProbe(t *testing.T) {
 		name: "with rules, with append header",
 		ingress: &v1alpha1.Ingress{
 			Spec: v1alpha1.IngressSpec{
-				HTTPOption: v1alpha1.HTTPOptionEnabled,
 				Rules: []v1alpha1.IngressRule{{
 					Hosts: []string{
 						"example.com",
@@ -151,7 +149,6 @@ func TestInsertProbe(t *testing.T) {
 		name: "rule missing HTTP block",
 		ingress: &v1alpha1.Ingress{
 			Spec: v1alpha1.IngressSpec{
-				HTTPOption: v1alpha1.HTTPOptionEnabled,
 				Rules: []v1alpha1.IngressRule{{
 					Hosts: []string{
 						"example.com",
@@ -217,7 +214,6 @@ func TestHostsPerVisibility(t *testing.T) {
 		name: "external rule",
 		ingress: &v1alpha1.Ingress{
 			Spec: v1alpha1.IngressSpec{
-				HTTPOption: v1alpha1.HTTPOptionEnabled,
 				Rules: []v1alpha1.IngressRule{{
 					Hosts: []string{
 						"example.com",
@@ -255,7 +251,6 @@ func TestHostsPerVisibility(t *testing.T) {
 		name: "internal rule",
 		ingress: &v1alpha1.Ingress{
 			Spec: v1alpha1.IngressSpec{
-				HTTPOption: v1alpha1.HTTPOptionEnabled,
 				Rules: []v1alpha1.IngressRule{{
 					Hosts: []string{
 						"foo.bar.svc.cluster.local",
