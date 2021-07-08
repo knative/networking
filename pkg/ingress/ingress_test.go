@@ -120,7 +120,7 @@ func TestInsertProbe(t *testing.T) {
 				}},
 			},
 		},
-		want: "f27ea4155f65534151b83acde999925574729be5a3681b70b13c016e55f37620",
+		want: "a25000a350642c8abef53078b329bd043e18758f6063c1172d53b04e14fcf5c1",
 	}, {
 		name: "with rules, with append header",
 		ingress: &v1alpha1.Ingress{
@@ -144,7 +144,7 @@ func TestInsertProbe(t *testing.T) {
 				}},
 			},
 		},
-		want: "adfb4309e020f706ff9ba8f9f035a41e49fecfa061f7230623675c9482a21369",
+		want: "6b652c7abed871354affd4a9cb699d33816f24541fac942149b91ad872fe63ca",
 	}, {
 		name: "rule missing HTTP block",
 		ingress: &v1alpha1.Ingress{
