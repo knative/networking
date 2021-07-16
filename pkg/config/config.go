@@ -26,7 +26,6 @@ import (
 	"text/template"
 
 	lru "github.com/hashicorp/golang-lru"
-	corev1 "k8s.io/api/core/v1"
 	cm "knative.dev/pkg/configmap"
 )
 
@@ -188,11 +187,6 @@ var (
 
 func init() {
 	templateCache, _ = lru.New(10 * 2)
-}
-
-// NewConfigFromConfigMap creates a Config from the supplied ConfigMap
-func NewFromConfigMap(configMap *corev1.ConfigMap) (*Config, error) {
-	return NewFromMap(configMap.Data)
 }
 
 // NewConfigFromMap creates a Config from the supplied data.

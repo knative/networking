@@ -23,9 +23,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	lru "github.com/hashicorp/golang-lru"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"knative.dev/pkg/system"
 
 	. "knative.dev/pkg/configmap/testing"
 	_ "knative.dev/pkg/system/testing"
@@ -44,10 +41,10 @@ func TestDefaultTemplateCompile(t *testing.T) {
 func TestOurConfig(t *testing.T) {
 	cm, example := ConfigMapsFromTestFile(t, ConfigName)
 
-	if _, err := NewFromConfigMap(cm); err != nil {
+	if _, err := NewFromMap(cm.Data); err != nil {
 		t.Error("NewConfigFromConfigMap(actual) =", err)
 	}
-	if got, err := NewFromConfigMap(example); err != nil {
+	if got, err := NewFromMap(example.Data); err != nil {
 		t.Error("NewConfigFromConfigMap(example) =", err)
 	} else if want := defaultConfig(); !cmp.Equal(got, want) {
 		t.Errorf("ExampleConfig does not match default config: (-want,+got):\n%s", cmp.Diff(want, got))
@@ -255,14 +252,7 @@ func TestConfiguration(t *testing.T) {
 
 	for _, tt := range networkConfigTests {
 		t.Run(tt.name, func(t *testing.T) {
-			config := &corev1.ConfigMap{
-				ObjectMeta: metav1.ObjectMeta{
-					Namespace: system.Namespace(),
-					Name:      ConfigName,
-				},
-				Data: tt.data,
-			}
-			actualConfigCM, err := NewFromConfigMap(config)
+			actualConfigCM, err := NewFromMap(tt.data)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
@@ -335,21 +325,15 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 		name               string
 		wantErr            bool
 		wantDomainTemplate string
-		config             *corev1.ConfigMap
+		config             map[string]string
 		data               DomainTemplateValues
 	}{{
 		name:               "network configuration with annotations in template",
 		wantErr:            false,
 		wantDomainTemplate: "foo.sub1.baz.com",
-		config: &corev1.ConfigMap{
-			ObjectMeta: metav1.ObjectMeta{
-				Namespace: system.Namespace(),
-				Name:      ConfigName,
-			},
-			Data: map[string]string{
-				DefaultIngressClassKey: "foo-ingress",
-				DomainTemplateKey:      `{{.Name}}.{{ index .Annotations "sub"}}.{{.Domain}}`,
-			},
+		config: map[string]string{
+			DefaultIngressClassKey: "foo-ingress",
+			DomainTemplateKey:      `{{.Name}}.{{ index .Annotations "sub"}}.{{.Domain}}`,
 		},
 		data: DomainTemplateValues{
 			Name:      "foo",
@@ -361,15 +345,9 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 		name:               "network configuration without annotations in template",
 		wantErr:            false,
 		wantDomainTemplate: "foo.bar.baz.com",
-		config: &corev1.ConfigMap{
-			ObjectMeta: metav1.ObjectMeta{
-				Namespace: system.Namespace(),
-				Name:      ConfigName,
-			},
-			Data: map[string]string{
-				DefaultIngressClassKey: "foo-ingress",
-				DomainTemplateKey:      `{{.Name}}.{{.Namespace}}.{{.Domain}}`,
-			},
+		config: map[string]string{
+			DefaultIngressClassKey: "foo-ingress",
+			DomainTemplateKey:      `{{.Name}}.{{.Namespace}}.{{.Domain}}`,
 		},
 		data: DomainTemplateValues{
 			Name:      "foo",
@@ -379,13 +357,13 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 
 	for _, tt := range networkConfigTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualConfigCM, err := NewFromConfigMap(tt.config)
+			actualConfigCM, err := NewFromMap(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
 			}
 
-			actualConfig, err := NewFromMap(tt.config.Data)
+			actualConfig, err := NewFromMap(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
@@ -444,9 +422,7 @@ func TestLabelsInDomainTemplate(t *testing.T) {
 
 	for _, tt := range networkConfigTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualConfig, err := NewFromConfigMap(&corev1.ConfigMap{
-				Data: tt.data,
-			})
+			actualConfig, err := NewFromMap(tt.data)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromConfigMap() error = %v, WantErr? %v", err, tt.wantErr)
 			}

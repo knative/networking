@@ -16,7 +16,10 @@ limitations under the License.
 
 package pkg
 
-import "knative.dev/networking/pkg/config"
+import (
+	"knative.dev/networking/pkg/config"
+	"knative.dev/networking/pkg/config/configmap"
+)
 
 type (
 	// DomainTemplateValues are the available properties people can choose from
@@ -45,7 +48,7 @@ type (
 var (
 	// NewConfigFromConfigMap creates a Config from the supplied ConfigMap
 	// Deprecated: use config.NewFromConfigMap
-	NewConfigFromConfigMap = config.NewFromConfigMap
+	NewConfigFromConfigMap = configmap.NewFromConfigMap
 
 	// NewConfigFromMap creates a Config from the supplied data.
 	// Deprecated: use config.NewFromMap
