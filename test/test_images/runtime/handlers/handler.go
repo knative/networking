@@ -23,15 +23,17 @@ import (
 	"net/http/httputil"
 	"strings"
 
-	network "knative.dev/networking/pkg"
+	"knative.dev/networking/pkg/header"
+	proberhandler "knative.dev/networking/pkg/prober/handler"
+	"knative.dev/pkg/network"
 )
 
 // InitHandlers initializes all handlers.
 func InitHandlers(mux *http.ServeMux) {
 	mux.HandleFunc("/", withHeaders(withRequestLog(runtimeHandler)))
 
-	h := network.NewProbeHandler(withRequestLog(withKubeletProbeHeaderCheck))
-	mux.HandleFunc(network.ProbePath, h.ServeHTTP)
+	h := proberhandler.New(withRequestLog(withKubeletProbeHeaderCheck))
+	mux.HandleFunc(header.ProbePath, h.ServeHTTP)
 }
 
 // withRequestLog logs each request before handling it.

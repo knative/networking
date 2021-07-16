@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package pkg
+package handler
 
 import (
 	"context"
@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"testing"
 
+	"knative.dev/networking/pkg/header"
 	"knative.dev/networking/pkg/prober"
 	"knative.dev/pkg/network"
 	_ "knative.dev/pkg/system/testing"
@@ -38,50 +39,50 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 	}{{
 		name: "successful probe when both headers are specified",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
-			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
+			prober.WithHeader(header.ProbeKey, header.ProbeValue),
+			prober.WithHeader(header.HashKey, "foo-bar-baz"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		want: true,
 	}, {
 		name: "forwards to inner handler when probe header is not specified",
 		options: []interface{}{
-			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
+			prober.WithHeader(header.HashKey, "foo-bar-baz"),
 			prober.ExpectsBody(body),
 			// Validates the header is stripped before forwarding to the inner handler
-			prober.ExpectsHeader(HashHeaderName, "false"),
+			prober.ExpectsHeader(header.HashKey, "false"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		want: true,
 	}, {
 		name: "forwards to inner handler when probe header is not 'probe'",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, "queue"),
-			prober.WithHeader(HashHeaderName, "foo-bar-baz"),
+			prober.WithHeader(header.ProbeKey, "queue"),
+			prober.WithHeader(header.HashKey, "foo-bar-baz"),
 			prober.ExpectsBody(body),
-			prober.ExpectsHeader(ProbeHeaderName, "true"),
+			prober.ExpectsHeader(header.ProbeKey, "true"),
 			// Validates the header is stripped before forwarding to the inner handler
-			prober.ExpectsHeader(HashHeaderName, "false"),
+			prober.ExpectsHeader(header.HashKey, "false"),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		want: true,
 	}, {
 		name: "failed probe when hash header is not present",
 		options: []interface{}{
-			prober.WithHeader(ProbeHeaderName, ProbeHeaderValue),
+			prober.WithHeader(header.ProbeKey, header.ProbeValue),
 			prober.ExpectsStatusCodes([]int{http.StatusOK}),
 		},
 		expErr: true,
 	}}
 
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Header[ProbeHeaderName]
-		w.Header().Set(ProbeHeaderName, strconv.FormatBool(ok))
-		_, ok = r.Header[HashHeaderName]
-		w.Header().Set(HashHeaderName, strconv.FormatBool(ok))
+		_, ok := r.Header[header.ProbeKey]
+		w.Header().Set(header.ProbeKey, strconv.FormatBool(ok))
+		_, ok = r.Header[header.HashKey]
+		w.Header().Set(header.HashKey, strconv.FormatBool(ok))
 		w.Write([]byte(body))
 	})
-	h = NewProbeHandler(h)
+	h = New(h)
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
@@ -103,7 +104,7 @@ func TestProbeHandlerSuccessfulProbe(t *testing.T) {
 
 func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewProbeHandler(h)
+	h = New(h)
 	resp := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
 
@@ -124,10 +125,10 @@ func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
 
 func BenchmarkProbeHandlerWithProbeHeader(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
-	req.Header.Set(ProbeHeaderName, ProbeHeaderValue)
-	req.Header.Set(HashHeaderName, "ok")
+	req.Header.Set(header.ProbeKey, header.ProbeValue)
+	req.Header.Set(header.HashKey, "ok")
 	var h http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
-	h = NewProbeHandler(h)
+	h = New(h)
 	b.Run("sequential-probe-header", func(b *testing.B) {
 		resp := httptest.NewRecorder()
 		for j := 0; j < b.N; j++ {

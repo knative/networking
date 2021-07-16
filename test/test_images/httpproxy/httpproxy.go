@@ -27,7 +27,7 @@ import (
 	"net/url"
 
 	"github.com/rs/dnscache"
-	network "knative.dev/networking/pkg"
+	proberhandler "knative.dev/networking/pkg/prober/handler"
 	"knative.dev/networking/test"
 )
 
@@ -132,6 +132,6 @@ func main() {
 	address := ":" + port
 	log.Print("Listening on address: ", address)
 	// Handle forwarding requests which uses "K-Network-Hash" header.
-	probeHandler := network.NewProbeHandler(http.HandlerFunc(handler)).ServeHTTP
+	probeHandler := proberhandler.New(http.HandlerFunc(handler)).ServeHTTP
 	test.ListenAndServeGracefully(address, probeHandler)
 }

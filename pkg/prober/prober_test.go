@@ -26,7 +26,7 @@ import (
 	"time"
 
 	"k8s.io/apimachinery/pkg/util/wait"
-	"knative.dev/networking/pkg"
+	"knative.dev/networking/pkg/header"
 	"knative.dev/pkg/network"
 )
 
@@ -38,7 +38,7 @@ const (
 )
 
 func probeServeFunc(w http.ResponseWriter, r *http.Request) {
-	s := r.Header.Get(pkg.ProbeHeaderName)
+	s := r.Header.Get(header.ProbeKey)
 	switch s {
 	case "":
 		// No header.
@@ -79,7 +79,7 @@ func TestDoServing(t *testing.T) {
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			got, err := Do(context.Background(), network.NewProberTransport(), ts.URL, WithHeader(pkg.ProbeHeaderName, test.headerValue), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
+			got, err := Do(context.Background(), network.NewProberTransport(), ts.URL, WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
 			if want := test.want; got != want {
 				t.Errorf("Got = %v, want: %v", got, want)
 			}
@@ -167,7 +167,7 @@ func TestDoAsync(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			m := New(test.cb, network.NewProberTransport())
-			m.Offer(context.Background(), ts.URL, test.name, probeInterval, probeTimeout, WithHeader(pkg.ProbeHeaderName, test.headerValue), ExpectsBody(test.headerValue), ExpectsStatusCodes([]int{http.StatusOK}))
+			m.Offer(context.Background(), ts.URL, test.name, probeInterval, probeTimeout, WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(test.headerValue), ExpectsStatusCodes([]int{http.StatusOK}))
 			<-wch
 		})
 	}
@@ -204,7 +204,7 @@ func TestDoAsyncRepeat(t *testing.T) {
 		wch <- arg
 	}
 	m := New(cb, network.NewProberTransport())
-	m.Offer(context.Background(), ts.URL, 42, probeInterval, probeTimeout, WithHeader(pkg.ProbeHeaderName, systemName), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
+	m.Offer(context.Background(), ts.URL, 42, probeInterval, probeTimeout, WithHeader(header.ProbeKey, systemName), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
 	<-wch
 	if got, want := c.calls, 3; got != want {
 		t.Errorf("Probe invocation count = %d, want: %d", got, want)

@@ -1,11 +1,11 @@
 /*
-Copyright 2018 The Knative Authors.
+Copyright 2021 The Knative Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,16 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-package pkg
+package config
 
 import (
 	"bytes"
-	"errors"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"reflect"
 	"testing"
 	"text/template"
 
@@ -31,19 +25,29 @@ import (
 	lru "github.com/hashicorp/golang-lru"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"knative.dev/pkg/system"
 
 	. "knative.dev/pkg/configmap/testing"
-	"knative.dev/pkg/system"
 	_ "knative.dev/pkg/system/testing"
 )
+
+func TestDefaultTemplateCompile(t *testing.T) {
+	// Verify the default templates are valid.
+	if _, err := template.New("domain-template").Parse(DefaultDomainTemplate); err != nil {
+		t.Error("DefaultDomainTemplate did not compile: ", err)
+	}
+	if _, err := template.New("tag-template").Parse(DefaultTagTemplate); err != nil {
+		t.Error("DefaultTagTemplate did not compile: ", err)
+	}
+}
 
 func TestOurConfig(t *testing.T) {
 	cm, example := ConfigMapsFromTestFile(t, ConfigName)
 
-	if _, err := NewConfigFromConfigMap(cm); err != nil {
+	if _, err := NewFromConfigMap(cm); err != nil {
 		t.Error("NewConfigFromConfigMap(actual) =", err)
 	}
-	if got, err := NewConfigFromConfigMap(example); err != nil {
+	if got, err := NewFromConfigMap(example); err != nil {
 		t.Error("NewConfigFromConfigMap(example) =", err)
 	} else if want := defaultConfig(); !cmp.Equal(got, want) {
 		t.Errorf("ExampleConfig does not match default config: (-want,+got):\n%s", cmp.Diff(want, got))
@@ -258,13 +262,13 @@ func TestConfiguration(t *testing.T) {
 				},
 				Data: tt.data,
 			}
-			actualConfigCM, err := NewConfigFromConfigMap(config)
+			actualConfigCM, err := NewFromConfigMap(config)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
 			}
 
-			actualConfig, err := NewConfigFromMap(tt.data)
+			actualConfig, err := NewFromMap(tt.data)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
@@ -299,7 +303,7 @@ func TestTemplateCaching(t *testing.T) {
 	templateCache, _ = lru.New(10)
 
 	const anotherTemplate = "{{.Namespace}}.{{.Name}}.{{.Domain}}.sad"
-	actualConfig, err := NewConfigFromMap(map[string]string{
+	actualConfig, err := NewFromMap(map[string]string{
 		DomainTemplateKey: anotherTemplate,
 	})
 	if err != nil {
@@ -313,7 +317,7 @@ func TestTemplateCaching(t *testing.T) {
 	}
 
 	// Reset to default. And make sure it is cached.
-	actualConfig, err = NewConfigFromMap(map[string]string{})
+	actualConfig, err = NewFromMap(map[string]string{})
 	if err != nil {
 		t.Fatal("Config parsing failure =", err)
 	}
@@ -375,13 +379,13 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 
 	for _, tt := range networkConfigTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualConfigCM, err := NewConfigFromConfigMap(tt.config)
+			actualConfigCM, err := NewFromConfigMap(tt.config)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
 			}
 
-			actualConfig, err := NewConfigFromMap(tt.config.Data)
+			actualConfig, err := NewFromMap(tt.config.Data)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("NewConfigFromMap() error = %v, WantErr %v",
 					err, tt.wantErr)
@@ -440,7 +444,7 @@ func TestLabelsInDomainTemplate(t *testing.T) {
 
 	for _, tt := range networkConfigTests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualConfig, err := NewConfigFromConfigMap(&corev1.ConfigMap{
+			actualConfig, err := NewFromConfigMap(&corev1.ConfigMap{
 				Data: tt.data,
 			})
 			if (err != nil) != tt.wantErr {
@@ -465,252 +469,4 @@ func mustExecute(t *testing.T, tmpl *template.Template, data interface{}) string
 		t.Error("Error executing the DomainTemplate:", err)
 	}
 	return buf.String()
-}
-
-func TestIsKubeletProbe(t *testing.T) {
-	req, err := http.NewRequest(http.MethodGet, "http://example.com/", nil)
-	if err != nil {
-		t.Fatal("Error building request:", err)
-	}
-	if IsKubeletProbe(req) {
-		t.Error("Not a kubelet probe but counted as such")
-	}
-	req.Header.Set("User-Agent", KubeProbeUAPrefix+"1.14")
-	if !IsKubeletProbe(req) {
-		t.Error("kubelet probe but not counted as such")
-	}
-	req.Header.Del("User-Agent")
-	if IsKubeletProbe(req) {
-		t.Error("Not a kubelet probe but counted as such")
-	}
-	req.Header.Set(KubeletProbeHeaderName, "no matter")
-	if !IsKubeletProbe(req) {
-		t.Error("kubelet probe but not counted as such")
-	}
-}
-
-func TestKnativeProbeHeader(t *testing.T) {
-	req, err := http.NewRequest(http.MethodGet, "http://example.com/", nil)
-	if err != nil {
-		t.Fatal("Error building request:", err)
-	}
-	if h := KnativeProbeHeader(req); h != "" {
-		t.Errorf("KnativeProbeHeader(req)=%v, want empty string", h)
-	}
-	const want = "activator"
-	req.Header.Set(ProbeHeaderName, want)
-	if h := KnativeProbeHeader(req); h != want {
-		t.Errorf("KnativeProbeHeader(req)=%v, want %v", h, want)
-	}
-	req.Header.Set(ProbeHeaderName, "")
-	if h := KnativeProbeHeader(req); h != "" {
-		t.Errorf("KnativeProbeHeader(req)=%v, want empty string", h)
-	}
-}
-
-func TestKnativeProxyHeader(t *testing.T) {
-	req, err := http.NewRequest(http.MethodGet, "http://example.com/", nil)
-	if err != nil {
-		t.Fatal("Error building request:", err)
-	}
-	if h := KnativeProxyHeader(req); h != "" {
-		t.Errorf("KnativeProxyHeader(req)=%v, want empty string", h)
-	}
-	const want = "activator"
-	req.Header.Set(ProxyHeaderName, want)
-	if h := KnativeProxyHeader(req); h != want {
-		t.Errorf("KnativeProxyHeader(req)=%v, want %v", h, want)
-	}
-	req.Header.Set(ProxyHeaderName, "")
-	if h := KnativeProxyHeader(req); h != "" {
-		t.Errorf("KnativeProxyHeader(req)=%v, want empty string", h)
-	}
-}
-
-func TestIsProbe(t *testing.T) {
-	// Not a probe
-	req, err := http.NewRequest(http.MethodGet, "http://example.com/", nil)
-	if err != nil {
-		t.Fatal("Error building request:", err)
-	}
-	if IsProbe(req) {
-		t.Error("Not a probe but counted as such")
-	}
-	// Kubelet probe
-	req.Header.Set("User-Agent", KubeProbeUAPrefix+"1.14")
-	if !IsProbe(req) {
-		t.Error("Kubelet probe but not counted as such")
-	}
-	// Knative probe
-	req.Header.Del("User-Agent")
-	req.Header.Set(ProbeHeaderName, "activator")
-	if !IsProbe(req) {
-		t.Error("Knative probe but not counted as such")
-	}
-}
-
-func TestRewriteHost(t *testing.T) {
-	r := httptest.NewRequest(http.MethodGet, "http://love.is/not-hate", nil)
-	r.Header.Set("Host", "love.is")
-
-	RewriteHostIn(r)
-
-	if got, want := r.Host, ""; got != want {
-		t.Errorf("r.Host = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get("Host"), ""; got != want {
-		t.Errorf("r.Header['Host'] = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get(OriginalHostHeader), "love.is"; got != want {
-		t.Errorf("r.Header[%s] = %q, want: %q", OriginalHostHeader, got, want)
-	}
-
-	// Do it again, but make sure that the ORIGINAL domain is still preserved.
-	r.Header.Set("Host", "hate.is")
-	RewriteHostIn(r)
-
-	if got, want := r.Host, ""; got != want {
-		t.Errorf("r.Host = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get("Host"), ""; got != want {
-		t.Errorf("r.Header['Host'] = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get(OriginalHostHeader), "love.is"; got != want {
-		t.Errorf("r.Header[%s] = %q, want: %q", OriginalHostHeader, got, want)
-	}
-
-	RewriteHostOut(r)
-	if got, want := r.Host, "love.is"; got != want {
-		t.Errorf("r.Host = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get("Host"), ""; got != want {
-		t.Errorf("r.Header['Host'] = %q, want: %q", got, want)
-	}
-
-	if got, want := r.Header.Get(OriginalHostHeader), ""; got != want {
-		t.Errorf("r.Header[%s] = %q, want: %q", OriginalHostHeader, got, want)
-	}
-}
-
-func TestNameForPortNumber(t *testing.T) {
-	for _, tc := range []struct {
-		name       string
-		svc        *corev1.Service
-		portNumber int32
-		portName   string
-		err        error
-	}{{
-		name: "HTTP to 80",
-		svc: &corev1.Service{
-			Spec: corev1.ServiceSpec{
-				Ports: []corev1.ServicePort{{
-					Port: 80,
-					Name: "http",
-				}, {
-					Port: 443,
-					Name: "https",
-				}},
-			},
-		},
-		portName:   "http",
-		portNumber: 80,
-	}, {
-		name: "no port",
-		svc: &corev1.Service{
-			Spec: corev1.ServiceSpec{
-				Ports: []corev1.ServicePort{{
-					Port: 443,
-					Name: "https",
-				}},
-			},
-		},
-		portNumber: 80,
-		err:        errors.New("no port with number 80 found"),
-	}} {
-		t.Run(tc.name, func(t *testing.T) {
-			portName, err := NameForPortNumber(tc.svc, tc.portNumber)
-			if !reflect.DeepEqual(err, tc.err) { // cmp Doesn't work well here due to private fields.
-				t.Errorf("Err = %v, want: %v", err, tc.err)
-			}
-			if tc.err == nil && portName != tc.portName {
-				t.Errorf("PortName = %s, want: %s", portName, tc.portName)
-			}
-		})
-	}
-}
-
-func TestPortNumberForName(t *testing.T) {
-	for _, tc := range []struct {
-		name       string
-		subset     corev1.EndpointSubset
-		portNumber int32
-		portName   string
-		err        error
-	}{{
-		name: "HTTP to 80",
-		subset: corev1.EndpointSubset{
-			Ports: []corev1.EndpointPort{{
-				Port: 8080,
-				Name: "http",
-			}, {
-				Port: 8443,
-				Name: "https",
-			}},
-		},
-		portName:   "http",
-		portNumber: 8080,
-	}, {
-		name: "no port",
-		subset: corev1.EndpointSubset{
-			Ports: []corev1.EndpointPort{{
-				Port: 8443,
-				Name: "https",
-			}},
-		},
-		portName: "http",
-		err:      errors.New(`no port for name "http" found`),
-	}} {
-		t.Run(tc.name, func(t *testing.T) {
-			portNumber, err := PortNumberForName(tc.subset, tc.portName)
-			if !reflect.DeepEqual(err, tc.err) { // cmp Doesn't work well here due to private fields.
-				t.Errorf("Err = %v, want: %v", err, tc.err)
-			}
-			if tc.err == nil && portNumber != tc.portNumber {
-				t.Errorf("PortNumber = %d, want: %d", portNumber, tc.portNumber)
-			}
-		})
-	}
-}
-
-func TestIsPotentialMeshErrorResponse(t *testing.T) {
-	for _, test := range []struct {
-		statusCode int
-		expect     bool
-	}{{
-		statusCode: 404,
-		expect:     false,
-	}, {
-		statusCode: 200,
-		expect:     false,
-	}, {
-		statusCode: 502,
-		expect:     false,
-	}, {
-		statusCode: 503,
-		expect:     true,
-	}} {
-		t.Run(fmt.Sprintf("statusCode=%d", test.statusCode), func(t *testing.T) {
-			resp := &http.Response{
-				StatusCode: test.statusCode,
-			}
-			if got := IsPotentialMeshErrorResponse(resp); got != test.expect {
-				t.Errorf("IsPotentialMeshErrorResponse({StatusCode: %d}) = %v, expected %v", resp.StatusCode, got, test.expect)
-			}
-		})
-	}
 }

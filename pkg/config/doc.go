@@ -14,29 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
-
-import (
-	"fmt"
-	"net/http"
-	"os"
-
-	proberhandler "knative.dev/networking/pkg/prober/handler"
-	"knative.dev/networking/test"
-)
-
-var retries = 0
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	if retries == 0 {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	}
-
-	fmt.Fprintf(w, "Retry %d", retries)
-	retries++
-}
-
-func main() {
-	h := proberhandler.New(http.HandlerFunc(handler))
-	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
-}
+// +k8s:deepcopy-gen=package
+// Package network holds the typed objects that define the schemas for
+// configuring the knative/serving networking layer.
+package config

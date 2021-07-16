@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,30 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+package label
 
-package main
-
-import (
-	"fmt"
-	"net/http"
-	"os"
-
-	proberhandler "knative.dev/networking/pkg/prober/handler"
-	"knative.dev/networking/test"
+const (
+	// VisibilityLabelKey is the label to indicate visibility of Route
+	// and KServices.  It can be an annotation too but since users are
+	// already using labels for domain, it probably best to keep this
+	// consistent.
+	VisibilityKey = "networking.knative.dev/visibility"
 )
-
-var retries = 0
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	if retries == 0 {
-		w.WriteHeader(http.StatusServiceUnavailable)
-	}
-
-	fmt.Fprintf(w, "Retry %d", retries)
-	retries++
-}
-
-func main() {
-	h := proberhandler.New(http.HandlerFunc(handler))
-	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
-}

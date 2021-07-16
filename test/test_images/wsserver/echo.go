@@ -22,7 +22,8 @@ import (
 	"os"
 
 	"github.com/gorilla/websocket"
-	network "knative.dev/networking/pkg"
+	"knative.dev/networking/pkg/header"
+	proberhandler "knative.dev/networking/pkg/prober/handler"
 	"knative.dev/networking/test"
 )
 
@@ -45,7 +46,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if network.IsKubeletProbe(r) {
+	if header.IsKubeletProbe(r) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -85,6 +86,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
-	h := network.NewProbeHandler(http.HandlerFunc(handler))
+	h := proberhandler.New(http.HandlerFunc(handler))
 	test.ListenAndServeGracefully(":"+os.Getenv("PORT"), h.ServeHTTP)
 }
