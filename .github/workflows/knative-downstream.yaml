@@ -41,6 +41,10 @@ jobs:
         go-version: ${{ matrix.go-version }}
       id: go
 
+    - name: Install Dependencies
+      run: |
+        go get github.com/google/go-licenses
+
     - name: Checkout Upstream
       uses: actions/checkout@v2
       with:
@@ -78,6 +82,10 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
       id: go
+
+    - name: Install Dependencies
+      run: |
+        go get github.com/google/go-licenses
 
     - name: Checkout Upstream
       uses: actions/checkout@v2
