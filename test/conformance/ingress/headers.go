@@ -64,14 +64,6 @@ func TestProbeHeaders(t *testing.T) {
 		t.Error("Failed to compute hash:", err)
 	}
 
-	// create a hash from a different Ingress.
-	another := ing.DeepCopy()
-	another.Spec.Rules[0].Visibility = v1alpha1.IngressVisibilityClusterLocal
-	wrong, _ := ingress.ComputeHash(another)
-	if err != nil {
-		t.Error("Failed to compute hash:", err)
-	}
-
 	tests := []struct {
 		name string
 		req  string
@@ -81,13 +73,9 @@ func TestProbeHeaders(t *testing.T) {
 		req:  network.HashHeaderValue,
 		want: fmt.Sprintf("%x", bytes),
 	}, {
-		name: "request unexpected hash",
-		req:  fmt.Sprintf("%x", wrong),
-		want: fmt.Sprintf("%x", bytes),
-	}, {
-		name: "request corresponding hash",
-		req:  fmt.Sprintf("%x", bytes),
-		want: fmt.Sprintf("%x", bytes),
+		name: "request overrides hash",
+		req:  "2701a1b241db6af811992c57a5e11171847148ac3d2e1a8cc992a62f9e4fa111", // random hash to override.
+		want: "2701a1b241db6af811992c57a5e11171847148ac3d2e1a8cc992a62f9e4fa111",
 	}}
 
 	for _, tt := range tests {
