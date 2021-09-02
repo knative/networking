@@ -698,8 +698,11 @@ func TestIsPotentialMeshErrorResponse(t *testing.T) {
 		statusCode: 200,
 		expect:     false,
 	}, {
-		statusCode: 502,
+		statusCode: 501,
 		expect:     false,
+	}, {
+		statusCode: 502,
+		expect:     true,
 	}, {
 		statusCode: 503,
 		expect:     true,
