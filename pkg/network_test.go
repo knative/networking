@@ -238,6 +238,26 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with enabled mesh compatibility mode",
+		data: map[string]string{
+			MeshCompatibilityModeKey: "enabled",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.MeshCompatibilityMode = MeshCompatibilityModeEnabled
+			return c
+		}(),
+	}, {
+		name: "network configuration with disabled mesh compatibility mode",
+		data: map[string]string{
+			MeshCompatibilityModeKey: "disabled",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.MeshCompatibilityMode = MeshCompatibilityModeDisabled
+			return c
+		}(),
+	}, {
 		name: "network configuration with overridden external and internal scheme",
 		data: map[string]string{
 			DefaultExternalSchemeKey: "https",
