@@ -278,9 +278,9 @@ func TestConfiguration(t *testing.T) {
 			"rolloutDuration":       "5",
 			"defaultExternalScheme": "6",
 
-			"autocreateDomainClaims": "true",
-			"httpProtocol":           "redirected",
-			"autoTLS":                "enabled",
+			"autocreateClusterDomainClaims": "true",
+			"httpProtocol":                  "redirected",
+			"autoTLS":                       "enabled",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "1",
@@ -307,9 +307,9 @@ func TestConfiguration(t *testing.T) {
 			"rolloutDuration":       "5",
 			"defaultExternalScheme": "6",
 
-			"autocreateDomainClaims": "true",
-			"httpProtocol":           "redirected",
-			"autoTLS":                "enabled",
+			"autocreateClusterDomainClaims": "true",
+			"httpProtocol":                  "redirected",
+			"autoTLS":                       "enabled",
 
 			DefaultIngressClassKey:     "7",
 			DefaultCertificateClassKey: "8",

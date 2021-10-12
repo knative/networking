@@ -341,7 +341,7 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsString("domainTemplate", &nc.DomainTemplate),
 		cm.AsString("tagTemplate", &nc.TagTemplate),
 		cm.AsInt("rolloutDuration", &nc.RolloutDurationSecs),
-		cm.AsBool("autocreateDomainClaims", &nc.AutocreateClusterDomainClaims),
+		cm.AsBool("autocreateClusterDomainClaims", &nc.AutocreateClusterDomainClaims),
 		cm.AsString("defaultExternalScheme", &nc.DefaultExternalScheme),
 
 		// New key takes precedence.
