@@ -32,8 +32,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	. "knative.dev/pkg/configmap/testing"
 	"knative.dev/pkg/system"
+
+	. "knative.dev/pkg/configmap/testing"
 	_ "knative.dev/pkg/system/testing"
 )
 
@@ -267,6 +268,75 @@ func TestConfiguration(t *testing.T) {
 			c.DefaultExternalScheme = "https"
 			return c
 		}(),
+	}, {
+		name: "legacy keys",
+		data: map[string]string{
+			"ingress.class":         "1",
+			"certificate.class":     "2",
+			"domainTemplate":        "3",
+			"tagTemplate":           "4",
+			"rolloutDuration":       "5",
+			"defaultExternalScheme": "6",
+
+			"autocreateClusterDomainClaims": "true",
+			"httpProtocol":                  "redirected",
+			"autoTLS":                       "enabled",
+		},
+		wantConfig: &Config{
+			DefaultIngressClass:     "1",
+			DefaultCertificateClass: "2",
+			DomainTemplate:          "3",
+			TagTemplate:             "4",
+			RolloutDurationSecs:     5,
+			DefaultExternalScheme:   "6",
+
+			AutocreateClusterDomainClaims: true,
+			HTTPProtocol:                  HTTPRedirected,
+			AutoTLS:                       true,
+
+			// This is defaulted
+			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+		},
+	}, {
+		name: "newer keys take precedence over legacy keys",
+		data: map[string]string{
+			"ingress.class":         "1",
+			"certificate.class":     "2",
+			"domainTemplate":        "3",
+			"tagTemplate":           "4",
+			"rolloutDuration":       "5",
+			"defaultExternalScheme": "6",
+
+			"autocreateClusterDomainClaims": "true",
+			"httpProtocol":                  "redirected",
+			"autoTLS":                       "enabled",
+
+			DefaultIngressClassKey:     "7",
+			DefaultCertificateClassKey: "8",
+			DomainTemplateKey:          "9",
+			TagTemplateKey:             "10",
+			RolloutDurationKey:         "11",
+			DefaultExternalSchemeKey:   "12",
+
+			AutocreateClusterDomainClaimsKey: "false",
+			HTTPProtocolKey:                  "enabled",
+			AutoTLSKey:                       "disabled",
+		},
+		wantConfig: &Config{
+			DefaultIngressClass:     "7",
+			DefaultCertificateClass: "8",
+			DomainTemplate:          "9",
+			TagTemplate:             "10",
+			RolloutDurationSecs:     11,
+			DefaultExternalScheme:   "12",
+
+			AutocreateClusterDomainClaims: false,
+			HTTPProtocol:                  HTTPEnabled,
+			AutoTLS:                       false,
+
+			// This is defaulted
+			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+		},
 	}}
 
 	for _, tt := range networkConfigTests {
@@ -308,7 +378,7 @@ func TestConfiguration(t *testing.T) {
 			}
 
 			if diff := cmp.Diff(actualConfig, tt.wantConfig, ignoreDT); diff != "" {
-				t.Fatalf("want %v, but got %v", tt.wantConfig, actualConfig)
+				t.Fatalf("diff (-want,+got) %v", diff)
 			}
 		})
 	}
