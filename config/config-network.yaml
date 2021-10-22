@@ -20,7 +20,7 @@ metadata:
   labels:
     serving.knative.dev/release: devel
   annotations:
-    knative.dev/example-checksum: "ea755eea"
+    knative.dev/example-checksum: "12e89f3f"
 data:
   _example: |
     ################################
@@ -59,6 +59,22 @@ data:
     # update this value during the setup of Knative, to avoid getting
     # undefined behavior.
     certificate-class: "cert-manager.certificate.networking.knative.dev"
+
+    # namespace-wildcard-cert-selector specifies a LabelSelector which
+    # determines which namespaces should have a wildcard certificate
+    # provisioned. An empty value selects no namespaces; an empty object
+    # selects all namespaces. Useful labels include the
+    # "kubernetes.io/metadata.name" label to avoid provisioning a
+    # certifcate for the "kube-system" namespaces.
+    #
+    # Use the following selector to match pre-1.0 behavior of using
+    # "networking.knative.dev/disableWildcardCert" to exclude namespaces:
+    #
+    # matchExpressions:
+    # - key: "networking.knative.dev/disableWildcardCert"
+    #   operator: "NotIn"
+    #   values: ["true"]
+    namespace-wildcard-cert-selector: ""
 
     # domain-template specifies the golang text template string to use
     # when constructing the Knative service's DNS name. The default
