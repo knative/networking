@@ -126,11 +126,6 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name:       "network configuration with unset wildcard cert label selector",
-		data:       map[string]string{},
-		wantErr:    false,
-		wantConfig: defaultConfig(),
-	}, {
 		name: "network configuration with configured wildcard cert label selector",
 		data: map[string]string{
 			NamespaceWildcardCertSelectorKey: "matchExpressions:\n- key: networking.knative.dev/disableWildcardCert\n  operator: NotIn\n  values: [\"true\"]",
