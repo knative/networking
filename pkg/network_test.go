@@ -126,6 +126,23 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with configured wildcard cert label selector",
+		data: map[string]string{
+			NamespaceWildcardCertSelectorKey: "matchExpressions:\n- key: networking.knative.dev/disableWildcardCert\n  operator: NotIn\n  values: [\"true\"]",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.NamespaceWildcardCertSelector = &metav1.LabelSelector{
+				MatchExpressions: []metav1.LabelSelectorRequirement{{
+					Key:      "networking.knative.dev/disableWildcardCert",
+					Operator: metav1.LabelSelectorOpNotIn,
+					Values:   []string{"true"},
+				}},
+			}
+			return c
+		}(),
+	}, {
 		name: "network configuration with diff domain template",
 		data: map[string]string{
 			DefaultIngressClassKey: "foo-ingress",
