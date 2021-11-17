@@ -93,7 +93,7 @@ func GetCertificateClass(annotations map[string]string) (val string) {
 	return annotations[CertificateClassAnnotationKey]
 }
 
-func GetHTTPOption(annotations map[string]string) (val string) {
+func GetHTTPProtocol(annotations map[string]string) (val string) {
 	return annotations[HTTPOptionAnnotationKey]
 }
 
