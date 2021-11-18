@@ -41,17 +41,26 @@ func TestValidateObjectMetadata(t *testing.T) {
 	}, {
 		name: "valid disable auto TLS annotation key",
 		annotations: map[string]string{
-			DisableAutoTLSAnnotationKey: "true",
+			DisableAutoTLSAnnotationKey:    "true",
+			DisableAutoTLSAnnotationAltKey: "true",
 		},
 	}, {
 		name: "valid certificate class annotation key",
 		annotations: map[string]string{
-			CertificateClassAnnotationKey: "certificate-class",
+			CertificateClassAnnotationKey:    "certificate.class",
+			CertificateClassAnnotationAltKey: "certificate-class",
 		},
 	}, {
 		name: "valid http option annotation key",
 		annotations: map[string]string{
-			HTTPOptionAnnotationKey: "Redirected",
+			HTTPOptionAnnotationKey:   "Redirected",
+			HTTPProtocolAnnotationKey: "Redirected",
+		},
+	}, {
+		name: "valid ingress class annotation key",
+		annotations: map[string]string{
+			IngressClassAnnotationKey:    "ingress.class",
+			IngressClassAnnotationAltKey: "ingress-class",
 		},
 	}}
 
