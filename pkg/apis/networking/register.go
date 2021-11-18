@@ -59,7 +59,7 @@ const (
 	// CertificateClassAnnotationAltKey is an alternative casing to CertificateClassAnnotationKey
 	//
 	// This annotation is meant to be applied to Knative Services or Routes. Serving
-	// will translate this to original casing for better compatability with different
+	// will translate this to original casing for better compatibility with different
 	// certificate providers
 	CertificateClassAnnotationAltKey = PublicGroupName + "/certificate-class"
 
@@ -95,7 +95,7 @@ const (
 	// IngressClassAnnotationAltKey is an alternative casing to IngressClassAnnotationKey
 	//
 	// This annotation is meant to be applied to Knative Services or Routes. Serving
-	// will translate this to original casing for better compatability with different
+	// will translate this to original casing for better compatibility with different
 	// ingress providers
 	IngressClassAnnotationAltKey = PublicGroupName + "/ingress-class"
 
