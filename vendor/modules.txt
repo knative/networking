@@ -616,7 +616,7 @@ k8s.io/utils/trace
 # knative.dev/hack v0.0.0-20211117134436-69a2295d54ce
 ## explicit
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20211117215328-5708c4c44232
+# knative.dev/pkg v0.0.0-20211120133512-d016976f2567
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -637,6 +637,7 @@ knative.dev/pkg/hack
 knative.dev/pkg/hash
 knative.dev/pkg/injection
 knative.dev/pkg/injection/clients/dynamicclient
+knative.dev/pkg/kmap
 knative.dev/pkg/kmeta
 knative.dev/pkg/kmp
 knative.dev/pkg/leaderelection
