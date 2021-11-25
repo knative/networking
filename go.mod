@@ -19,6 +19,6 @@ require (
 	k8s.io/client-go v0.21.4
 	k8s.io/code-generator v0.21.4
 	knative.dev/hack v0.0.0-20211122162614-813559cefdda
-	knative.dev/pkg v0.0.0-20211123135150-787aec59e70a
+	knative.dev/pkg v0.0.0-20211125111016-6352c0c70c07
 	sigs.k8s.io/yaml v1.3.0
 )
