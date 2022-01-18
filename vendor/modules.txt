@@ -613,10 +613,10 @@ k8s.io/kube-openapi/pkg/validation/spec
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20220111151514-59b0cf17578e
+# knative.dev/hack v0.0.0-20220118141833-9b2ed8471e30
 ## explicit
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20220114141842-0a429cba1c73
+# knative.dev/pkg v0.0.0-20220118151132-768f44f3fce2
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
