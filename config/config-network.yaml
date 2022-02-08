@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/version: devel
     serving.knative.dev/release: devel
   annotations:
-    knative.dev/example-checksum: "70491d06"
+    knative.dev/example-checksum: "ddc3250f"
 data:
   _example: |
     ################################
@@ -187,4 +187,4 @@ data:
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
-    activator-name: ""
+    activator-san: ""

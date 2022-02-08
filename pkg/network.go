@@ -194,8 +194,8 @@ const (
 	// to sign the activator TLS certificate.
 	ActivatorCAKey = "activator-ca"
 
-	// ActivatorNameKey is the config for the SAN used to validate the activator TLS certificate.
-	ActivatorNameKey = "activator-name"
+	// ActivatorSANKey is the config for the SAN used to validate the activator TLS certificate.
+	ActivatorSANKey = "activator-san"
 )
 
 // DomainTemplateValues are the available properties people can choose from
@@ -299,9 +299,9 @@ type Config struct {
 	// The traffic is not encrypted if ActivatorCA is empty.
 	ActivatorCA string
 
-	// ActivatorName defines the SAN (Subject Alt Name) used to validate the activator TLS certificate.
+	// ActivatorSAN defines the SAN (Subject Alt Name) used to validate the activator TLS certificate.
 	// It is used only when ActivatorCA is specified.
-	ActivatorName string
+	ActivatorSAN string
 }
 
 // HTTPProtocol indicates a type of HTTP endpoint behavior
@@ -358,7 +358,7 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		ActivatorCA:                   "",
-		ActivatorName:                 "",
+		ActivatorSAN:                  "",
 	}
 }
 
@@ -391,7 +391,7 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsBool(EnableMeshPodAddressabilityKey, &nc.EnableMeshPodAddressability),
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsString(ActivatorCAKey, &nc.ActivatorCA),
-		cm.AsString(ActivatorNameKey, &nc.ActivatorName),
+		cm.AsString(ActivatorSANKey, &nc.ActivatorSAN),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
