@@ -110,7 +110,7 @@ github.com/modern-go/reflect2
 github.com/openzipkin/zipkin-go/model
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
-# github.com/prometheus/client_golang v1.11.0
+# github.com/prometheus/client_golang v1.11.1
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
 github.com/prometheus/client_golang/prometheus/promhttp
@@ -613,10 +613,10 @@ k8s.io/kube-openapi/pkg/validation/spec
 k8s.io/utils/buffer
 k8s.io/utils/integer
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20220224013837-e1785985d364
+# knative.dev/hack v0.0.0-20220314052818-c9c3ea17a2e9
 ## explicit
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20220301181942-2fdd5f232e77
+# knative.dev/pkg v0.0.0-20220314170718-721abec0a377
 ## explicit
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
