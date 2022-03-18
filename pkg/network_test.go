@@ -286,6 +286,31 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with activator-ca and activator-san",
+		data: map[string]string{
+			ActivatorCAKey:  "test-ca",
+			ActivatorSANKey: "test-san",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ActivatorCA = "test-ca"
+			c.ActivatorSAN = "test-san"
+			return c
+		}(),
+	}, {
+		name: "network configuration with activator-ca and missing activator-san",
+		data: map[string]string{
+			ActivatorCAKey: "test-ca",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with activator-san and missing activator-ca",
+		data: map[string]string{
+			ActivatorCAKey: "test-san",
+		},
+		wantErr: true,
+	}, {
 		name: "legacy keys",
 		data: map[string]string{
 			"ingress.class":         "1",
