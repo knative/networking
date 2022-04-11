@@ -197,9 +197,9 @@ const (
 	// ActivatorSANKey is the config for the SAN used to validate the activator TLS certificate.
 	ActivatorSANKey = "activator-san"
 
-	// ActivatorCertSecretKey is the config for the secret name, which stores certificates
+	// ActivatorCertKey is the config for the secret name, which stores certificates
 	// to serve the TLS traffic from ingress to activator.
-	ActivatorCertSecretKey = "activator-cert-secret"
+	ActivatorCertKey = "activator-cert-secret"
 
 	// QueueProxyCAKey is the config for the secret name, which stores CA public certificate used
 	// to sign the queue-proxy TLS certificate.
@@ -208,9 +208,9 @@ const (
 	// QueueProxySANKey is the config for the SAN used to validate the queue-proxy TLS certificate.
 	QueueProxySANKey = "queue-proxy-san"
 
-	// QueueProxyCertSecretKey is the config for the secret name, which stores certificates
+	// QueueProxyCertKey is the config for the secret name, which stores certificates
 	// to serve the TLS traffic from activator to queue-proxy.
-	QueueProxyCertSecretKey = "queue-proxy-cert-secret"
+	QueueProxyCertKey = "queue-proxy-cert-secret"
 )
 
 // DomainTemplateValues are the available properties people can choose from
@@ -425,10 +425,10 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsString(ActivatorCAKey, &nc.ActivatorCA),
 		cm.AsString(ActivatorSANKey, &nc.ActivatorSAN),
-		cm.AsString(ActivatorCertSecretKey, &nc.ActivatorCertSecret),
+		cm.AsString(ActivatorCertKey, &nc.ActivatorCertSecret),
 		cm.AsString(QueueProxyCAKey, &nc.QueueProxyCA),
 		cm.AsString(QueueProxySANKey, &nc.QueueProxySAN),
-		cm.AsString(QueueProxyCertSecretKey, &nc.QueueProxyCertSecret),
+		cm.AsString(QueueProxyCertKey, &nc.QueueProxyCertSecret),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
