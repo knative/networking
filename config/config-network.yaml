@@ -195,7 +195,7 @@ data:
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
-    activator-server-certs: ""
+    activator-cert-secret: ""
 
     # The CA public certificate used to sign the queue-proxy TLS certificate.
     # It is specified by the secret name, which has the "ca.crt" data field.
@@ -219,4 +219,4 @@ data:
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
-    queue-proxy-server-certs: ""
+    queue-proxy-cert-secret: ""

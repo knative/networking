@@ -197,9 +197,9 @@ const (
 	// ActivatorSANKey is the config for the SAN used to validate the activator TLS certificate.
 	ActivatorSANKey = "activator-san"
 
-	// ActivatorServerCertKey is the config for the secret name, which stores certificates
+	// ActivatorCertSecretKey is the config for the secret name, which stores certificates
 	// to serve the TLS traffic from ingress to activator.
-	ActivatorServerCertKey = "activator-server-certs"
+	ActivatorCertSecretKey = "activator-cert-secret"
 
 	// QueueProxyCAKey is the config for the secret name, which stores CA public certificate used
 	// to sign the queue-proxy TLS certificate.
@@ -208,9 +208,9 @@ const (
 	// QueueProxySANKey is the config for the SAN used to validate the queue-proxy TLS certificate.
 	QueueProxySANKey = "queue-proxy-san"
 
-	// QueueProxyServerCertKey is the config for the secret name, which stores certificates
+	// QueueProxyCertSecretKey is the config for the secret name, which stores certificates
 	// to serve the TLS traffic from activator to queue-proxy.
-	QueueProxyServerCertKey = "queue-proxy-server-certs"
+	QueueProxyCertSecretKey = "queue-proxy-cert-secret"
 )
 
 // DomainTemplateValues are the available properties people can choose from
@@ -318,8 +318,8 @@ type Config struct {
 	// It is used only when ActivatorCA is specified.
 	ActivatorSAN string
 
-	// ActivatorSererCert defines the secret name of the server certificates to serve the TLS traffic from ingress to activator.
-	ActivatorServerCert string
+	// ActivatorCertSecret defines the secret name of the server certificates to serve the TLS traffic from ingress to activator.
+	ActivatorCertSecret string
 
 	// QueueProxyCA defines the secret name of the CA public certificate used to sign the queue-proxy TLS certificate.
 	// The traffic to queue-proxy is not encrypted if QueueProxyCA is empty.
@@ -329,8 +329,8 @@ type Config struct {
 	// It is used only when QueueProxyCA is specified.
 	QueueProxySAN string
 
-	// QueueProxyServerCert defines the secret name of the server certificates to serve the TLS traffic from activator to queue-proxy.
-	QueueProxyServerCert string
+	// QueueProxyCertSecret defines the secret name of the server certificates to serve the TLS traffic from activator to queue-proxy.
+	QueueProxyCertSecret string
 }
 
 // HTTPProtocol indicates a type of HTTP endpoint behavior
@@ -388,10 +388,10 @@ func defaultConfig() *Config {
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		ActivatorCA:                   "",
 		ActivatorSAN:                  "",
-		ActivatorServerCert:           "",
+		ActivatorCertSecret:           "",
 		QueueProxyCA:                  "",
 		QueueProxySAN:                 "",
-		QueueProxyServerCert:          "",
+		QueueProxyCertSecret:          "",
 	}
 }
 
@@ -425,10 +425,10 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsString(ActivatorCAKey, &nc.ActivatorCA),
 		cm.AsString(ActivatorSANKey, &nc.ActivatorSAN),
-		cm.AsString(ActivatorServerCertKey, &nc.ActivatorServerCert),
+		cm.AsString(ActivatorCertSecretKey, &nc.ActivatorCertSecret),
 		cm.AsString(QueueProxyCAKey, &nc.QueueProxyCA),
 		cm.AsString(QueueProxySANKey, &nc.QueueProxySAN),
-		cm.AsString(QueueProxyServerCertKey, &nc.QueueProxyServerCert),
+		cm.AsString(QueueProxyCertSecretKey, &nc.QueueProxyCertSecret),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
