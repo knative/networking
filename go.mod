@@ -17,7 +17,7 @@ require (
 	k8s.io/apimachinery v0.23.5
 	k8s.io/client-go v0.23.5
 	k8s.io/code-generator v0.23.5
-	knative.dev/hack v0.0.0-20220328133751-f06773764ce3
-	knative.dev/pkg v0.0.0-20220325200448-1f7514acd0c2
+	knative.dev/hack v0.0.0-20220407171644-0e0784b13cef
+	knative.dev/pkg v0.0.0-20220407210145-4d62e1dbb943
 	sigs.k8s.io/yaml v1.3.0
 )
