@@ -307,7 +307,32 @@ func TestConfiguration(t *testing.T) {
 	}, {
 		name: "network configuration with activator-san and missing activator-ca",
 		data: map[string]string{
-			ActivatorCAKey: "test-san",
+			ActivatorSANKey: "test-san",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with queue-proxy-ca and queue-proxy-san",
+		data: map[string]string{
+			QueueProxyCAKey:  "test-ca",
+			QueueProxySANKey: "test-san",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.QueueProxyCA = "test-ca"
+			c.QueueProxySAN = "test-san"
+			return c
+		}(),
+	}, {
+		name: "network configuration with queue-proxy-ca and missing queue-proxy-san",
+		data: map[string]string{
+			QueueProxyCAKey: "test-ca",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with queue-proxy-san and missing queue-proxy-ca",
+		data: map[string]string{
+			QueueProxySANKey: "test-san",
 		},
 		wantErr: true,
 	}, {
