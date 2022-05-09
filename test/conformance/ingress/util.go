@@ -52,7 +52,6 @@ import (
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/test"
 	"knative.dev/networking/test/types"
-	"knative.dev/pkg/injection/filtering"
 	"knative.dev/pkg/network"
 	"knative.dev/pkg/ptr"
 	"knative.dev/pkg/reconciler"
@@ -986,7 +985,8 @@ func CreateTLSSecret(ctx context.Context, t *testing.T, clients *test.Clients, h
 			Name:      name,
 			Namespace: test.ServingNamespace,
 			Labels: map[string]string{
-				"test-secret": name,
+				"test-secret":                    name,
+				networking.CertifcateUIDLabelKey: "test-uid",
 			},
 		},
 		Type: corev1.SecretTypeTLS,
@@ -995,7 +995,6 @@ func CreateTLSSecret(ctx context.Context, t *testing.T, clients *test.Clients, h
 			corev1.TLSPrivateKeyKey: privPEM.String(),
 		},
 	}
-	filtering.AddKnativeUsedByLabels(secret.Labels)
 	t.Cleanup(func() {
 		clients.KubeClient.CoreV1().Secrets(secret.Namespace).Delete(ctx, secret.Name, metav1.DeleteOptions{})
 	})
