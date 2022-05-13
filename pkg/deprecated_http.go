@@ -64,6 +64,28 @@ type (
 	RequestStatsReport = stats.RequestStatsReport
 )
 
+const (
+	// ReqIn represents an incoming request
+	//
+	// Deprecated: use knative.dev/networking/pkg/http/stats.ReqIn
+	ReqIn = stats.ReqIn
+
+	// ReqOut represents a finished request
+	//
+	// Deprecated: use knative.dev/networking/pkg/http/stats.ReqOut
+	ReqOut = stats.ReqOut
+
+	// ProxiedIn represents an incoming request through a proxy.
+	//
+	// Deprecated: use knative.dev/networking/pkg/http/stats.ProxiedIn
+	ProxiedIn = stats.ProxiedIn
+
+	// ProxiedOut represents a finished proxied request.
+	//
+	// Deprecated: use knative.dev/networking/pkg/http/stats.ProxiedOut
+	ProxiedOut = stats.ProxiedOut
+)
+
 var (
 	// NewRequestStats builds a RequestStats instance, started at the given time.
 	//
