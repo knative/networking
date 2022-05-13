@@ -29,13 +29,14 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
+	"knative.dev/networking/pkg/http/header"
+	"knative.dev/networking/pkg/http/probe"
 	"knative.dev/networking/pkg/ingress"
 
 	"go.uber.org/atomic"
 	"go.uber.org/zap/zaptest"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	network "knative.dev/networking/pkg"
 )
 
 var (
@@ -76,7 +77,7 @@ func TestProbeAllHosts(t *testing.T) {
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(failHandler)
+	probeHandler := probe.NewHandler(failHandler)
 
 	// Probes to hostA always succeed and probes to hostB only succeed if hostBEnabled is true
 	probeRequests := make(chan *http.Request)
@@ -88,7 +89,7 @@ func TestProbeAllHosts(t *testing.T) {
 			return
 		}
 
-		r.Header.Set(network.HashHeaderName, hash)
+		r.Header.Set(header.HashKey, hash)
 		probeHandler.ServeHTTP(w, r)
 	})
 
@@ -199,7 +200,7 @@ func TestProbeLifecycle(t *testing.T) {
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
-	probeHandler := network.NewProbeHandler(failHandler)
+	probeHandler := probe.NewHandler(failHandler)
 
 	// Test handler keeping track of received requests, mimicking AppendHeader of K-Network-Hash
 	// and simulate a non-existing host by returning 404.
@@ -211,7 +212,7 @@ func TestProbeLifecycle(t *testing.T) {
 		}
 
 		probeRequests <- r
-		r.Header.Set(network.HashHeaderName, <-hashes)
+		r.Header.Set(header.HashKey, <-hashes)
 		probeHandler.ServeHTTP(w, r)
 	})
 
@@ -491,7 +492,7 @@ func TestPartialPodCancellation(t *testing.T) {
 	requests := make(chan *http.Request, 100)
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requests <- r
-		w.Header().Set(network.HashHeaderName, hash)
+		w.Header().Set(header.HashKey, hash)
 		w.WriteHeader(http.StatusOK)
 	})
 	ts := httptest.NewServer(handler)
@@ -701,14 +702,14 @@ func TestProbeVerifier(t *testing.T) {
 		name: "HTTP 200 matching hash",
 		resp: &http.Response{
 			StatusCode: http.StatusOK,
-			Header:     http.Header{network.HashHeaderName: []string{hash}},
+			Header:     http.Header{header.HashKey: []string{hash}},
 		},
 		want: true,
 	}, {
 		name: "HTTP 200 mismatching hash",
 		resp: &http.Response{
 			StatusCode: http.StatusOK,
-			Header:     http.Header{network.HashHeaderName: []string{"nope"}},
+			Header:     http.Header{header.HashKey: []string{"nope"}},
 		},
 		want: false,
 	}, {
