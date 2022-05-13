@@ -55,7 +55,7 @@ ${GOPATH}/bin/deepcopy-gen \
   -O zz_generated.deepcopy \
   --go-header-file ${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt \
   -i knative.dev/networking/pkg/apis/config \
-  -i knative.dev/networking/pkg
+  -i knative.dev/networking/pkg/config
 
 group "Update deps post-codegen"
 
