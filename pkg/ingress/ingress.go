@@ -61,7 +61,7 @@ func InsertProbe(ing *v1alpha1.Ingress) (string, error) {
 			if elt.Headers == nil {
 				elt.Headers = make(map[string]v1alpha1.HeaderMatch, 1)
 			}
-			elt.Headers[header.HashKey] = v1alpha1.HeaderMatch{Exact: header.HashKey}
+			elt.Headers[header.HashKey] = v1alpha1.HeaderMatch{Exact: header.HashValueOverride}
 			elt.AppendHeaders[header.HashKey] = hash
 			probePaths = append(probePaths, *elt)
 		}
