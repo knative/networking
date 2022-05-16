@@ -985,8 +985,8 @@ func CreateTLSSecret(ctx context.Context, t *testing.T, clients *test.Clients, h
 			Name:      name,
 			Namespace: test.ServingNamespace,
 			Labels: map[string]string{
-				"test-secret":                    name,
-				networking.CertifcateUIDLabelKey: "test-uid",
+				"test-secret":                     name,
+				networking.CertificateUIDLabelKey: "test-uid",
 			},
 		},
 		Type: corev1.SecretTypeTLS,
