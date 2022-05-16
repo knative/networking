@@ -23,7 +23,7 @@ const (
 	GroupName = "networking.internal.knative.dev"
 
 	// CertifcateUIDLabelKey is used to specify a label selector for informers listing ingress secrets.
-	CertifcateUIDLabelKey = GroupName + "/certificate-uid"
+	CertificateUIDLabelKey = GroupName + "/certificate-uid"
 
 	// IngressLabelKey is the label key attached to underlying network programming
 	// resources to indicate which Ingress triggered their creation.
