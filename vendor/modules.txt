@@ -698,10 +698,10 @@ k8s.io/utils/internal/third_party/forked/golang/net
 k8s.io/utils/lru
 k8s.io/utils/net
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20220503220458-46c77f157e20
+# knative.dev/hack v0.0.0-20220524153203-12d3e2a7addc
 ## explicit; go 1.14
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20220503223858-245166458ef4
+# knative.dev/pkg v0.0.0-20220524202603-19adf798efb8
 ## explicit; go 1.17
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
