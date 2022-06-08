@@ -123,7 +123,7 @@ const (
 	TagTemplateKey = "tag-template"
 
 	// InternalEncryptionKey is the name of the configuration whether
-	// internal trafic is encrypted or not.
+	// internal traffic is encrypted or not.
 	InternalEncryptionKey = "internal-encryption"
 )
 
@@ -251,7 +251,7 @@ type Config struct {
 	// not enabled. Defaults to "http".
 	DefaultExternalScheme string
 
-	// DefaultExternal specifies whether internal trafic is encrypted or not.
+	// DefaultExternal specifies whether internal traffic is encrypted or not.
 	InternalEncryption bool
 }
 

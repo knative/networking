@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "95478c0c"
+    knative.dev/example-checksum: "73d96d1b"
 data:
   _example: |
     ################################
@@ -173,7 +173,7 @@ data:
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
 
-    # internal-encryption indicates whether internal trafic is encrypted or not.
+    # internal-encryption indicates whether internal traffic is encrypted or not.
     # If this is "true", the following traffic are encrypted:
     #  - ingress to activator
     #  - ingress to queue-proxy
