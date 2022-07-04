@@ -61,3 +61,7 @@ group "Update deps post-codegen"
 
 # Make sure our dependencies are up-to-date
 ${REPO_ROOT_DIR}/hack/update-deps.sh
+
+group "Generating schemas"
+
+${REPO_ROOT_DIR}/hack/update-schemas.sh
