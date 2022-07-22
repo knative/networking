@@ -43,7 +43,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        go get github.com/google/go-licenses
+        go install github.com/google/go-licenses@latest
 
     - name: Checkout Upstream
       uses: actions/checkout@v2
@@ -85,7 +85,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        go get github.com/google/go-licenses
+        go install github.com/google/go-licenses@latest
 
     - name: Checkout Upstream
       uses: actions/checkout@v2
