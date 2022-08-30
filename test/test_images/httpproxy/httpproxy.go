@@ -141,7 +141,7 @@ func newDNSCachingTransport() http.RoundTripper {
 			log.Fatal(err)
 		}
 		t.TLSClientConfig = &tls.Config{
-			RootCAs: rootCAs,
+			RootCAs:    rootCAs,
 			ServerName: serverName,
 		}
 	}
