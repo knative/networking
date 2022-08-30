@@ -60,9 +60,11 @@ import (
 )
 
 const (
-	certDirectory = "/var/lib/knative/certs"
-	certPath      = certDirectory + "/tls.crt"
-	keyPath       = certDirectory + "/tls.key"
+	certDirectory   = "/var/lib/knative/certs"
+	certPath        = certDirectory + "/tls.crt"
+	keyPath         = certDirectory + "/tls.key"
+	caCertDirectory = "/var/lib/knative/ca"
+	caCertPath      = caCertDirectory + "/ca.crt"
 )
 
 var dialBackoff = wait.Backoff{
@@ -263,6 +265,18 @@ func CreateProxyService(ctx context.Context, t *testing.T, clients *test.Clients
 			WithVolume("knative-certs", certDirectory, corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
 					SecretName: secretName,
+					Optional:   ptr.Bool(false),
+				}}),
+		)
+	}
+
+	if caSecretName, serverName := os.Getenv("UPSTREAM_CA_CERT"), os.Getenv("SERVER_NAME");
+		caSecretName != "" && serverName != "" {
+		pod = PodWithOption(pod,
+			WithEnv([]corev1.EnvVar{{Name: "CA_CERT", Value: caCertPath},{Name: "SERVER_NAME", Value: serverName},}...),
+			WithVolume("ca-certs", caCertDirectory, corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: caSecretName,
 					Optional:   ptr.Bool(false),
 				}}),
 		)
