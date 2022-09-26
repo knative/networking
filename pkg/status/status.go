@@ -385,6 +385,8 @@ func (m *Prober) processWorkItem() bool {
 		ctx,
 		transport,
 		probeURL.String(),
+		item.podIP,
+		item.podPort,
 		prober.WithHeader(header.UserAgentKey, header.IngressReadinessUserAgent),
 		prober.WithHeader(header.ProbeKey, header.ProbeValue),
 		prober.WithHeader(header.HashKey, header.HashValueOverride),
