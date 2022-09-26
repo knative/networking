@@ -28,7 +28,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -138,9 +137,6 @@ func Do(ctx context.Context, transport http.RoundTripper, target string, podIP s
 		targetTCP, err := net.ResolveTCPAddr("tcp", podIP+":"+podPort)
 		checkErr(err)
 
-		port, err := strconv.Atoi(podPort)
-		checkErr(err)
-
 		conn, err := net.DialTCP("tcp", nil, targetTCP)
 		checkErr(err)
 
@@ -158,8 +154,8 @@ func Do(ctx context.Context, transport http.RoundTripper, target string, podIP s
 				Port: 1000,
 			},
 			DestinationAddr: &net.TCPAddr{
-				IP:   net.ParseIP(podIP),
-				Port: port,
+				IP:   targetTCP.IP,
+				Port: targetTCP.Port,
 			},
 		}
 		// After the connection was created write the proxy headers first
