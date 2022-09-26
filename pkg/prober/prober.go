@@ -19,15 +19,18 @@ package prober
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"sync"
-	"time"
-
+	"github.com/pires/go-proxyproto"
 	"go.uber.org/zap"
+	"io/ioutil"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/pkg/logging"
+	"log"
+	"net"
+	"net/http"
+	"strconv"
+	"sync"
+	"time"
 )
 
 // Preparer is a way for the caller to modify the HTTP request before it goes out.
@@ -92,37 +95,79 @@ func ExpectsStatusCodes(statusCodes []int) Verifier {
 	}
 }
 
+func checkErr(err error) {
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+}
+
 // Do sends a single probe to given target, e.g. `http://revision.default.svc.cluster.local:81`.
 // Do returns whether the probe was successful or not, or there was an error probing.
-func Do(ctx context.Context, transport http.RoundTripper, target string, ops ...interface{}) (bool, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
-	if err != nil {
-		return false, fmt.Errorf("%s is not a valid URL: %w", target, err)
-	}
-	for _, op := range ops {
-		if po, ok := op.(Preparer); ok {
-			req = po(req)
+func Do(ctx context.Context, transport http.RoundTripper, target string, podIP string, podPort string, ops ...interface{}) (bool, error) {
+	//TODO where should the proxy protocol flag be added to context?
+	if ctx.Value("standardProtocolFlag") == true {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+		if err != nil {
+			return false, fmt.Errorf("%s is not a valid URL: %w", target, err)
 		}
-	}
-
-	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		return false, fmt.Errorf("error roundtripping %s: %w", target, err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return false, fmt.Errorf("error reading body: %w", err)
-	}
-
-	for _, op := range ops {
-		if vo, ok := op.(Verifier); ok {
-			if ok, err := vo(resp, body); err != nil || !ok {
-				return false, err
+		for _, op := range ops {
+			if po, ok := op.(Preparer); ok {
+				req = po(req)
 			}
 		}
+
+		resp, err := transport.RoundTrip(req)
+		if err != nil {
+			return false, fmt.Errorf("error roundtripping %s: %w", target, err)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return false, fmt.Errorf("error reading body: %w", err)
+		}
+
+		for _, op := range ops {
+			if vo, ok := op.(Verifier); ok {
+				if ok, err := vo(resp, body); err != nil || !ok {
+					return false, err
+				}
+			}
+		}
+		return true, nil
+	} else {
+		targetTCP, err := net.ResolveTCPAddr("tcp", podIP+":"+podPort)
+		checkErr(err)
+
+		port, err := strconv.Atoi(podPort)
+		checkErr(err)
+
+		conn, err := net.DialTCP("tcp", nil, targetTCP)
+		checkErr(err)
+
+		defer conn.Close()
+
+		// Create a proxy protocol header
+		header := &proxyproto.Header{
+			Version:           1,
+			Command:           proxyproto.PROXY,
+			TransportProtocol: proxyproto.TCPv4,
+			// TODO source is self, is it useful to use our actual ip or should it be
+			// an arbitrary default to represent this was initiated from the probing pod?
+			SourceAddr: &net.TCPAddr{
+				IP:   net.ParseIP("10.1.1.1"),
+				Port: 1000,
+			},
+			DestinationAddr: &net.TCPAddr{
+				IP:   net.ParseIP(podIP),
+				Port: port,
+			},
+		}
+		// After the connection was created write the proxy headers first
+		_, err = header.WriteTo(conn)
+		checkErr(err)
+
+		return true, nil
 	}
-	return true, nil
 }
 
 // Done is a callback that is executed when the async probe has finished.
@@ -187,7 +232,8 @@ func (m *Manager) doAsync(ctx context.Context, target string, arg interface{}, p
 			inErr  error
 		)
 		err := wait.PollImmediate(period, timeout, func() (bool, error) {
-			result, inErr = Do(ctx, m.transport, target, ops...)
+			//TODO adding junk here temporarily for mvp (second and third target should be pod ip and pod port)
+			result, inErr = Do(ctx, m.transport, target, target, target, ops...)
 			// Do not return error, which is from verifierError, as retry is expected until timeout.
 			return result, nil
 		})
