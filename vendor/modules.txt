@@ -146,6 +146,9 @@ github.com/munnerz/goautoneg
 # github.com/openzipkin/zipkin-go v0.3.0
 ## explicit; go 1.14
 github.com/openzipkin/zipkin-go/model
+# github.com/pires/go-proxyproto v0.6.2
+## explicit; go 1.13
+github.com/pires/go-proxyproto
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
