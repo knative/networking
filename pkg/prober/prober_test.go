@@ -79,9 +79,7 @@ func TestDoServing(t *testing.T) {
 	}}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.Background()
-			ctx2 := context.WithValue(ctx, "standardProtocolFlag", true)
-			got, err := Do(ctx2, network.NewProberTransport(), ts.URL, "podip", "podport", WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
+			got, err := Do(context.Background(), network.NewProberTransport(), ts.URL, WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
 			if want := test.want; got != want {
 				t.Errorf("Got = %v, want: %v", got, want)
 			}
@@ -101,8 +99,7 @@ func TestBlackHole(t *testing.T) {
 			Timeout: 10 * time.Millisecond,
 		}).Dial,
 	}
-	ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-	got, err := Do(ctx, transport, "http://gone.fishing.svc.custer.local:8080", "podip", "port", ExpectsStatusCodes([]int{http.StatusOK}))
+	got, err := Do(context.Background(), transport, "http://gone.fishing.svc.custer.local:8080", ExpectsStatusCodes([]int{http.StatusOK}))
 	if want := false; got != want {
 		t.Errorf("Got = %v, want: %v", got, want)
 	}
@@ -112,8 +109,7 @@ func TestBlackHole(t *testing.T) {
 }
 
 func TestBadURL(t *testing.T) {
-	ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-	_, err := Do(ctx, network.NewProberTransport(), ":foo", "podip", "port", ExpectsStatusCodes([]int{http.StatusOK}))
+	_, err := Do(context.Background(), network.NewProberTransport(), ":foo", ExpectsStatusCodes([]int{http.StatusOK}))
 	if err == nil {
 		t.Error("Do did not return an error")
 	}
@@ -173,8 +169,7 @@ func TestDoAsync(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			m := New(test.cb, network.NewProberTransport())
-			ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-			m.Offer(ctx, ts.URL, test.name, probeInterval, probeTimeout, WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(test.headerValue), ExpectsStatusCodes([]int{http.StatusOK}))
+			m.Offer(context.Background(), ts.URL, test.name, probeInterval, probeTimeout, WithHeader(header.ProbeKey, test.headerValue), ExpectsBody(test.headerValue), ExpectsStatusCodes([]int{http.StatusOK}))
 			<-wch
 		})
 	}
@@ -211,8 +206,7 @@ func TestDoAsyncRepeat(t *testing.T) {
 		wch <- arg
 	}
 	m := New(cb, network.NewProberTransport())
-	ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-	m.Offer(ctx, ts.URL, 42, probeInterval, probeTimeout, WithHeader(header.ProbeKey, systemName), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
+	m.Offer(context.Background(), ts.URL, 42, probeInterval, probeTimeout, WithHeader(header.ProbeKey, systemName), ExpectsBody(systemName), ExpectsStatusCodes([]int{http.StatusOK}))
 	<-wch
 	if got, want := c.calls, 3; got != want {
 		t.Errorf("Probe invocation count = %d, want: %d", got, want)
@@ -238,8 +232,7 @@ func TestDoAsyncTimeout(t *testing.T) {
 		wch <- arg
 	}
 	m := New(cb, network.NewProberTransport())
-	ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-	m.Offer(ctx, ts.URL, 2009, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK}))
+	m.Offer(context.Background(), ts.URL, 2009, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK}))
 	<-wch
 }
 
@@ -254,12 +247,11 @@ func TestAsyncMultiple(t *testing.T) {
 		wch <- 2006
 	}
 	m := New(cb, network.NewProberTransport())
-	ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
 
-	if !m.Offer(ctx, ts.URL, 1984, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK})) {
+	if !m.Offer(context.Background(), ts.URL, 1984, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK})) {
 		t.Error("First call to offer returned false")
 	}
-	if m.Offer(ctx, ts.URL, 1982, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK})) {
+	if m.Offer(context.Background(), ts.URL, 1982, probeInterval, probeTimeout, ExpectsStatusCodes([]int{http.StatusOK})) {
 		t.Error("Second call to offer returned true")
 	}
 	if got, want := m.len(), 1; got != want {
@@ -303,8 +295,7 @@ func TestWithPathOption(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-			if ok, _ := Do(ctx, network.AutoTransport, ts.URL, "podip", "port", test.options...); !ok {
+			if ok, _ := Do(context.Background(), network.AutoTransport, ts.URL, test.options...); !ok {
 				t.Error("Unexpected probe failure")
 			}
 		})
@@ -337,8 +328,7 @@ func TestWithHostOption(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-			if ok, _ := Do(ctx, network.AutoTransport, ts.URL, "podip", "podport", test.options...); !ok {
+			if ok, _ := Do(context.Background(), network.AutoTransport, ts.URL, test.options...); !ok {
 				t.Error("Unexpected probe result")
 			}
 		})
@@ -374,8 +364,7 @@ func TestExpectsHeaderOption(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.WithValue(context.Background(), "standardProtocolFlag", true)
-			ok, err := Do(ctx, network.AutoTransport, ts.URL, "podip", "podport", test.options...)
+			ok, err := Do(context.Background(), network.AutoTransport, ts.URL, test.options...)
 			if ok != test.success {
 				t.Errorf("unexpected probe result: want: %v, got: %v", test.success, ok)
 			}

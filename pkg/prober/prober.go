@@ -100,70 +100,69 @@ func checkErr(err error) {
 	}
 }
 
+func DoWithProxyProtocol(ctx context.Context, transport http.RoundTripper, target string, podIP string, podPort string, ops ...interface{}) (bool, error) {
+	targetTCP, err := net.ResolveTCPAddr("tcp", podIP+":"+podPort)
+	checkErr(err)
+
+	conn, err := net.DialTCP("tcp", nil, targetTCP)
+	checkErr(err)
+
+	defer conn.Close()
+
+	// Create a proxy protocol header
+	header := &proxyproto.Header{
+		Version:           1,
+		Command:           proxyproto.PROXY,
+		TransportProtocol: proxyproto.TCPv4,
+		// TODO source is self, is it useful to use our actual ip or should it be
+		// an arbitrary default to represent this was initiated from the probing pod given this is round trip only?
+		SourceAddr: &net.TCPAddr{
+			IP:   net.ParseIP("10.1.1.1"),
+			Port: 1000,
+		},
+		DestinationAddr: &net.TCPAddr{
+			IP:   targetTCP.IP,
+			Port: targetTCP.Port,
+		},
+	}
+	// After the connection was created write the proxy headers first
+	_, err = header.WriteTo(conn)
+	checkErr(err)
+
+	return true, nil
+}
+
 // Do sends a single probe to given target, e.g. `http://revision.default.svc.cluster.local:81`.
 // Do returns whether the probe was successful or not, or there was an error probing.
-func Do(ctx context.Context, transport http.RoundTripper, target string, podIP string, podPort string, ops ...interface{}) (bool, error) {
-	//TODO where should the proxy protocol flag be added to context?
-	if ctx.Value("standardProtocolFlag") == true {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
-		if err != nil {
-			return false, fmt.Errorf("%s is not a valid URL: %w", target, err)
-		}
-		for _, op := range ops {
-			if po, ok := op.(Preparer); ok {
-				req = po(req)
-			}
-		}
-
-		resp, err := transport.RoundTrip(req)
-		if err != nil {
-			return false, fmt.Errorf("error roundtripping %s: %w", target, err)
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return false, fmt.Errorf("error reading body: %w", err)
-		}
-
-		for _, op := range ops {
-			if vo, ok := op.(Verifier); ok {
-				if ok, err := vo(resp, body); err != nil || !ok {
-					return false, err
-				}
-			}
-		}
-		return true, nil
-	} else {
-		targetTCP, err := net.ResolveTCPAddr("tcp", podIP+":"+podPort)
-		checkErr(err)
-
-		conn, err := net.DialTCP("tcp", nil, targetTCP)
-		checkErr(err)
-
-		defer conn.Close()
-
-		// Create a proxy protocol header
-		header := &proxyproto.Header{
-			Version:           1,
-			Command:           proxyproto.PROXY,
-			TransportProtocol: proxyproto.TCPv4,
-			// TODO source is self, is it useful to use our actual ip or should it be
-			// an arbitrary default to represent this was initiated from the probing pod?
-			SourceAddr: &net.TCPAddr{
-				IP:   net.ParseIP("10.1.1.1"),
-				Port: 1000,
-			},
-			DestinationAddr: &net.TCPAddr{
-				IP:   targetTCP.IP,
-				Port: targetTCP.Port,
-			},
-		}
-		// After the connection was created write the proxy headers first
-		_, err = header.WriteTo(conn)
-		checkErr(err)
-
-		return true, nil
+func Do(ctx context.Context, transport http.RoundTripper, target string, ops ...interface{}) (bool, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	if err != nil {
+		return false, fmt.Errorf("%s is not a valid URL: %w", target, err)
 	}
+	for _, op := range ops {
+		if po, ok := op.(Preparer); ok {
+			req = po(req)
+		}
+	}
+
+	resp, err := transport.RoundTrip(req)
+	if err != nil {
+		return false, fmt.Errorf("error roundtripping %s: %w", target, err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return false, fmt.Errorf("error reading body: %w", err)
+	}
+
+	for _, op := range ops {
+		if vo, ok := op.(Verifier); ok {
+			if ok, err := vo(resp, body); err != nil || !ok {
+				return false, err
+			}
+		}
+	}
+	return true, nil
 }
 
 // Done is a callback that is executed when the async probe has finished.
