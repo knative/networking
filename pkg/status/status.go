@@ -25,6 +25,7 @@ import (
 	"net/url"
 	"path"
 	"reflect"
+	"strings"
 	"sync"
 	"time"
 
@@ -382,14 +383,22 @@ func (m *Prober) processWorkItem() bool {
 	ctx, cancel := context.WithTimeout(item.context, probeTimeout)
 	defer cancel()
 
-	// TODO do we have a for where to add toggle flags to context (via configmap?)?
-	// Can we achieve finer tuning on a per pod basis or filtering on domain?
-	proxyProtocolEnabled := ctx.Value("proxyProtocolEnabled")
+	proxyProtocolEnabled := ctx.Value("ProxyProtocolProbeEnabled")
 	if proxyProtocolEnabled == nil {
 		proxyProtocolEnabled = false
 	}
 
-	if proxyProtocolEnabled.(bool) {
+	var proxyProtocolFilterMatch bool
+
+	proxyProtocolFilter := ctx.Value("ProxyProtocolFilter")
+	if proxyProtocolFilter != nil {
+		proxyProtocolFilterMatch = strings.HasPrefix(probeURL.String(), proxyProtocolFilter.(string))
+	} else {
+		proxyProtocolFilterMatch = true
+	}
+
+	// If proxy protocol is enabled and the filter is matching or nil then perform proxy protocol probe
+	if proxyProtocolEnabled.(bool) && proxyProtocolFilterMatch {
 		ok, err := prober.DoWithProxyProtocol(
 			ctx,
 			transport,
