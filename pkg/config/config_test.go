@@ -67,6 +67,28 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with proxy protocol probe enabled",
+		data: map[string]string{
+			ProxyProtocolProbeEnabled: "true",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ProxyProtocolProbeEnabled = true
+			return c
+		}(),
+	}, {
+		name: "network configuration with proxy protocol filter",
+		data: map[string]string{
+			ProxyProtocolFilter: "fizz",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ProxyProtocolFilter = "fizz"
+			return c
+		}(),
+	}, {
 		name: "network configuration with non-default rollout duration",
 		data: map[string]string{
 			RolloutDurationKey: "211",
