@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "73d96d1b"
+    knative.dev/example-checksum: "cea093de"
 data:
   _example: |
     ################################
@@ -183,7 +183,7 @@ data:
     #       for now. Use with caution.
     internal-encryption: "false"
 
-    # proxy-protocol-filter allows internal traffic to split between a route that 
+    # proxy-protocol-filter allows internal traffic to split between a route that
     # is using proxy protocol, and one without in the same environment.
     #
     # Example Scenario: proxyprotocol.route.test and fizz.route.test are two routes in a cluster

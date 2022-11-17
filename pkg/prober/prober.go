@@ -19,17 +19,18 @@ package prober
 import (
 	"context"
 	"fmt"
-	"github.com/pires/go-proxyproto"
-	"go.uber.org/zap"
 	"io"
-	"k8s.io/apimachinery/pkg/util/sets"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"knative.dev/pkg/logging"
 	"log"
 	"net"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/pires/go-proxyproto"
+	"go.uber.org/zap"
+	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"knative.dev/pkg/logging"
 )
 
 // Preparer is a way for the caller to modify the HTTP request before it goes out.
