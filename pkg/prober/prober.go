@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"github.com/pires/go-proxyproto"
 	"go.uber.org/zap"
-	"io/ioutil"
+	"io"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"knative.dev/pkg/logging"
@@ -150,7 +150,7 @@ func Do(ctx context.Context, transport http.RoundTripper, target string, ops ...
 		return false, fmt.Errorf("error roundtripping %s: %w", target, err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return false, fmt.Errorf("error reading body: %w", err)
 	}
