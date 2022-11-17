@@ -183,14 +183,14 @@ data:
     #       for now. Use with caution.
     internal-encryption: "false"
 
-    # proxy-protocol-filter allows internal traffic to split between a route that
-    # is using proxy protocol, and one without in the same environment.
+    # proxy-protocol-filter allows internal traffic to split between proxy protocol probes
+    # and http probes via a csv input string.  Values added in the string will use
+    # the standard http probe instead of the proxy protocol probe.
     #
-    # Example Scenario: proxyprotocol.route.test and fizz.route.test are two routes in a cluster
-    # - "" an empty string will match as a prefix for both routes, using proxy protocol probes if enabled
-    # - "proxyprotocol" will match as a prefix for the first entry, using proxy protocol probes if enabled
-    # while using standard http probes for the fizz prefixed route
-    proxy-protocol-filter: ""
+    # Example Scenario: proxyprotocol.route.test and *.fizz.route.test are two routes in a cluster
+    # - "fizz.route.test" will match as a suffix for the second entry, using http probes for that host
+    # while using proxy protocol probes for the proxyprotocol prefixed route
+    proxy-protocol-filter: nil
 
     # proxy-protocol-probe-enabled indicates whether the probing mechanism for pods
     # should use the proxy protocol or the HTTP call

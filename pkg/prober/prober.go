@@ -115,8 +115,7 @@ func DoWithProxyProtocol(ctx context.Context, transport http.RoundTripper, targe
 		Version:           1,
 		Command:           proxyproto.PROXY,
 		TransportProtocol: proxyproto.TCPv4,
-		// TODO source is self, is it useful to use our actual ip or should it be
-		// an arbitrary default to represent this was initiated from the probing pod given this is round trip only?
+		// an arbitrary default to represent this was initiated from the probing pod given this is round trip only
 		SourceAddr: &net.TCPAddr{
 			IP:   net.ParseIP("10.1.1.1"),
 			Port: 1000,

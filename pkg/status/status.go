@@ -388,17 +388,21 @@ func (m *Prober) processWorkItem() bool {
 		proxyProtocolEnabled = false
 	}
 
-	var proxyProtocolFilterMatch bool
+	probeFilterMatch := false
 
 	proxyProtocolFilter := ctx.Value("ProxyProtocolFilter")
 	if proxyProtocolFilter != nil {
-		proxyProtocolFilterMatch = strings.HasPrefix(probeURL.String(), proxyProtocolFilter.(string))
-	} else {
-		proxyProtocolFilterMatch = true
+		proxyProtocolFilterList := strings.Split(proxyProtocolFilter.(string), ",")
+		for _, v := range proxyProtocolFilterList {
+			if strings.HasSuffix(probeURL.Host, v) {
+				probeFilterMatch = true
+				break
+			}
+		}
 	}
 
-	// If proxy protocol is enabled and the filter is matching or nil then perform proxy protocol probe
-	if proxyProtocolEnabled.(bool) && proxyProtocolFilterMatch {
+	// If proxy protocol is enabled and the filter is non-matching or nil then perform proxy protocol probe
+	if proxyProtocolEnabled.(bool) && !probeFilterMatch {
 		ok, err := prober.DoWithProxyProtocol(
 			ctx,
 			transport,
