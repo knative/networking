@@ -391,7 +391,7 @@ func (m *Prober) processWorkItem() bool {
 	probeFilterMatch := false
 
 	proxyProtocolFilter := ctx.Value("ProxyProtocolFilter")
-	if proxyProtocolFilter != nil {
+	if proxyProtocolFilter != "" {
 		proxyProtocolFilterList := strings.Split(proxyProtocolFilter.(string), ",")
 		for _, v := range proxyProtocolFilterList {
 			if strings.HasSuffix(probeURL.Host, v) {

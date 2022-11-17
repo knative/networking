@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "cea093de"
+    knative.dev/example-checksum: "ba459cad"
 data:
   _example: |
     ################################
@@ -190,7 +190,7 @@ data:
     # Example Scenario: proxyprotocol.route.test and *.fizz.route.test are two routes in a cluster
     # - "fizz.route.test" will match as a suffix for the second entry, using http probes for that host
     # while using proxy protocol probes for the proxyprotocol prefixed route
-    proxy-protocol-filter: nil
+    proxy-protocol-filter: ""
 
     # proxy-protocol-probe-enabled indicates whether the probing mechanism for pods
     # should use the proxy protocol or the HTTP call
