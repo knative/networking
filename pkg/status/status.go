@@ -391,7 +391,7 @@ func (m *Prober) processWorkItem() bool {
 	proxyProtocolEnabled := defaultConfig.ProxyProtocolProbeEnabled
 	proxyProtocolFilter := defaultConfig.ProxyProtocolFilter
 
-	cm, configmapErr := configmap.Load("/etc/config-network.yaml")
+	cm, configmapErr := configmap.Load("/etc/config-network")
 	if configmapErr == nil {
 		networkConfig, err := config.NewConfigFromMap(cm)
 		if err == nil {
