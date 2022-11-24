@@ -108,6 +108,36 @@ func TestBlackHole(t *testing.T) {
 	}
 }
 
+func TestDoWithProxyProtocol(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(probeServeFunc))
+	defer ts.Close()
+	tests := []struct {
+		name        string
+		headerValue string
+		want        bool
+		expErr      bool
+	}{{
+		name:        "ok",
+		headerValue: systemName,
+		want:        true,
+		expErr:      false,
+	}}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got, err := DoWithProxyProtocol(context.Background(), network.NewProberTransport(), ts.URL, "1.1.1.1", "80", ExpectsStatusCodes([]int{http.StatusOK}))
+			if want := test.want; got != want {
+				t.Errorf("Got = %v, want: %v", got, want)
+			}
+			if err != nil && !test.expErr {
+				t.Errorf("Do() = %v, no error expected", err)
+			}
+			if err == nil && test.expErr {
+				t.Errorf("Do() = nil, expected an error")
+			}
+		})
+	}
+}
+
 func TestBadURL(t *testing.T) {
 	_, err := Do(context.Background(), network.NewProberTransport(), ":foo", ExpectsStatusCodes([]int{http.StatusOK}))
 	if err == nil {

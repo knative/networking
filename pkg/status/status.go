@@ -20,6 +20,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"knative.dev/networking/pkg/config"
+	"knative.dev/pkg/configmap"
 	"net"
 	"net/http"
 	"net/url"
@@ -383,18 +385,30 @@ func (m *Prober) processWorkItem() bool {
 	ctx, cancel := context.WithTimeout(item.context, probeTimeout)
 	defer cancel()
 
-	proxyProtocolEnabled := ctx.Value("ProxyProtocolProbeEnabled")
-	if proxyProtocolEnabled == nil {
-		proxyProtocolEnabled = false
+	// Use default config
+	defaultConfig, _ := config.NewConfigFromMap(nil)
+	proxyProtocolEnabled := defaultConfig.ProxyProtocolProbeEnabled
+	proxyProtocolFilter := defaultConfig.ProxyProtocolFilter
+
+	cm, configmapErr := configmap.Load("/etc/config-network.yaml")
+	if configmapErr == nil {
+		networkConfig, err := config.NewConfigFromMap(cm)
+		if err == nil {
+			proxyProtocolEnabled = networkConfig.ProxyProtocolProbeEnabled
+			proxyProtocolFilter = networkConfig.ProxyProtocolFilter
+		} else {
+			m.logger.Error("error when creating config from configmap, using default config, ", err.Error())
+		}
+	} else {
+		m.logger.Error("error when getting configmap set up, using default config, ", configmapErr.Error())
 	}
 
 	probeFilterMatch := false
 
-	proxyProtocolFilter := ctx.Value("ProxyProtocolFilter")
-	if proxyProtocolFilter != nil && proxyProtocolFilter != "" {
-		proxyProtocolFilterList := strings.Split(proxyProtocolFilter.(string), ",")
+	if proxyProtocolFilter != "" {
+		proxyProtocolFilterList := strings.Split(proxyProtocolFilter, ",")
 		for _, v := range proxyProtocolFilterList {
-			if strings.HasSuffix(probeURL.Host, v) {
+			if strings.HasSuffix(probeURL.Hostname(), v) {
 				probeFilterMatch = true
 				break
 			}
@@ -402,7 +416,7 @@ func (m *Prober) processWorkItem() bool {
 	}
 
 	// If proxy protocol is enabled and the filter is non-matching or nil then perform proxy protocol probe
-	if proxyProtocolEnabled.(bool) && !probeFilterMatch {
+	if proxyProtocolEnabled && !probeFilterMatch {
 		ok, err := prober.DoWithProxyProtocol(
 			ctx,
 			transport,
