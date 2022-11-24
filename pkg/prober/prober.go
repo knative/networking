@@ -20,10 +20,13 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
+	"net"
 	"net/http"
 	"sync"
 	"time"
 
+	"github.com/pires/go-proxyproto"
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -90,6 +93,43 @@ func ExpectsStatusCodes(statusCodes []int) Verifier {
 		}
 		return false, fmt.Errorf("unexpected status code: want %v, got %v", statusCodes, r.StatusCode)
 	}
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatalf("Error: %s", err.Error())
+	}
+}
+
+func DoWithProxyProtocol(ctx context.Context, transport http.RoundTripper, target string, podIP string, podPort string, ops ...interface{}) (bool, error) {
+	targetTCP, err := net.ResolveTCPAddr("tcp", podIP+":"+podPort)
+	checkErr(err)
+
+	conn, err := net.DialTCP("tcp", nil, targetTCP)
+	checkErr(err)
+
+	defer conn.Close()
+
+	// Create a proxy protocol header
+	header := &proxyproto.Header{
+		Version:           1,
+		Command:           proxyproto.PROXY,
+		TransportProtocol: proxyproto.TCPv4,
+		// an arbitrary default to represent this was initiated from the probing pod given this is round trip only
+		SourceAddr: &net.TCPAddr{
+			IP:   net.ParseIP("10.1.1.1"),
+			Port: 1000,
+		},
+		DestinationAddr: &net.TCPAddr{
+			IP:   targetTCP.IP,
+			Port: targetTCP.Port,
+		},
+	}
+	// After the connection was created write the proxy headers first
+	_, err = header.WriteTo(conn)
+	checkErr(err)
+
+	return true, nil
 }
 
 // Do sends a single probe to given target, e.g. `http://revision.default.svc.cluster.local:81`.

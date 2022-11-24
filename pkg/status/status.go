@@ -25,8 +25,12 @@ import (
 	"net/url"
 	"path"
 	"reflect"
+	"strings"
 	"sync"
 	"time"
+
+	"knative.dev/networking/pkg/config"
+	"knative.dev/pkg/configmap"
 
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
@@ -381,31 +385,94 @@ func (m *Prober) processWorkItem() bool {
 
 	ctx, cancel := context.WithTimeout(item.context, probeTimeout)
 	defer cancel()
-	ok, err := prober.Do(
-		ctx,
-		transport,
-		probeURL.String(),
-		prober.WithHeader(header.UserAgentKey, header.IngressReadinessUserAgent),
-		prober.WithHeader(header.ProbeKey, header.ProbeValue),
-		prober.WithHeader(header.HashKey, header.HashValueOverride),
-		m.probeVerifier(item))
 
-	// In case of cancellation, drop the work item
-	select {
-	case <-item.context.Done():
-		m.workQueue.Forget(obj)
-		return true
-	default:
-	}
+	// Use default config
+	defaultConfig, _ := config.NewConfigFromMap(nil)
+	proxyProtocolEnabled := defaultConfig.ProxyProtocolProbeEnabled
+	proxyProtocolFilter := defaultConfig.ProxyProtocolFilter
 
-	if err != nil || !ok {
-		// In case of error, enqueue for retry
-		m.workQueue.AddRateLimited(obj)
-		item.logger.Errorf("Probing of %s failed, IP: %s:%s, ready: %t, error: %v (depth: %d)",
-			item.url, item.podIP, item.podPort, ok, err, m.workQueue.Len())
+	cm, configmapErr := configmap.Load("/etc/config-network.yaml")
+	if configmapErr == nil {
+		networkConfig, err := config.NewConfigFromMap(cm)
+		if err == nil {
+			proxyProtocolEnabled = networkConfig.ProxyProtocolProbeEnabled
+			proxyProtocolFilter = networkConfig.ProxyProtocolFilter
+		} else {
+			m.logger.Error("error when creating config from configmap, using default config, ", err.Error())
+		}
 	} else {
-		m.onProbingSuccess(item.ingressState, item.podState)
+		m.logger.Error("error when getting configmap set up, using default config, ", configmapErr.Error())
 	}
+
+	probeFilterMatch := false
+
+	if proxyProtocolFilter != "" {
+		proxyProtocolFilterList := strings.Split(proxyProtocolFilter, ",")
+		for _, v := range proxyProtocolFilterList {
+			if strings.HasSuffix(probeURL.Hostname(), v) {
+				probeFilterMatch = true
+				break
+			}
+		}
+	}
+
+	// If proxy protocol is enabled and the filter is non-matching or nil then perform proxy protocol probe
+	if proxyProtocolEnabled && !probeFilterMatch {
+		ok, err := prober.DoWithProxyProtocol(
+			ctx,
+			transport,
+			probeURL.String(),
+			item.podIP,
+			item.podPort,
+			prober.WithHeader(header.UserAgentKey, header.IngressReadinessUserAgent),
+			prober.WithHeader(header.ProbeKey, header.ProbeValue),
+			prober.WithHeader(header.HashKey, header.HashValueOverride),
+			m.probeVerifier(item))
+
+		// In case of cancellation, drop the work item
+		select {
+		case <-item.context.Done():
+			m.workQueue.Forget(obj)
+			return true
+		default:
+		}
+
+		if err != nil || !ok {
+			// In case of error, enqueue for retry
+			m.workQueue.AddRateLimited(obj)
+			item.logger.Errorf("Probing of %s failed, IP: %s:%s, ready: %t, error: %v (depth: %d)",
+				item.url, item.podIP, item.podPort, ok, err, m.workQueue.Len())
+		} else {
+			m.onProbingSuccess(item.ingressState, item.podState)
+		}
+	} else {
+		ok, err := prober.Do(
+			ctx,
+			transport,
+			probeURL.String(),
+			prober.WithHeader(header.UserAgentKey, header.IngressReadinessUserAgent),
+			prober.WithHeader(header.ProbeKey, header.ProbeValue),
+			prober.WithHeader(header.HashKey, header.HashValueOverride),
+			m.probeVerifier(item))
+
+		// In case of cancellation, drop the work item
+		select {
+		case <-item.context.Done():
+			m.workQueue.Forget(obj)
+			return true
+		default:
+		}
+
+		if err != nil || !ok {
+			// In case of error, enqueue for retry
+			m.workQueue.AddRateLimited(obj)
+			item.logger.Errorf("Probing of %s failed, IP: %s:%s, ready: %t, error: %v (depth: %d)",
+				item.url, item.podIP, item.podPort, ok, err, m.workQueue.Len())
+		} else {
+			m.onProbingSuccess(item.ingressState, item.podState)
+		}
+	}
+
 	return true
 }
 

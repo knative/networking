@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "73d96d1b"
+    knative.dev/example-checksum: "ba459cad"
 data:
   _example: |
     ################################
@@ -182,3 +182,18 @@ data:
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
     internal-encryption: "false"
+
+    # proxy-protocol-filter allows internal traffic to split between proxy protocol probes
+    # and http probes via a csv input string.  Values added in the string will use
+    # the standard http probe instead of the proxy protocol probe.
+    #
+    # Example Scenario: proxyprotocol.route.test and *.fizz.route.test are two routes in a cluster
+    # - "fizz.route.test" will match as a suffix for the second entry, using http probes for that host
+    # while using proxy protocol probes for the proxyprotocol prefixed route
+    proxy-protocol-filter: ""
+
+    # proxy-protocol-probe-enabled indicates whether the probing mechanism for pods
+    # should use the proxy protocol or the HTTP call
+    #
+    # HTTP probes are used by default.  Setting this value to true will activate proxy protocol probes.
+    proxy-protocol-probe-enabled: "false"

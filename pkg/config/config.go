@@ -113,6 +113,15 @@ const (
 	// have a wildcard certificate provisioned for them.
 	NamespaceWildcardCertSelectorKey = "namespace-wildcard-cert-selector"
 
+	// ProxyProtocolFilter is the name of the configuration entry
+	// that specifies which prefix if any to match against when splitting
+	// traffic between probes with proxy protocol and HTTP.
+	ProxyProtocolFilter = "proxy-protocol-filter"
+
+	// ProxyProtocolProbeEnabled is the name of the configuration entry
+	// that specifies if the proxy protocol should be used when probing.
+	ProxyProtocolProbeEnabled = "proxy-protocol-probe-enabled"
+
 	// RolloutDurationKey is the name of the configuration entry
 	// that specifies the default duration of the configuration rollout.
 	RolloutDurationKey = "rollout-duration"
@@ -253,6 +262,15 @@ type Config struct {
 
 	// DefaultExternal specifies whether internal traffic is encrypted or not.
 	InternalEncryption bool
+
+	// ProxyProtocolProbeEnabled specifies whether proxy protocol should be used for readiness probes
+	// Defaults to false
+	ProxyProtocolProbeEnabled bool
+
+	// ProxyProtocolFilter specifies whether a prefix should be matched allowing for a
+	// proxy protocol probe enabled route and a HTTP enabled route to be used in the same environment
+	// Defaults to empty string to match all
+	ProxyProtocolFilter string
 }
 
 func defaultConfig() *Config {
@@ -268,6 +286,8 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		InternalEncryption:            false,
+		ProxyProtocolProbeEnabled:     false,
+		ProxyProtocolFilter:           "",
 	}
 }
 
@@ -295,6 +315,8 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsBool(EnableMeshPodAddressabilityKey, &nc.EnableMeshPodAddressability),
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsBool(InternalEncryptionKey, &nc.InternalEncryption),
+		cm.AsBool(ProxyProtocolProbeEnabled, &nc.ProxyProtocolProbeEnabled),
+		cm.AsString(ProxyProtocolFilter, &nc.ProxyProtocolFilter),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
