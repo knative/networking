@@ -33,6 +33,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 		name: "valid",
 		cs: &CertificateSpec{
 			DNSNames:   []string{"host.example"},
+			Domain:     "example",
 			SecretName: "secret",
 		},
 		want: nil,
@@ -40,6 +41,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 		name: "missing-dnsnames",
 		cs: &CertificateSpec{
 			DNSNames:   []string{},
+			Domain:     "example",
 			SecretName: "secret",
 		},
 		want: apis.ErrMissingField("dnsNames"),
@@ -47,6 +49,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 		name: "empty-dnsname",
 		cs: &CertificateSpec{
 			DNSNames:   []string{"host.example", ""},
+			Domain:     "example",
 			SecretName: "secret",
 		},
 		want: apis.ErrInvalidArrayValue("", "dnsNames", 1),
@@ -54,6 +57,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 		name: "missing-secret-name",
 		cs: &CertificateSpec{
 			DNSNames:   []string{"host.example"},
+			Domain:     "example",
 			SecretName: "",
 		},
 		want: apis.ErrMissingField("secretName"),
