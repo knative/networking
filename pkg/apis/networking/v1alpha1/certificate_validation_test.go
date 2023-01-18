@@ -45,6 +45,14 @@ func TestCertificateSpecValidation(t *testing.T) {
 		},
 		want: nil,
 	}, {
+		name: "valid-domain-equals-dnsnames",
+		cs: &CertificateSpec{
+			DNSNames:   []string{"host.example"},
+			Domain:     "host.example",
+			SecretName: "secret",
+		},
+		want: nil,
+	}, {
 		name: "missing-dnsnames",
 		cs: &CertificateSpec{
 			DNSNames:   []string{},
@@ -75,7 +83,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 			Domain:     "example",
 			SecretName: "secret",
 		},
-		want: apis.ErrInvalidValue("domain", "domain must be a suffix of at least one entry in dnsNames"),
+		want: apis.ErrInvalidValue("domain", "domain must be a suffix of, or match exactly, at least one entry in dnsNames"),
 	}}
 
 	for _, test := range tests {
