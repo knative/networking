@@ -2,9 +2,8 @@
 
 approvers:
 - technical-oversight-committee
-- networking-writers
+- serving-writers
 - knative-release-leads
 
-# Networking Reviewers
 reviewers:
-- networking-reviewers
+- serving-reviewers
