@@ -722,7 +722,7 @@ k8s.io/utils/trace
 # knative.dev/hack v0.0.0-20230210215449-d71d569c4308
 ## explicit; go 1.18
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20230210013552-fb44e94cccb1
+# knative.dev/pkg v0.0.0-20230215234751-2f55fe00c5a1
 ## explicit; go 1.18
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
