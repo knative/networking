@@ -41,7 +41,22 @@ func TestHTTP01Challenge(t *testing.T) {
 
 		if err := utils.WaitForCertificateState(ctx, clients.NetworkingClient, cert.Name,
 			func(c *v1alpha1.Certificate) (bool, error) {
-				return len(c.Status.HTTP01Challenges) == len(c.Spec.DNSNames), nil
+				for _, dnsName := range c.Spec.DNSNames {
+					found := false
+
+					for _, challenge := range c.Status.HTTP01Challenges {
+						if challenge.URL.Host == dnsName {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						return false, nil
+					}
+				}
+
+				return true, nil
 			},
 			t.Name()); err != nil {
 			t.Fatal("failed to wait for HTTP01 challenges:", err)
