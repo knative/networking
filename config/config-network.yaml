@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "73d96d1b"
+    knative.dev/example-checksum: "7c60c93a"
 data:
   _example: |
     ################################
@@ -174,6 +174,7 @@ data:
     default-external-scheme: "http"
 
     # internal-encryption indicates whether internal traffic is encrypted or not.
+    # Using internal-encryption does not protect against MITM attacks
     # If this is "true", the following traffic are encrypted:
     #  - ingress to activator
     #  - ingress to queue-proxy
@@ -182,3 +183,14 @@ data:
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
     internal-encryption: "false"
+
+    # internal-trust indicates whether internal traffic is encrypted and mutual trust is achieved.
+    # Using internal-trust protect against MITM attacks
+    # If this is "true", the following traffic are encrypted:
+    #  - ingress to activator
+    #  - ingress to queue-proxy
+    #  - activator to queue-proxy
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    internal-trust: "false"

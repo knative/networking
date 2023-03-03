@@ -288,6 +288,17 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "network configuration with activator-ca and activator-san + trust",
+		data: map[string]string{
+			InternalTrustKey: "true",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.InternalTrust = true
+			return c
+		}(),
+	}, {
 		name: "legacy keys",
 		data: map[string]string{
 			"ingress.class":         "1",
