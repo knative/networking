@@ -127,7 +127,7 @@ const (
 	InternalEncryptionKey = "internal-encryption"
 
 	// InternalTrustKey is the name of the configuration whether
-	// internal traffic is encrypted and mutual trust achived between the peers.
+	// internal traffic is encrypted and mutual trust achieved between the peers.
 	InternalTrustKey = "internal-trust"
 )
 
