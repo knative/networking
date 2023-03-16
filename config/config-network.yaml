@@ -185,8 +185,10 @@ data:
     internal-encryption: "false"
 
     # internal-trust indicates whether internal traffic is encrypted and mutual trust is achieved.
-    # Using internal-trust protect against MITM attacks
-    # If this is "true", the following traffic are encrypted:
+    # Using internal-trust protect against MITM attacks and ensures that all requests received
+    # will go via the ingress and will come from an approved set of sources 
+    # (e.g. KServ from recognized namespaces)
+    # If this is "true", the following traffic is encrypted and client authentication is verified with mutual TLS:
     #  - ingress to activator
     #  - ingress to queue-proxy
     #  - activator to queue-proxy
