@@ -22,6 +22,176 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "00c2370e"
+    knative.dev/example-checksum: "26573c6a"
 data:
-  _example: "################################\n#                              #\n#    EXAMPLE CONFIGURATION     #\n#                              #\n################################\n\n# This block is not actually functional configuration,\n# but serves to illustrate the available configuration\n# options and document them in a way that is accessible\n# to users that `kubectl edit` this config map.\n#\n# These sample configuration options may be copied out of\n# this example block and unindented to be in the data block\n# to actually change the configuration.\n\n# ingress-class specifies the default ingress class\n# to use when not dictated by Route annotation.\n#\n# If not specified, will use the Istio ingress.\n#\n# Note that changing the Ingress class of an existing Route\n# will result in undefined behavior.  Therefore it is best to only\n# update this value during the setup of Knative, to avoid getting\n# undefined behavior.\ningress-class: \"istio.ingress.networking.knative.dev\"\n\n# certificate-class specifies the default Certificate class\n# to use when not dictated by Route annotation.\n#\n# If not specified, will use the Cert-Manager Certificate.\n#\n# Note that changing the Certificate class of an existing Route\n# will result in undefined behavior.  Therefore it is best to only\n# update this value during the setup of Knative, to avoid getting\n# undefined behavior.\ncertificate-class: \"cert-manager.certificate.networking.knative.dev\"\n\n# namespace-wildcard-cert-selector specifies a LabelSelector which\n# determines which namespaces should have a wildcard certificate\n# provisioned.\n#\n# Use an empty value to disable the feature (this is the default):\n#   namespace-wildcard-cert-selector: \"\"\n#\n# Use an empty object to enable for all namespaces\n#   namespace-wildcard-cert-selector: {}\n#\n# Useful labels include the \"kubernetes.io/metadata.name\" label to\n# avoid provisioning a certifcate for the \"kube-system\" namespaces.\n# Use the following selector to match pre-1.0 behavior of using\n# \"networking.knative.dev/disableWildcardCert\" to exclude namespaces:\n#\n# matchExpressions:\n# - key: \"networking.knative.dev/disableWildcardCert\"\n#   operator: \"NotIn\"\n#   values: [\"true\"]\nnamespace-wildcard-cert-selector: \"\"\n\n# domain-template specifies the golang text template string to use\n# when constructing the Knative service's DNS name. The default\n# value is \"{{.Name}}.{{.Namespace}}.{{.Domain}}\".\n#\n# Valid variables defined in the template include Name, Namespace, Domain,\n# Labels, and Annotations. Name will be the result of the tagTemplate\n# below, if a tag is specified for the route.\n#\n# Changing this value might be necessary when the extra levels in\n# the domain name generated is problematic for wildcard certificates\n# that only support a single level of domain name added to the\n# certificate's domain. In those cases you might consider using a value\n# of \"{{.Name}}-{{.Namespace}}.{{.Domain}}\", or removing the Namespace\n# entirely from the template. When choosing a new value be thoughtful\n# of the potential for conflicts - for example, when users choose to use\n# characters such as `-` in their service, or namespace, names.\n# {{.Annotations}} or {{.Labels}} can be used for any customization in the\n# go template if needed.\n# We strongly recommend keeping namespace part of the template to avoid\n# domain name clashes:\n# eg. '{{.Name}}-{{.Namespace}}.{{ index .Annotations \"sub\"}}.{{.Domain}}'\n# and you have an annotation {\"sub\":\"foo\"}, then the generated template\n# would be {Name}-{Namespace}.foo.{Domain}\ndomain-template: \"{{.Name}}.{{.Namespace}}.{{.Domain}}\"\n\n# tagTemplate specifies the golang text template string to use\n# when constructing the DNS name for \"tags\" within the traffic blocks\n# of Routes and Configuration.  This is used in conjunction with the\n# domainTemplate above to determine the full URL for the tag.\ntag-template: \"{{.Tag}}-{{.Name}}\"\n\n# Controls whether TLS certificates are automatically provisioned and\n# installed in the Knative ingress to terminate external TLS connection.\n# 1. Enabled: enabling auto-TLS feature.\n# 2. Disabled: disabling auto-TLS feature.\nauto-tls: \"Disabled\"\n\n# Controls the behavior of the HTTP endpoint for the Knative ingress.\n# It requires autoTLS to be enabled.\n# 1. Enabled: The Knative ingress will be able to serve HTTP connection.\n# 2. Redirected: The Knative ingress will send a 301 redirect for all\n# http connections, asking the clients to use HTTPS.\n#\n# \"Disabled\" option is deprecated.\nhttp-protocol: \"Enabled\"\n\n# rollout-duration contains the minimal duration in seconds over which the\n# Configuration traffic targets are rolled out to the newest revision.\nrollout-duration: \"0\"\n\n# autocreate-cluster-domain-claims controls whether ClusterDomainClaims should\n# be automatically created (and deleted) as needed when DomainMappings are\n# reconciled.\n#\n# If this is \"false\" (the default), the cluster administrator is\n# responsible for creating ClusterDomainClaims and delegating them to\n# namespaces via their spec.Namespace field. This setting should be used in\n# multitenant environments which need to control which namespace can use a\n# particular domain name in a domain mapping.\n#\n# If this is \"true\", users are able to associate arbitrary names with their\n# services via the DomainMapping feature.\nautocreate-cluster-domain-claims: \"false\"\n\n# If true, networking plugins can add additional information to deployed\n# applications to make their pods directly accessible via their IPs even if mesh is\n# enabled and thus direct-addressability is usually not possible.\n# Consumers like Knative Serving can use this setting to adjust their behavior\n# accordingly, i.e. to drop fallback solutions for non-pod-addressable systems.\n#\n# NOTE: This flag is in an alpha state and is mostly here to enable internal testing\n#       for now. Use with caution.\nenable-mesh-pod-addressability: \"false\"\n\n# mesh-compatibility-mode indicates whether consumers of network plugins\n# should directly contact Pod IPs (most efficient), or should use the\n# Cluster IP (less efficient, needed when mesh is enabled unless\n# `enable-mesh-pod-addressability`, above, is set).\n# Permitted values are:\n#  - \"auto\" (default): automatically determine which mesh mode to use by trying Pod IP and falling back to Cluster IP as needed.\n#  - \"enabled\": always use Cluster IP and do not attempt to use Pod IPs.\n#  - \"disabled\": always use Pod IPs and do not fall back to Cluster IP on failure.\nmesh-compatibility-mode: \"auto\"\n\n# Defines the scheme used for external URLs if autoTLS is not enabled.\n# This can be used for making Knative report all URLs as \"HTTPS\" for example, if you're\n# fronting Knative with an external loadbalancer that deals with TLS termination and\n# Knative doesn't know about that otherwise.\ndefault-external-scheme: \"http\"\n\n# internal-encryption indicates whether internal traffic is encrypted or not.\n# Using internal-encryption does not protect against MITM attacks\n# If this is \"true\", the following traffic are encrypted:\n#  - ingress to activator\n#  - ingress to queue-proxy\n#  - activator to queue-proxy\n#\n# NOTE: This flag is in an alpha state and is mostly here to enable internal testing\n#       for now. Use with caution.\ninternal-encryption: \"false\"\n\n# internal-trust indicates whether internal traffic is encrypted and mutual trust is achieved.\n# Using internal-trust protect against MITM attacks and ensures that all requests received\n# will go via the ingress and will come from an approved set of sources \n# (e.g. KServ from recognized namespaces)\n# If this is \"true\", the following traffic is encrypted and client authentication is verified with mutual TLS:\n#  - ingress to activator\n#  - ingress to queue-proxy\n#  - activator to queue-proxy\n#\n# NOTE: This flag is in an alpha state and is mostly here to enable internal testing\n#       for now. Use with caution.\ninternal-trust: \"false\"\n"
+  _example: |
+    ################################
+    #                              #
+    #    EXAMPLE CONFIGURATION     #
+    #                              #
+    ################################
+
+    # This block is not actually functional configuration,
+    # but serves to illustrate the available configuration
+    # options and document them in a way that is accessible
+    # to users that `kubectl edit` this config map.
+    #
+    # These sample configuration options may be copied out of
+    # this example block and unindented to be in the data block
+    # to actually change the configuration.
+
+    # ingress-class specifies the default ingress class
+    # to use when not dictated by Route annotation.
+    #
+    # If not specified, will use the Istio ingress.
+    #
+    # Note that changing the Ingress class of an existing Route
+    # will result in undefined behavior.  Therefore it is best to only
+    # update this value during the setup of Knative, to avoid getting
+    # undefined behavior.
+    ingress-class: "istio.ingress.networking.knative.dev"
+
+    # certificate-class specifies the default Certificate class
+    # to use when not dictated by Route annotation.
+    #
+    # If not specified, will use the Cert-Manager Certificate.
+    #
+    # Note that changing the Certificate class of an existing Route
+    # will result in undefined behavior.  Therefore it is best to only
+    # update this value during the setup of Knative, to avoid getting
+    # undefined behavior.
+    certificate-class: "cert-manager.certificate.networking.knative.dev"
+
+    # namespace-wildcard-cert-selector specifies a LabelSelector which
+    # determines which namespaces should have a wildcard certificate
+    # provisioned.
+    #
+    # Use an empty value to disable the feature (this is the default):
+    #   namespace-wildcard-cert-selector: ""
+    #
+    # Use an empty object to enable for all namespaces
+    #   namespace-wildcard-cert-selector: {}
+    #
+    # Useful labels include the "kubernetes.io/metadata.name" label to
+    # avoid provisioning a certifcate for the "kube-system" namespaces.
+    # Use the following selector to match pre-1.0 behavior of using
+    # "networking.knative.dev/disableWildcardCert" to exclude namespaces:
+    #
+    # matchExpressions:
+    # - key: "networking.knative.dev/disableWildcardCert"
+    #   operator: "NotIn"
+    #   values: ["true"]
+    namespace-wildcard-cert-selector: ""
+
+    # domain-template specifies the golang text template string to use
+    # when constructing the Knative service's DNS name. The default
+    # value is "{{.Name}}.{{.Namespace}}.{{.Domain}}".
+    #
+    # Valid variables defined in the template include Name, Namespace, Domain,
+    # Labels, and Annotations. Name will be the result of the tagTemplate
+    # below, if a tag is specified for the route.
+    #
+    # Changing this value might be necessary when the extra levels in
+    # the domain name generated is problematic for wildcard certificates
+    # that only support a single level of domain name added to the
+    # certificate's domain. In those cases you might consider using a value
+    # of "{{.Name}}-{{.Namespace}}.{{.Domain}}", or removing the Namespace
+    # entirely from the template. When choosing a new value be thoughtful
+    # of the potential for conflicts - for example, when users choose to use
+    # characters such as `-` in their service, or namespace, names.
+    # {{.Annotations}} or {{.Labels}} can be used for any customization in the
+    # go template if needed.
+    # We strongly recommend keeping namespace part of the template to avoid
+    # domain name clashes:
+    # eg. '{{.Name}}-{{.Namespace}}.{{ index .Annotations "sub"}}.{{.Domain}}'
+    # and you have an annotation {"sub":"foo"}, then the generated template
+    # would be {Name}-{Namespace}.foo.{Domain}
+    domain-template: "{{.Name}}.{{.Namespace}}.{{.Domain}}"
+
+    # tagTemplate specifies the golang text template string to use
+    # when constructing the DNS name for "tags" within the traffic blocks
+    # of Routes and Configuration.  This is used in conjunction with the
+    # domainTemplate above to determine the full URL for the tag.
+    tag-template: "{{.Tag}}-{{.Name}}"
+
+    # Controls whether TLS certificates are automatically provisioned and
+    # installed in the Knative ingress to terminate external TLS connection.
+    # 1. Enabled: enabling auto-TLS feature.
+    # 2. Disabled: disabling auto-TLS feature.
+    auto-tls: "Disabled"
+
+    # Controls the behavior of the HTTP endpoint for the Knative ingress.
+    # It requires autoTLS to be enabled.
+    # 1. Enabled: The Knative ingress will be able to serve HTTP connection.
+    # 2. Redirected: The Knative ingress will send a 301 redirect for all
+    # http connections, asking the clients to use HTTPS.
+    #
+    # "Disabled" option is deprecated.
+    http-protocol: "Enabled"
+
+    # rollout-duration contains the minimal duration in seconds over which the
+    # Configuration traffic targets are rolled out to the newest revision.
+    rollout-duration: "0"
+
+    # autocreate-cluster-domain-claims controls whether ClusterDomainClaims should
+    # be automatically created (and deleted) as needed when DomainMappings are
+    # reconciled.
+    #
+    # If this is "false" (the default), the cluster administrator is
+    # responsible for creating ClusterDomainClaims and delegating them to
+    # namespaces via their spec.Namespace field. This setting should be used in
+    # multitenant environments which need to control which namespace can use a
+    # particular domain name in a domain mapping.
+    #
+    # If this is "true", users are able to associate arbitrary names with their
+    # services via the DomainMapping feature.
+    autocreate-cluster-domain-claims: "false"
+
+    # If true, networking plugins can add additional information to deployed
+    # applications to make their pods directly accessible via their IPs even if mesh is
+    # enabled and thus direct-addressability is usually not possible.
+    # Consumers like Knative Serving can use this setting to adjust their behavior
+    # accordingly, i.e. to drop fallback solutions for non-pod-addressable systems.
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    enable-mesh-pod-addressability: "false"
+
+    # mesh-compatibility-mode indicates whether consumers of network plugins
+    # should directly contact Pod IPs (most efficient), or should use the
+    # Cluster IP (less efficient, needed when mesh is enabled unless
+    # `enable-mesh-pod-addressability`, above, is set).
+    # Permitted values are:
+    #  - "auto" (default): automatically determine which mesh mode to use by trying Pod IP and falling back to Cluster IP as needed.
+    #  - "enabled": always use Cluster IP and do not attempt to use Pod IPs.
+    #  - "disabled": always use Pod IPs and do not fall back to Cluster IP on failure.
+    mesh-compatibility-mode: "auto"
+
+    # Defines the scheme used for external URLs if autoTLS is not enabled.
+    # This can be used for making Knative report all URLs as "HTTPS" for example, if you're
+    # fronting Knative with an external loadbalancer that deals with TLS termination and
+    # Knative doesn't know about that otherwise.
+    default-external-scheme: "http"
+
+    # internal-encryption indicates whether internal traffic is encrypted or not.
+    # If this is "true", the following traffic are encrypted:
+    #  - ingress to activator
+    #  - ingress to queue-proxy
+    #  - activator to queue-proxy
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    internal-encryption: "false"
+
+    # internal-trust indicates whether internal traffic is encrypted and mutual trust is achieved.
+    # Using internal-trust protect against MITM attacks and ensures that all requests received
+    # will go via the ingress and will come from an approved set of sources
+    # (e.g. KServ from recognized namespaces)
+    # If this is "true", the following traffic is encrypted and client authentication is verified with mutual TLS:
+    #  - ingress to activator
+    #  - ingress to queue-proxy
+    #  - activator to queue-proxy
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
+    #       for now. Use with caution.
+    internal-trust: "false"

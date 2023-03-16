@@ -259,6 +259,7 @@ type Config struct {
 	InternalEncryption bool
 
 	// InternalTrust specifies whether internal traffic is encrypted with mutual trust between peers.
+	// InternalTrust enforces InternalEncryption = true
 	InternalTrust bool
 }
 
