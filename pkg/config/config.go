@@ -258,9 +258,9 @@ type Config struct {
 	// InternalEncryption specifies whether internal traffic is encrypted or not.
 	InternalEncryption bool
 
-	// InternalTrust specifies whether internal traffic is encrypted with mutual trust between peers.
+	// InternalTrust specifies what level of trust whether internal traffic is encrypted with mutual trust between peers.
 	// InternalTrust enforces InternalEncryption = true
-	InternalTrust bool
+	InternalTrust string
 }
 
 func defaultConfig() *Config {
@@ -276,6 +276,7 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		InternalEncryption:            false,
+		InternalTrust:                 "none",
 	}
 }
 
@@ -303,7 +304,7 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsBool(EnableMeshPodAddressabilityKey, &nc.EnableMeshPodAddressability),
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsBool(InternalEncryptionKey, &nc.InternalEncryption),
-		cm.AsBool(InternalTrustKey, &nc.InternalTrust),
+		cm.AsString(InternalTrustKey, &nc.InternalTrust),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {

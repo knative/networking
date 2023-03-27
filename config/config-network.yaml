@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "26573c6a"
+    knative.dev/example-checksum: "49690e50"
 data:
   _example: |
     ################################
@@ -173,25 +173,24 @@ data:
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
 
-    # internal-encryption indicates whether internal traffic is encrypted or not.
-    # If this is "true", the following traffic are encrypted:
-    #  - ingress to activator
-    #  - ingress to queue-proxy
-    #  - activator to queue-proxy
+    # internal-encryption applies to the knative control-plane only, for data-plane see internal-trust
+    # internal-encryption indicates whether internal control-plane traffic is encrypted or not.
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
     internal-encryption: "false"
 
-    # internal-trust indicates whether internal traffic is encrypted and mutual trust is achieved.
-    # Using internal-trust protect against MITM attacks and ensures that all requests received
-    # will go via the ingress and will come from an approved set of sources
-    # (e.g. KServ from recognized namespaces)
-    # If this is "true", the following traffic is encrypted and client authentication is verified with mutual TLS:
+    # internal-trust indicates the level of trust established in the knative data-plane.
+    # internal-trust = "none" (the default) - uses no encryption for internal traffic
+    # Using any other value ensures that the following traffic are encrypted:
     #  - ingress to activator
     #  - ingress to queue-proxy
     #  - activator to queue-proxy
     #
-    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
-    #       for now. Use with caution.
-    internal-trust: "false"
+    # internal-trust = "minimal" ensures requests arriving the Kingress will be forwarded to Kserv with a certificate created by the Knative CA
+    # internal-trust = "namespace" ensures requests arriving the Kingress will be forwarded to Kserv with a namespace specific certificate created by the Knative CA
+    # internal-trust = "mutual" same as "namespace" and also ensures that Kserv will only receive reqeusts via the Kingress
+    # internal-trust = "identity" same as "mutual" and also adds sender identity verified by the Kingress and forwarded to Kserv
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
+    internal-trust: "none"

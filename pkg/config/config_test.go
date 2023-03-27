@@ -277,7 +277,7 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with activator-ca and activator-san",
+		name: "network configuration of the control-plane",
 		data: map[string]string{
 			InternalEncryptionKey: "true",
 		},
@@ -288,14 +288,14 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with activator-ca and activator-san + trust",
+		name: "network configuration of the data-plane",
 		data: map[string]string{
-			InternalTrustKey: "true",
+			InternalTrustKey: "trustLevel",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.InternalTrust = true
+			c.InternalTrust = "trustLevel"
 			return c
 		}(),
 	}, {
@@ -326,6 +326,7 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			InternalTrust:         "none",
 		},
 	}, {
 		name: "newer keys take precedence over legacy keys",
@@ -351,6 +352,7 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaimsKey: "false",
 			HTTPProtocolKey:                  "enabled",
 			AutoTLSKey:                       "disabled",
+			InternalTrustKey:                 "minimum",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "7",
@@ -366,6 +368,7 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			InternalTrust:         "minimum",
 		},
 	}}
 
