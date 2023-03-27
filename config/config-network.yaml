@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "49690e50"
+    knative.dev/example-checksum: "15059b7b"
 data:
   _example: |
     ################################
@@ -173,7 +173,8 @@ data:
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
 
-    # internal-encryption applies to the knative control-plane only, for data-plane see internal-trust
+    # internal-encryption applies to the knative control-plane only
+    # internal-encryption use for data-plane is deprecated and is replaced by internal-trust
     # internal-encryption indicates whether internal control-plane traffic is encrypted or not.
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
