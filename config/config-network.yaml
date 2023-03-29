@@ -22,9 +22,9 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "15059b7b"
+    knative.dev/example-checksum: "c5b36bbe"
 data:
-  _example: |
+  _example: |-
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
@@ -173,25 +173,38 @@ data:
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
 
-    # internal-encryption applies to the knative control-plane only
-    # internal-encryption use for data-plane is deprecated and is replaced by internal-trust
-    # internal-encryption indicates whether internal control-plane traffic is encrypted or not.
+    # internal-encryption is deprecated and replaced by internal-dataplane-trust and internal-controlplane-trust
+    # internal-encryption indicates whether internal traffic is encrypted or not.
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
     internal-encryption: "false"
 
-    # internal-trust indicates the level of trust established in the knative data-plane.
-    # internal-trust = "none" (the default) - uses no encryption for internal traffic
-    # Using any other value ensures that the following traffic are encrypted:
+    # internal-dataplane-trust indicates the level of trust established in the knative data-plane.
+    # internal-dataplane-trust = "none" (the default) - uses no encryption for internal traffic
+    # Using any other value ensures that the following traffic is encrypted:
     #  - ingress to activator
     #  - ingress to queue-proxy
     #  - activator to queue-proxy
     #
-    # internal-trust = "minimal" ensures requests arriving the Kingress will be forwarded to Kserv with a certificate created by the Knative CA
-    # internal-trust = "namespace" ensures requests arriving the Kingress will be forwarded to Kserv with a namespace specific certificate created by the Knative CA
-    # internal-trust = "mutual" same as "namespace" and also ensures that Kserv will only receive reqeusts via the Kingress
-    # internal-trust = "identity" same as "mutual" and also adds sender identity verified by the Kingress and forwarded to Kserv
+    # internal-dataplane-trust = "minimal" ensures requests arriving the Kingress will be forwarded to Kserv with a certificate created by the Knative CA
+    # internal-dataplane-trust = "namespace" ensures requests arriving the Kingress will be forwarded to Kserv with a namespace specific certificate created by the Knative CA
+    # internal-dataplane-trust = "mutual" same as "namespace" and also ensures that Kserv will only receive reqeusts via the Kingress
+    # internal-dataplane-trust = "identity" same as "mutual" and also adds sender identity verified by the Kingress and forwarded to Kserv
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
-    internal-trust: "none"
+    internal-dataplane-trust: "none"
+
+    # internal-controlplane-trust indicates the level of trust established in the knative control-plane.
+    # internal-controlplane-trust = "none" (the default) - uses no encryption for internal traffic
+    # Using any other value ensures that controlm traffic is encrypted:
+    #  - ingress to activator
+    #  - ingress to queue-proxy
+    #  - activator to queue-proxy
+    #
+    # internal-controlplane-trust = "minimal" ensures control requests sent to Kserv will use a certificate created by the Knative CA
+    # internal-controlplane-trust = "namespace" ensures control requests sent to Kserv will use a namespace specific certificate created by the Knative CA
+    # internal-controlplane-trust = "mutual" same as "namespace" and also ensures that Kserv will only receive reqeusts from senders that has a control certificate
+    #
+    # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
+    internal-controlplane-trust: "none"
