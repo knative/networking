@@ -203,6 +203,8 @@ const (
 )
 
 // NewConfigFromConfigMap creates a Config from the supplied ConfigMap
+//
+// Deprecated: Use knative.dev/networking/pkg/config/NewConfigFromMap
 func NewConfigFromConfigMap(configMap *corev1.ConfigMap) (*Config, error) {
 	return NewConfigFromMap(configMap.Data)
 }
