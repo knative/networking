@@ -719,10 +719,10 @@ k8s.io/utils/lru
 k8s.io/utils/net
 k8s.io/utils/strings/slices
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20230410142639-359d58534ae2
+# knative.dev/hack v0.0.0-20230417170854-f591fea109b3
 ## explicit; go 1.18
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20230410174046-15cf17d95395
+# knative.dev/pkg v0.0.0-20230418073056-dfad48eaa5d0
 ## explicit; go 1.18
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
