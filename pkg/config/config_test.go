@@ -277,7 +277,7 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration of the control-plane",
+		name: "network configuration with activator-ca and activator-san",
 		data: map[string]string{
 			InternalEncryptionKey: "true",
 		},
@@ -290,12 +290,23 @@ func TestConfiguration(t *testing.T) {
 	}, {
 		name: "network configuration of the data-plane",
 		data: map[string]string{
-			InternalTrustKey: "trustLevel",
+			InternalDataplaneTrustKey: "trustLevel",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.InternalTrust = "trustLevel"
+			c.InternalDataplaneTrust = "trustLevel"
+			return c
+		}(),
+	}, {
+		name: "network configuration of the control-plane",
+		data: map[string]string{
+			InternalControlplaneTrustKey: "trustLevel",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.InternalControlplaneTrust = "trustLevel"
 			return c
 		}(),
 	}, {
@@ -325,8 +336,9 @@ func TestConfiguration(t *testing.T) {
 			AutoTLS:                       true,
 
 			// This is defaulted
-			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			InternalTrust:         "none",
+			MeshCompatibilityMode:     MeshCompatibilityModeAuto,
+			InternalDataplaneTrust:    "disabled",
+			InternalControlplaneTrust: "disabled",
 		},
 	}, {
 		name: "newer keys take precedence over legacy keys",
@@ -352,7 +364,8 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaimsKey: "false",
 			HTTPProtocolKey:                  "enabled",
 			AutoTLSKey:                       "disabled",
-			InternalTrustKey:                 "minimum",
+			InternalDataplaneTrustKey:        "minimum",
+			InternalControlplaneTrustKey:     "enabled",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "7",
@@ -367,8 +380,9 @@ func TestConfiguration(t *testing.T) {
 			AutoTLS:                       false,
 
 			// This is defaulted
-			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			InternalTrust:         "minimum",
+			MeshCompatibilityMode:     MeshCompatibilityModeAuto,
+			InternalDataplaneTrust:    "minimum",
+			InternalControlplaneTrust: "enabled",
 		},
 	}}
 

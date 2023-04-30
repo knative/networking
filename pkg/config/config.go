@@ -122,13 +122,18 @@ const (
 	// hostname for a Route's tag.
 	TagTemplateKey = "tag-template"
 
+	// InternalEncryptionKey is deprecated and replaced by InternalDataplaneTrustKey and internal-controlplane-trust
 	// InternalEncryptionKey is the name of the configuration whether
 	// internal traffic is encrypted or not.
 	InternalEncryptionKey = "internal-encryption"
 
-	// InternalTrustKey is the name of the configuration whether
-	// internal traffic is encrypted and mutual trust achieved between the peers.
-	InternalTrustKey = "internal-trust"
+	// InternalDataplaneTrustKey is the name of the configuration entry
+	// defining the level of trust used for data plane traffic.
+	InternalDataplaneTrustKey = "internal-dataplane-trust"
+
+	// InternalControlplaneTrustKey is the name of the configuration entry
+	// defining the level of trust used for control plane traffic.
+	InternalControlplaneTrustKey = "internal-controlplane-trust"
 )
 
 // HTTPProtocol indicates a type of HTTP endpoint behavior
@@ -255,12 +260,15 @@ type Config struct {
 	// not enabled. Defaults to "http".
 	DefaultExternalScheme string
 
+	// Deprecated - replaced with InternalDataplaneTrust and InternalControlplaneTrust
 	// InternalEncryption specifies whether internal traffic is encrypted or not.
 	InternalEncryption bool
 
-	// InternalTrust specifies what level of trust whether internal traffic is encrypted with mutual trust between peers.
-	// InternalTrust enforces InternalEncryption = true
-	InternalTrust string
+	// InternalDataplaneTrust specifies the level of trust used for date plane.
+	InternalDataplaneTrust string
+
+	// InternalControlplaneTrust specifies the level of trust used for control plane.
+	InternalControlplaneTrust string
 }
 
 func defaultConfig() *Config {
@@ -276,7 +284,8 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		InternalEncryption:            false,
-		InternalTrust:                 "none",
+		InternalDataplaneTrust:        "disabled",
+		InternalControlplaneTrust:     "disabled",
 	}
 }
 
@@ -304,7 +313,8 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsBool(EnableMeshPodAddressabilityKey, &nc.EnableMeshPodAddressability),
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsBool(InternalEncryptionKey, &nc.InternalEncryption),
-		cm.AsString(InternalTrustKey, &nc.InternalTrust),
+		cm.AsString(InternalDataplaneTrustKey, &nc.InternalDataplaneTrust),
+		cm.AsString(InternalControlplaneTrustKey, &nc.InternalControlplaneTrust),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
