@@ -23,15 +23,14 @@ aliases:
   - pmbanugo
   - snneji
   docs-wg-leads:
-  - abrennan89
   - snneji
   docs-writers:
-  - abrennan89
   - csantanapr
   - psschwei
   - snneji
   eventing-reviewers:
   - aslom
+  - creydr
   eventing-triage:
   - lberk
   eventing-wg-leads:
@@ -61,7 +60,6 @@ aliases:
   - dprotaso
   - dsimansk
   - evankanderson
-  - itsmurugappan
   - knative-automation
   - knative-prow-releaser-robot
   - knative-prow-robot
@@ -71,14 +69,19 @@ aliases:
   - lance
   - mchmarny
   - nainaz
+  - pierDipi
+  - pradnyavmw
   - psschwei
+  - puerco
   - salaboy
   - smoser-ibm
   - upodroid
   - zroubalik
   knative-release-leads:
-  - evankanderson
-  - psschwei
+  - dsimansk
+  - kvmware
+  - pierDipi
+  - pradnyavmw
   knative-robots:
   - knative-automation
   - knative-prow-releaser-robot
@@ -112,8 +115,10 @@ aliases:
   - psschwei
   - upodroid
   security-wg-leads:
+  - davidhadas
   - evankanderson
   security-writers:
+  - davidhadas
   - evankanderson
   serving-approvers:
   - nak3
@@ -139,9 +144,9 @@ aliases:
   - psschwei
   steering-committee:
   - csantanapr
-  - itsmurugappan
   - lance
   - nainaz
+  - puerco
   - salaboy
   technical-oversight-committee:
   - dprotaso
@@ -154,8 +159,6 @@ aliases:
   - mchmarny
   - smoser-ibm
   ux-wg-leads:
-  - abrennan89
   - snneji
   ux-writers:
-  - abrennan89
   - snneji
