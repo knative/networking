@@ -17,15 +17,19 @@ limitations under the License.
 package main
 
 import (
+	"errors"
 	"flag"
+	"io"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/gorilla/websocket"
+	"github.com/gobwas/httphead"
+	"github.com/gobwas/ws"
 	"knative.dev/networking/pkg/http/header"
 	"knative.dev/networking/pkg/http/probe"
 	"knative.dev/networking/test"
+	"knative.dev/pkg/websocket"
 )
 
 const suffixMessageEnv = "SUFFIX"
@@ -39,10 +43,9 @@ func messageSuffix() string {
 	return value
 }
 
-var upgrader = websocket.Upgrader{
-	// Allow any origin, since we are spoofing requests anyway.
-	CheckOrigin: func(r *http.Request) bool {
-		return true
+var upgrader = ws.HTTPUpgrader{
+	Negotiate: func(opt httphead.Option) (ret httphead.Option, err error) {
+		return httphead.Option{}, nil
 	},
 }
 
@@ -51,19 +54,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, _, _, err := upgrader.Upgrade(r, w)
 	if err != nil {
 		log.Println("Error upgrading websocket:", err)
 		return
 	}
-	defer conn.Close()
+	nc := websocket.NewNetConnExtension(conn)
+	defer nc.Close()
 	log.Println("Connection upgraded to WebSocket. Entering receive loop.")
 	for {
-		messageType, message, err := conn.ReadMessage()
+		messageType, message, err := nc.ReadMessage()
 		if err != nil {
 			// We close abnormally, because we're just closing the connection in the client,
 			// which is okay. There's no value delaying closure of the connection unnecessarily.
-			if websocket.IsCloseError(err, websocket.CloseAbnormalClosure) {
+			if errors.Is(err, io.ErrUnexpectedEOF) {
 				log.Println("Client disconnected.")
 			} else {
 				log.Println("Handler exiting on error:", err)
@@ -76,7 +80,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Printf("Successfully received: %q", message)
-		if err = conn.WriteMessage(messageType, message); err != nil {
+		if err = nc.WriteMessage(messageType, message); err != nil {
 			log.Println("Failed to write message:", err)
 			return
 		}

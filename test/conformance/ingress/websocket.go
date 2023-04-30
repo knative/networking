@@ -26,12 +26,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gobwas/ws"
 	"github.com/google/go-cmp/cmp"
-	"github.com/gorilla/websocket"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/test"
+	"knative.dev/pkg/websocket"
 )
 
 // TestWebsocket verifies that websockets may be used via a simple Ingress.
@@ -63,21 +64,22 @@ func TestWebsocket(t *testing.T) {
 		}},
 	})
 
-	dialer := websocket.Dialer{
-		NetDialContext:   dialCtx,
-		Proxy:            http.ProxyFromEnvironment,
-		HandshakeTimeout: 45 * time.Second,
+	dialer := ws.Dialer{
+		NetDial: dialCtx,
+		Timeout: 45 * time.Second,
+		Header:  ws.HandshakeHeaderHTTP(http.Header{"Host": {domain}}),
 	}
 
 	u := url.URL{Scheme: "ws", Host: domain, Path: "/"}
-	conn, _, err := dialer.Dial(u.String(), http.Header{"Host": {domain}})
+	conn, _, _, err := dialer.Dial(ctx, u.String())
 	if err != nil {
 		t.Fatal("Dial() =", err)
 	}
-	defer conn.Close()
+	nc := websocket.NewNetConnExtension(conn)
+	defer nc.Close()
 
 	for i := 0; i < 100; i++ {
-		checkWebsocketRoundTrip(ctx, t, conn, suffix)
+		checkWebsocketRoundTrip(ctx, t, nc, suffix)
 	}
 }
 
@@ -124,30 +126,31 @@ func TestWebsocketSplit(t *testing.T) {
 		}},
 	})
 
-	dialer := websocket.Dialer{
-		NetDialContext:   dialCtx,
-		Proxy:            http.ProxyFromEnvironment,
-		HandshakeTimeout: 45 * time.Second,
+	dialer := ws.Dialer{
+		NetDial: dialCtx,
+		Timeout: 45 * time.Second,
+		Header:  ws.HandshakeHeaderHTTP(http.Header{"Host": {domain}}),
 	}
 	u := url.URL{Scheme: "ws", Host: domain, Path: "/"}
 
 	const maxRequests = 100
 	got := sets.NewString()
 	for i := 0; i < maxRequests; i++ {
-		conn, _, err := dialer.Dial(u.String(), http.Header{"Host": {domain}})
+		conn, _, _, err := dialer.Dial(ctx, u.String())
 		if err != nil {
 			t.Fatal("Dial() =", err)
 		}
-		defer conn.Close()
+		nc := websocket.NewNetConnExtension(conn)
+		defer nc.Close()
 
-		suffix := findWebsocketSuffix(ctx, t, conn)
+		suffix := findWebsocketSuffix(ctx, t, nc)
 		if suffix == "" {
 			continue
 		}
 		got.Insert(suffix)
 
 		for j := 0; j < 10; j++ {
-			checkWebsocketRoundTrip(ctx, t, conn, suffix)
+			checkWebsocketRoundTrip(ctx, t, nc, suffix)
 		}
 
 		if want.Equal(got) {
@@ -160,11 +163,11 @@ func TestWebsocketSplit(t *testing.T) {
 	t.Errorf("(over %d requests) (-want, +got) = %s", maxRequests, cmp.Diff(want.List(), got.List()))
 }
 
-func findWebsocketSuffix(ctx context.Context, t *testing.T, conn *websocket.Conn) string {
+func findWebsocketSuffix(_ context.Context, t *testing.T, conn *websocket.NetConnExtension) string {
 	t.Helper()
 	// Establish the suffix that corresponds to this socket.
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+	if err := conn.WriteMessage(ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return ""
 	}
@@ -182,10 +185,10 @@ func findWebsocketSuffix(ctx context.Context, t *testing.T, conn *websocket.Conn
 	return strings.TrimSpace(strings.TrimPrefix(gotMsg, message))
 }
 
-func checkWebsocketRoundTrip(ctx context.Context, t *testing.T, conn *websocket.Conn, suffix string) {
+func checkWebsocketRoundTrip(_ context.Context, t *testing.T, conn *websocket.NetConnExtension, suffix string) {
 	t.Helper()
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+	if err := conn.WriteMessage(ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return
 	}
