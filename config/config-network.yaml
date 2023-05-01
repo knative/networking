@@ -22,9 +22,9 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "dd928d80"
+    knative.dev/example-checksum: "2b6d10ba"
 data:
-  _example: |-
+  _example: |
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
@@ -180,27 +180,27 @@ data:
     #       for now. Use with caution.
     internal-encryption: "false"
 
-    # internal-dataplane-trust indicates the level of trust established in the knative data-plane.
-    # internal-dataplane-trust = "disabled" (the default) - uses no encryption for internal traffic
+    # dataplane-trust indicates the level of trust established in the knative data-plane.
+    # dataplane-trust = "disabled" (the default) - uses no encryption for internal data plane traffic
     # Using any other value ensures that the following traffic is encrypted using TLS:
     #  - ingress to activator
     #  - ingress to queue-proxy
     #  - activator to queue-proxy
     #
-    # internal-dataplane-trust = "minimal" ensures data messages are encrypted, Kingress authenticate that the receiver is a Kserv
-    # internal-dataplane-trust = "enabled" same as "minimal" and in addition, Kingress authenticate that Kserv is at the correct namespace
-    # internal-dataplane-trust = "mutual" same as "enabled" and in addition, Kserv authenticate that the messages come from the Kingress
-    # internal-dataplane-trust = "identity" same as "mutual" with Kingress adding a trusted sender identity to the message
+    # dataplane-trust = "minimal" ensures data messages are encrypted, Kingress authenticate that the receiver is a Ksvc
+    # dataplane-trust = "enabled" same as "minimal" and in addition, Kingress authenticate that Ksvc is at the correct namespace
+    # dataplane-trust = "mutual" same as "enabled" and in addition, Ksvc authenticate that the messages come from the Kingress
+    # dataplane-trust = "identity" same as "mutual" with Kingress adding a trusted sender identity to the message
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
-    internal-dataplane-trust: "disabled"
-
-    # internal-controlplane-trust indicates the level of trust established in the knative control-plane.
-    # internal-controlplane-trust = "disabled" (the default) - uses no encryption for internal traffic
+    dataplane-trust: "disabled"
+    
+    # controlplane-trust indicates the level of trust established in the knative control-plane.
+    # controlplane-trust = "disabled" (the default) - uses no encryption for internal control plane traffic
     # Using any other value ensures that control traffic is encrypted using TLS.
     #
-    # internal-controlplane-trust = "enabled" ensures control messages are encrypted using TLS (client authenticate the server)
-    # internal-controlplane-trust = "mutual" ensures control messages are encrypted using mTLS (client and server authenticate each other)
+    # controlplane-trust = "enabled" ensures control messages are encrypted using TLS (client authenticate the server)
+    # controlplane-trust = "mutual" ensures control messages are encrypted using mTLS (client and server authenticate each other)
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
-    internal-controlplane-trust: "disabled"
+    controlplane-trust: "disabled"

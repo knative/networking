@@ -288,25 +288,37 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "bad network configuration of the data-plane",
+		data: map[string]string{
+			DataplaneTrustKey: "trustLevel",
+		},
+		wantErr: true,
+	}, {
 		name: "network configuration of the data-plane",
 		data: map[string]string{
-			InternalDataplaneTrustKey: "trustLevel",
+			DataplaneTrustKey: "identity",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.InternalDataplaneTrust = "trustLevel"
+			c.DataplaneTrust = TrustIdentity
 			return c
 		}(),
 	}, {
+		name: "bad network configuration of the control-plane",
+		data: map[string]string{
+			ControlplaneTrustKey: "trustLevel",
+		},
+		wantErr: true,
+	}, {
 		name: "network configuration of the control-plane",
 		data: map[string]string{
-			InternalControlplaneTrustKey: "trustLevel",
+			ControlplaneTrustKey: "mutual",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.InternalControlplaneTrust = "trustLevel"
+			c.ControlplaneTrust = TrustMutual
 			return c
 		}(),
 	}, {
@@ -336,9 +348,9 @@ func TestConfiguration(t *testing.T) {
 			AutoTLS:                       true,
 
 			// This is defaulted
-			MeshCompatibilityMode:     MeshCompatibilityModeAuto,
-			InternalDataplaneTrust:    "disabled",
-			InternalControlplaneTrust: "disabled",
+			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			DataplaneTrust:        TrustDisabled,
+			ControlplaneTrust:     TrustDisabled,
 		},
 	}, {
 		name: "newer keys take precedence over legacy keys",
@@ -364,8 +376,8 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaimsKey: "false",
 			HTTPProtocolKey:                  "enabled",
 			AutoTLSKey:                       "disabled",
-			InternalDataplaneTrustKey:        "minimum",
-			InternalControlplaneTrustKey:     "enabled",
+			DataplaneTrustKey:                "MiNiMal",
+			ControlplaneTrustKey:             "EnAbLeD",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "7",
@@ -380,9 +392,9 @@ func TestConfiguration(t *testing.T) {
 			AutoTLS:                       false,
 
 			// This is defaulted
-			MeshCompatibilityMode:     MeshCompatibilityModeAuto,
-			InternalDataplaneTrust:    "minimum",
-			InternalControlplaneTrust: "enabled",
+			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			DataplaneTrust:        TrustMinimal,
+			ControlplaneTrust:     TrustEnabled,
 		},
 	}}
 

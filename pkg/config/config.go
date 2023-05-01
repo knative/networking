@@ -127,13 +127,34 @@ const (
 	// internal traffic is encrypted or not.
 	InternalEncryptionKey = "internal-encryption"
 
-	// InternalDataplaneTrustKey is the name of the configuration entry
+	// DataplaneTrustKey is the name of the configuration entry
 	// defining the level of trust used for data plane traffic.
-	InternalDataplaneTrustKey = "internal-dataplane-trust"
+	DataplaneTrustKey = "dataplane-trust"
 
-	// InternalControlplaneTrustKey is the name of the configuration entry
+	// ControlplaneTrustKey is the name of the configuration entry
 	// defining the level of trust used for control plane traffic.
-	InternalControlplaneTrustKey = "internal-controlplane-trust"
+	ControlplaneTrustKey = "controlplane-trust"
+)
+
+// HTTPProtocol indicates a type of HTTP endpoint behavior
+// that Knative ingress could take.
+type Trust string
+
+const (
+	// TrustDisabled - TLS not used
+	TrustDisabled Trust = "disabled"
+
+	// TrustMinimal - TLS used. We verify that the server is using Knative certificates
+	TrustMinimal Trust = "minimal"
+
+	// TrustEnabled - TLS used. We verify that the server is using Knative certificates of the right namespace
+	TrustEnabled Trust = "enabled"
+
+	// TrustMutual - same as TrustEnabled and we also verify the identity of the client.
+	TrustMutual Trust = "mutual"
+
+	// TrustIdentity - same as TrustMutual and we also add a trusted sender identity to the message.
+	TrustIdentity Trust = "identity"
 )
 
 // HTTPProtocol indicates a type of HTTP endpoint behavior
@@ -264,11 +285,11 @@ type Config struct {
 	// InternalEncryption specifies whether internal traffic is encrypted or not.
 	InternalEncryption bool
 
-	// InternalDataplaneTrust specifies the level of trust used for date plane.
-	InternalDataplaneTrust string
+	// DataplaneTrust specifies the level of trust used for date plane.
+	DataplaneTrust Trust
 
-	// InternalControlplaneTrust specifies the level of trust used for control plane.
-	InternalControlplaneTrust string
+	// ControlplaneTrust specifies the level of trust used for control plane.
+	ControlplaneTrust Trust
 }
 
 func defaultConfig() *Config {
@@ -284,8 +305,8 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		InternalEncryption:            false,
-		InternalDataplaneTrust:        "disabled",
-		InternalControlplaneTrust:     "disabled",
+		DataplaneTrust:                TrustDisabled,
+		ControlplaneTrust:             TrustDisabled,
 	}
 }
 
@@ -313,8 +334,6 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		cm.AsBool(EnableMeshPodAddressabilityKey, &nc.EnableMeshPodAddressability),
 		cm.AsString(DefaultExternalSchemeKey, &nc.DefaultExternalScheme),
 		cm.AsBool(InternalEncryptionKey, &nc.InternalEncryption),
-		cm.AsString(InternalDataplaneTrustKey, &nc.InternalDataplaneTrust),
-		cm.AsString(InternalControlplaneTrustKey, &nc.InternalControlplaneTrust),
 		asMode(MeshCompatibilityModeKey, &nc.MeshCompatibilityMode),
 		asLabelSelector(NamespaceWildcardCertSelectorKey, &nc.NamespaceWildcardCertSelector),
 	); err != nil {
@@ -369,6 +388,34 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		nc.HTTPProtocol = HTTPRedirected
 	default:
 		return nil, fmt.Errorf("httpProtocol %s in config-network ConfigMap is not supported", data[HTTPProtocolKey])
+	}
+
+	switch strings.ToLower(data[DataplaneTrustKey]) {
+	case "", string(TrustDisabled):
+		// If DataplaneTrus is not set in the config-network, default is already
+		// set to TrustDisabled.
+	case string(TrustMinimal):
+		nc.DataplaneTrust = TrustMinimal
+	case string(TrustEnabled):
+		nc.DataplaneTrust = TrustEnabled
+	case string(TrustMutual):
+		nc.DataplaneTrust = TrustMutual
+	case string(TrustIdentity):
+		nc.DataplaneTrust = TrustIdentity
+	default:
+		return nil, fmt.Errorf("DataplaneTrust %q in config-network ConfigMap is not supported", data[DataplaneTrustKey])
+	}
+
+	switch strings.ToLower(data[ControlplaneTrustKey]) {
+	case "", string(TrustDisabled):
+		// If ControlplaneTrust is not set in the config-network, default is already
+		// set to TrustDisabled.
+	case string(TrustEnabled):
+		nc.ControlplaneTrust = TrustEnabled
+	case string(TrustMutual):
+		nc.ControlplaneTrust = TrustMutual
+	default:
+		return nil, fmt.Errorf("ControlplaneTrust %q in config-network ConfigMap is not supported", data[ControlplaneTrustKey])
 	}
 
 	return nc, nil
