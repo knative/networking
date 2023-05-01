@@ -18,14 +18,10 @@ package test
 
 import (
 	"context"
-	"io"
-	"net"
 	"net/http"
 	"testing"
 	"time"
 
-	"github.com/gobwas/ws"
-	"github.com/gobwas/ws/wsutil"
 	pkgnet "knative.dev/pkg/network"
 	"knative.dev/pkg/signals"
 	pkgTest "knative.dev/pkg/test"
@@ -104,16 +100,4 @@ func ListenAndServeTLSGracefullyWithHandler(cert, key, addr string, handler http
 
 	<-signals.SetupSignalHandler()
 	server.Shutdown(context.Background())
-}
-
-func ReadMessage(conn net.Conn) (messageType ws.OpCode, p []byte, err error) {
-	var r io.Reader
-	var header ws.Header
-	header, r, err = wsutil.NextReader(conn, ws.StateServerSide)
-	messageType = header.OpCode
-	if err != nil {
-		return messageType, nil, err
-	}
-	p, err = io.ReadAll(r)
-	return messageType, p, err
 }

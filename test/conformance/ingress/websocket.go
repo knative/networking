@@ -166,16 +166,18 @@ func findWebsocketSuffix(_ context.Context, t *testing.T, conn net.Conn) string 
 	t.Helper()
 	// Establish the suffix that corresponds to this socket.
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := wsutil.WriteClientMessage(conn, ws.OpText, []byte(message)); err != nil {
+	if err := wsutil.WriteMessage(conn, ws.StateClientSide, ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return ""
 	}
 
-	_, recv, err := test.ReadMessage(conn)
+	var messages []wsutil.Message
+	messages, err := wsutil.ReadMessage(conn, ws.StateClientSide, messages)
 	if err != nil {
 		t.Error("ReadMessage() =", err)
 		return ""
 	}
+	recv := messages[0].Payload
 	gotMsg := string(recv)
 	if !strings.HasPrefix(gotMsg, message) {
 		t.Errorf("ReadMessage() = %s, wanted %s prefix", gotMsg, message)
@@ -187,15 +189,16 @@ func findWebsocketSuffix(_ context.Context, t *testing.T, conn net.Conn) string 
 func checkWebsocketRoundTrip(_ context.Context, t *testing.T, conn net.Conn, suffix string) {
 	t.Helper()
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := wsutil.WriteClientMessage(conn, ws.OpText, []byte(message)); err != nil {
+	if err := wsutil.WriteMessage(conn, ws.StateClientSide, ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return
 	}
 
 	// Read back the echoed message and compared with sent.
-	if _, recv, err := test.ReadMessage(conn); err != nil {
+	var messages []wsutil.Message
+	if messages, err := wsutil.ReadMessage(conn, ws.StateClientSide, messages); err != nil {
 		t.Error("ReadMessage() =", err)
-	} else if got, want := string(recv), message+" "+suffix; got != want {
+	} else if got, want := string(messages[0].Payload), message+" "+suffix; got != want {
 		t.Errorf("ReadMessage() = %s, wanted %s", got, want)
 	}
 }

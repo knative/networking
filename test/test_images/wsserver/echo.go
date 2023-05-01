@@ -62,28 +62,33 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 	log.Println("Connection upgraded to WebSocket. Entering receive loop.")
 	for {
-		messageType, message, err := test.ReadMessage(conn)
-		if err != nil {
-			// We close abnormally, because we're just closing the connection in the client,
-			// which is okay. There's no value delaying closure of the connection unnecessarily.
-			if errors.Is(err, io.ErrUnexpectedEOF) {
-				log.Println("Client disconnected.")
-			} else {
-				log.Println("Handler exiting on error:", err)
+		var messages []wsutil.Message
+		messages, err = wsutil.ReadMessage(conn, ws.StateServerSide, messages)
+		for _, m := range messages {
+			message := m.Payload
+			messageType := m.OpCode
+			if err != nil {
+				// We close abnormally, because we're just closing the connection in the client,
+				// which is okay. There's no value delaying closure of the connection unnecessarily.
+				if errors.Is(err, io.ErrUnexpectedEOF) {
+					log.Println("Client disconnected.")
+				} else {
+					log.Println("Handler exiting on error:", err)
+				}
+				return
 			}
-			return
-		}
-		if suffix := messageSuffix(); suffix != "" {
-			respMes := string(message) + " " + suffix
-			message = []byte(respMes)
-		}
+			if suffix := messageSuffix(); suffix != "" {
+				respMes := string(message) + " " + suffix
+				message = []byte(respMes)
+			}
 
-		log.Printf("Successfully received: %q", message)
-		if err = wsutil.WriteClientMessage(conn, messageType, message); err != nil {
-			log.Println("Failed to write message:", err)
-			return
+			log.Printf("Successfully received: %q", message)
+			if err = wsutil.WriteClientMessage(conn, messageType, message); err != nil {
+				log.Println("Failed to write message:", err)
+				return
+			}
+			log.Printf("Successfully wrote: %q", message)
 		}
-		log.Printf("Successfully wrote: %q", message)
 	}
 }
 
