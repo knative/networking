@@ -26,10 +26,10 @@ import (
 
 	"github.com/gobwas/httphead"
 	"github.com/gobwas/ws"
+	"github.com/gobwas/ws/wsutil"
 	"knative.dev/networking/pkg/http/header"
 	"knative.dev/networking/pkg/http/probe"
 	"knative.dev/networking/test"
-	"knative.dev/pkg/websocket"
 )
 
 const suffixMessageEnv = "SUFFIX"
@@ -59,11 +59,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error upgrading websocket:", err)
 		return
 	}
-	nc := websocket.NewNetConnExtension(conn)
-	defer nc.Close()
+	defer conn.Close()
 	log.Println("Connection upgraded to WebSocket. Entering receive loop.")
 	for {
-		messageType, message, err := nc.ReadMessage()
+		messageType, message, err := test.ReadMessage(conn)
 		if err != nil {
 			// We close abnormally, because we're just closing the connection in the client,
 			// which is okay. There's no value delaying closure of the connection unnecessarily.
@@ -80,7 +79,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Printf("Successfully received: %q", message)
-		if err = nc.WriteMessage(messageType, message); err != nil {
+		if err = wsutil.WriteClientMessage(conn, messageType, message); err != nil {
 			log.Println("Failed to write message:", err)
 			return
 		}

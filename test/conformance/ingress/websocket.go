@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -27,12 +28,12 @@ import (
 	"time"
 
 	"github.com/gobwas/ws"
+	"github.com/gobwas/ws/wsutil"
 	"github.com/google/go-cmp/cmp"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"knative.dev/networking/pkg/apis/networking/v1alpha1"
 	"knative.dev/networking/test"
-	"knative.dev/pkg/websocket"
 )
 
 // TestWebsocket verifies that websockets may be used via a simple Ingress.
@@ -75,11 +76,10 @@ func TestWebsocket(t *testing.T) {
 	if err != nil {
 		t.Fatal("Dial() =", err)
 	}
-	nc := websocket.NewNetConnExtension(conn)
-	defer nc.Close()
+	defer conn.Close()
 
 	for i := 0; i < 100; i++ {
-		checkWebsocketRoundTrip(ctx, t, nc, suffix)
+		checkWebsocketRoundTrip(ctx, t, conn, suffix)
 	}
 }
 
@@ -140,17 +140,16 @@ func TestWebsocketSplit(t *testing.T) {
 		if err != nil {
 			t.Fatal("Dial() =", err)
 		}
-		nc := websocket.NewNetConnExtension(conn)
-		defer nc.Close()
+		defer conn.Close()
 
-		suffix := findWebsocketSuffix(ctx, t, nc)
+		suffix := findWebsocketSuffix(ctx, t, conn)
 		if suffix == "" {
 			continue
 		}
 		got.Insert(suffix)
 
 		for j := 0; j < 10; j++ {
-			checkWebsocketRoundTrip(ctx, t, nc, suffix)
+			checkWebsocketRoundTrip(ctx, t, conn, suffix)
 		}
 
 		if want.Equal(got) {
@@ -163,16 +162,16 @@ func TestWebsocketSplit(t *testing.T) {
 	t.Errorf("(over %d requests) (-want, +got) = %s", maxRequests, cmp.Diff(want.List(), got.List()))
 }
 
-func findWebsocketSuffix(_ context.Context, t *testing.T, conn *websocket.NetConnExtension) string {
+func findWebsocketSuffix(_ context.Context, t *testing.T, conn net.Conn) string {
 	t.Helper()
 	// Establish the suffix that corresponds to this socket.
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := conn.WriteMessage(ws.OpText, []byte(message)); err != nil {
+	if err := wsutil.WriteClientMessage(conn, ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return ""
 	}
 
-	_, recv, err := conn.ReadMessage()
+	_, recv, err := test.ReadMessage(conn)
 	if err != nil {
 		t.Error("ReadMessage() =", err)
 		return ""
@@ -185,16 +184,16 @@ func findWebsocketSuffix(_ context.Context, t *testing.T, conn *websocket.NetCon
 	return strings.TrimSpace(strings.TrimPrefix(gotMsg, message))
 }
 
-func checkWebsocketRoundTrip(_ context.Context, t *testing.T, conn *websocket.NetConnExtension, suffix string) {
+func checkWebsocketRoundTrip(_ context.Context, t *testing.T, conn net.Conn, suffix string) {
 	t.Helper()
 	message := fmt.Sprint("ping -", rand.Intn(1000))
-	if err := conn.WriteMessage(ws.OpText, []byte(message)); err != nil {
+	if err := wsutil.WriteClientMessage(conn, ws.OpText, []byte(message)); err != nil {
 		t.Error("WriteMessage() =", err)
 		return
 	}
 
 	// Read back the echoed message and compared with sent.
-	if _, recv, err := conn.ReadMessage(); err != nil {
+	if _, recv, err := test.ReadMessage(conn); err != nil {
 		t.Error("ReadMessage() =", err)
 	} else if got, want := string(recv), message+" "+suffix; got != want {
 		t.Errorf("ReadMessage() = %s, wanted %s", got, want)
