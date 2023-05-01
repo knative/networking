@@ -194,7 +194,7 @@ data:
     #
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing for now. Use with caution.
     dataplane-trust: "disabled"
-    
+
     # controlplane-trust indicates the level of trust established in the knative control-plane.
     # controlplane-trust = "disabled" (the default) - uses no encryption for internal control plane traffic
     # Using any other value ensures that control traffic is encrypted using TLS.
