@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/rs/dnscache v0.0.0-20211102005908-e0241e321417
+	github.com/stretchr/testify v1.8.0
 	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.19.1
 	golang.org/x/sync v0.1.0
