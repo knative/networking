@@ -288,6 +288,40 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "bad network configuration of the data-plane",
+		data: map[string]string{
+			DataplaneTrustKey: "trustLevel",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration of the data-plane",
+		data: map[string]string{
+			DataplaneTrustKey: "identity",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.DataplaneTrust = TrustIdentity
+			return c
+		}(),
+	}, {
+		name: "bad network configuration of the control-plane",
+		data: map[string]string{
+			ControlplaneTrustKey: "trustLevel",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration of the control-plane",
+		data: map[string]string{
+			ControlplaneTrustKey: "mutual",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ControlplaneTrust = TrustMutual
+			return c
+		}(),
+	}, {
 		name: "legacy keys",
 		data: map[string]string{
 			"ingress.class":         "1",
@@ -315,6 +349,8 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			DataplaneTrust:        TrustDisabled,
+			ControlplaneTrust:     TrustDisabled,
 		},
 	}, {
 		name: "newer keys take precedence over legacy keys",
@@ -340,6 +376,8 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaimsKey: "false",
 			HTTPProtocolKey:                  "enabled",
 			AutoTLSKey:                       "disabled",
+			DataplaneTrustKey:                "MiNiMal",
+			ControlplaneTrustKey:             "EnAbLeD",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "7",
@@ -355,6 +393,8 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
+			DataplaneTrust:        TrustMinimal,
+			ControlplaneTrust:     TrustEnabled,
 		},
 	}}
 
