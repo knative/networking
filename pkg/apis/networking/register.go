@@ -119,6 +119,10 @@ const (
 	// already using labels for domain, it probably best to keep this
 	// consistent.
 	VisibilityLabelKey = PublicGroupName + "/visibility"
+
+	// CertificateTypeLabelKey is the label to indicate the type of Knative certificate
+	// used for Knative Serving encryption functionality.
+	CertificateTypeLabelKey = PublicGroupName + "/certificate-type"
 )
 
 // Pseudo-constants
