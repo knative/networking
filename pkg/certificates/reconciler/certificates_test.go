@@ -374,8 +374,8 @@ func mustCreateDataPlaneUserCert(t *testing.T, expirationInterval time.Duration,
 	return kp
 }
 
-func mustCreateDataPlaneRoutingCert(t *testing.T, expirationInterval time.Duration, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, routingId string) *certificates.KeyPair {
-	kp, err := certificates.CreateCert(context.TODO(), caKey, caCertificate, expirationInterval, certificates.DataPlaneRoutingName(routingId), certificates.LegacyFakeDnsName)
+func mustCreateDataPlaneRoutingCert(t *testing.T, expirationInterval time.Duration, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, routingID string) *certificates.KeyPair {
+	kp, err := certificates.CreateCert(context.TODO(), caKey, caCertificate, expirationInterval, certificates.DataPlaneRoutingName(routingID), certificates.LegacyFakeDnsName)
 	require.NoError(t, err)
 	return kp
 }

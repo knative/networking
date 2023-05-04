@@ -163,6 +163,7 @@ func TestProbeAllHosts(t *testing.T) {
 
 	// Just drain the requests in the channel to not block the handler
 	go func() {
+		//nolint:all
 		for range probeRequests {
 		}
 	}()
@@ -425,11 +426,11 @@ func TestCancelPodProbing(t *testing.T) {
 	// Create a different Ingress (to be probed in parallel)
 	const parallelDomain = "parallel.net"
 	func() {
-		copy := ing.DeepCopy()
-		copy.Spec.Rules[0].Hosts[0] = parallelDomain
-		copy.Name = "something"
+		dc := ing.DeepCopy()
+		dc.Spec.Rules[0].Hosts[0] = parallelDomain
+		dc.Name = "something"
 
-		ok, err = prober.IsReady(context.Background(), copy)
+		ok, err = prober.IsReady(context.Background(), dc)
 		if err != nil {
 			t.Fatal("IsReady failed:", err)
 		}
@@ -768,7 +769,7 @@ func TestProbeVerifier(t *testing.T) {
 
 type fakeProbeTargetLister []ProbeTarget
 
-func (l fakeProbeTargetLister) ListProbeTargets(ctx context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
+func (l fakeProbeTargetLister) ListProbeTargets(_ context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
 	targets := []ProbeTarget{}
 	for _, target := range l {
 		newTarget := ProbeTarget{
@@ -790,6 +791,6 @@ func (l fakeProbeTargetLister) ListProbeTargets(ctx context.Context, ing *v1alph
 
 type notFoundLister struct{}
 
-func (l notFoundLister) ListProbeTargets(ctx context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
+func (l notFoundLister) ListProbeTargets(_ context.Context, _ *v1alpha1.Ingress) ([]ProbeTarget, error) {
 	return nil, errors.New("not found")
 }
