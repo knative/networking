@@ -285,6 +285,7 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.InternalEncryption = true
+			c.DataplaneTrust = TrustMinimal
 			return c
 		}(),
 	}, {
