@@ -29,11 +29,11 @@ jobs:
       matrix:
         repo:
         - knative/serving
-        - knative-sandbox/net-contour
-        - knative-sandbox/net-istio
-        - knative-sandbox/net-kourier
-        - knative-sandbox/net-certmanager
-        - knative-sandbox/net-http01
+        - knative-extension/net-contour
+        - knative-extension/net-istio
+        - knative-extension/net-kourier
+        - knative-extension/net-certmanager
+        - knative-extension/net-http01
 
     steps:
     - name: Set up Go 1.19.x

@@ -35,11 +35,11 @@ Check out:
 
 See also:
 
-- http://github.com/knative-sandbox/net-contour for the Contour-based
+- http://github.com/knative-extension/net-contour for the Contour-based
   implementation of KIngress.
-- http://github.com/knative-sandbox/net-kourier for a dependency-free
+- http://github.com/knative-extension/net-kourier for a dependency-free
   implementation of KIngress based on Envoy proxy.
-- http://github.com/knative-sandbox/net-istio For the Istio-based implementation
+- http://github.com/knative-extension/net-istio For the Istio-based implementation
   of KIngress.
 
 # Knative Certificate aka KCert
