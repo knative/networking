@@ -23,7 +23,8 @@ const (
 	//nolint:all
 	LegacyFakeDnsName = "data-plane." + Organization
 	//nolint:all
-	FakeDnsName            = LegacyFakeDnsName // Deprecated
+	// Deprecated: FakeDnsName is deprecated. Please use the DataPlaneRoutingName or DataPlaneUserName function.
+	FakeDnsName            = LegacyFakeDnsName
 	dataPlaneUserPrefix    = "kn-user-"
 	dataPlaneRoutingPrefix = "kn-routing-"
 	ControlPlaneName       = "kn-control"

@@ -94,7 +94,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 		r.logger.Infof("CA cert invalid: %v", err)
 
 		// We need to generate a new CA cert, then shortcircuit the reconciler
-		keyPair, err := certificates.CreateCACerts(ctx, caExpirationInterval)
+		keyPair, err := certificates.CreateCACerts(caExpirationInterval)
 		if err != nil {
 			return fmt.Errorf("cannot generate the CA cert: %w", err)
 		}
@@ -124,7 +124,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 		// Check the secret to reconcile type
 
 		var keyPair *certificates.KeyPair
-		keyPair, err = certificates.CreateCert(ctx, caPk, caCert, expirationInterval, sans...)
+		keyPair, err = certificates.CreateCert(caPk, caCert, expirationInterval, sans...)
 		if err != nil {
 			return fmt.Errorf("cannot generate the cert: %w", err)
 		}
@@ -163,7 +163,7 @@ func parseAndValidateSecret(secret *corev1.Secret, shouldContainCaCert bool, san
 	if err != nil {
 		return nil, nil, err
 	}
-	if err := certificates.ValidateCert(cert, rotationThreshold); err != nil {
+	if err := certificates.CheckExpiry(cert, rotationThreshold); err != nil {
 		return nil, nil, err
 	}
 

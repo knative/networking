@@ -361,7 +361,7 @@ func TestReconcile(t *testing.T) {
 }
 
 func mustCreateCACert(t *testing.T, expirationInterval time.Duration) (*certificates.KeyPair, *rsa.PrivateKey, *x509.Certificate) {
-	kp, err := certificates.CreateCACerts(context.TODO(), expirationInterval)
+	kp, err := certificates.CreateCACerts(expirationInterval)
 	require.NoError(t, err)
 	pk, cert, err := certificates.ParseCert(kp.CertBytes(), kp.PrivateKeyBytes())
 	require.NoError(t, err)
@@ -369,19 +369,19 @@ func mustCreateCACert(t *testing.T, expirationInterval time.Duration) (*certific
 }
 
 func mustCreateDataPlaneUserCert(t *testing.T, expirationInterval time.Duration, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, namespace string) *certificates.KeyPair {
-	kp, err := certificates.CreateCert(context.TODO(), caKey, caCertificate, expirationInterval, certificates.DataPlaneUserName(namespace), certificates.LegacyFakeDnsName)
+	kp, err := certificates.CreateCert(caKey, caCertificate, expirationInterval, certificates.DataPlaneUserName(namespace), certificates.LegacyFakeDnsName)
 	require.NoError(t, err)
 	return kp
 }
 
 func mustCreateDataPlaneRoutingCert(t *testing.T, expirationInterval time.Duration, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, routingID string) *certificates.KeyPair {
-	kp, err := certificates.CreateCert(context.TODO(), caKey, caCertificate, expirationInterval, certificates.DataPlaneRoutingName(routingID), certificates.LegacyFakeDnsName)
+	kp, err := certificates.CreateCert(caKey, caCertificate, expirationInterval, certificates.DataPlaneRoutingName(routingID), certificates.LegacyFakeDnsName)
 	require.NoError(t, err)
 	return kp
 }
 
 func mustCreateControlPlaneCert(t *testing.T, expirationInterval time.Duration, caKey *rsa.PrivateKey, caCertificate *x509.Certificate) *certificates.KeyPair {
-	kp, err := certificates.CreateCert(context.TODO(), caKey, caCertificate, expirationInterval, certificates.ControlPlaneName, certificates.LegacyFakeDnsName)
+	kp, err := certificates.CreateCert(caKey, caCertificate, expirationInterval, certificates.ControlPlaneName, certificates.LegacyFakeDnsName)
 	require.NoError(t, err)
 	return kp
 }
