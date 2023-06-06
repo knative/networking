@@ -115,12 +115,12 @@ func CreateCACerts(expirationInterval time.Duration) (*KeyPair, error) {
 }
 
 // Deprecated: CreateControlPlaneCert generates the certificate for the client
-func CreateControlPlaneCert(ctx context.Context, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, expirationInterval time.Duration) (*KeyPair, error) {
+func CreateControlPlaneCert(_ context.Context, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, expirationInterval time.Duration) (*KeyPair, error) {
 	return CreateCert(caKey, caCertificate, expirationInterval, LegacyFakeDnsName)
 }
 
 // Deprecated: CreateDataPlaneCert generates the certificate for the server
-func CreateDataPlaneCert(ctx context.Context, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, expirationInterval time.Duration) (*KeyPair, error) {
+func CreateDataPlaneCert(_ context.Context, caKey *rsa.PrivateKey, caCertificate *x509.Certificate, expirationInterval time.Duration) (*KeyPair, error) {
 	return CreateCert(caKey, caCertificate, expirationInterval, LegacyFakeDnsName)
 }
 
