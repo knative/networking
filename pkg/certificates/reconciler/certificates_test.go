@@ -118,8 +118,8 @@ func TestReconcile(t *testing.T) {
 			certificates.SecretCertKey:   dataPlaneUserKP.CertBytes(),
 			certificates.SecretPKKey:     dataPlaneUserKP.PrivateKeyBytes(),
 			certificates.CaCertName:      caKP.CertBytes(),
-			certificates.CertName:        controlPlaneKP.CertBytes(),
-			certificates.PrivateKeyName:  controlPlaneKP.PrivateKeyBytes(),
+			certificates.CertName:        dataPlaneUserKP.CertBytes(),
+			certificates.PrivateKeyName:  dataPlaneUserKP.PrivateKeyBytes(),
 		},
 	}
 
@@ -138,8 +138,8 @@ func TestReconcile(t *testing.T) {
 			certificates.SecretCertKey:   dataPlaneRoutingKP.CertBytes(),
 			certificates.SecretPKKey:     dataPlaneRoutingKP.PrivateKeyBytes(),
 			certificates.CaCertName:      caKP.CertBytes(),
-			certificates.CertName:        controlPlaneKP.CertBytes(),
-			certificates.PrivateKeyName:  controlPlaneKP.PrivateKeyBytes(),
+			certificates.CertName:        dataPlaneRoutingKP.CertBytes(),
+			certificates.PrivateKeyName:  dataPlaneRoutingKP.PrivateKeyBytes(),
 		},
 	}
 
