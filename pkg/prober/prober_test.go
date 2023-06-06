@@ -177,7 +177,7 @@ type thirdTimesTheCharmProber struct {
 	calls int
 }
 
-func (t *thirdTimesTheCharmProber) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (t *thirdTimesTheCharmProber) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	t.calls++
 	if t.calls < 3 {
 		w.WriteHeader(http.StatusBadRequest)

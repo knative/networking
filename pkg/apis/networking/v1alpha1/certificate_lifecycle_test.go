@@ -74,7 +74,7 @@ func TestMarkReady(t *testing.T) {
 	}
 }
 
-func TestMarkNotReady(t *testing.T) {
+func TestMarkNotReady(_ *testing.T) {
 	c := &CertificateStatus{}
 	c.InitializeConditions()
 	apistest.CheckCondition(c, CertificateConditionReady, corev1.ConditionUnknown)
