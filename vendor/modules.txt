@@ -878,7 +878,7 @@ k8s.io/utils/lru
 k8s.io/utils/net
 k8s.io/utils/strings/slices
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20230802014852-338500eed425
+# knative.dev/hack v0.0.0-20230803220206-d7fde305c59f
 ## explicit; go 1.18
 knative.dev/hack
 # knative.dev/pkg v0.0.0-20230802191948-8d3f95106327
