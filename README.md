@@ -21,7 +21,7 @@ In addition to these, we previously added Timeout and Retry settings but no
 longer used them and may deprecate these parts in future versions.
 
 See
-https://knative.dev/docs/install/any-kubernetes-cluster/#installing-the-serving-component
+https://knative.dev/docs/install/yaml-install/serving/install-serving-with-yaml/#install-a-networking-layer
 for a list of the current supported KIngress implementations.
 
 Check out:
