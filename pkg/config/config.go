@@ -436,6 +436,11 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 	return nc, nil
 }
 
+// InternalTLSEnabled returns whether or not dataplane-trust is disabled
+func (c *Config) InternalTLSEnabled() bool {
+	return c.DataplaneTrust != TrustDisabled
+}
+
 // GetDomainTemplate returns the golang Template from the config map
 // or panics (the value is validated during CM validation and at
 // this point guaranteed to be parseable).
