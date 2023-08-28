@@ -134,7 +134,7 @@ const (
 	// hostname for a Route's tag.
 	TagTemplateKey = "tag-template"
 
-	// InternalEncryptionKey is deprecated and replaced by InternalDataplaneTrustKey and internal-controlplane-trust
+	// InternalEncryptionKey is deprecated and replaced by InternalDataplaneTrustKey and ControlplaneTrustKey.
 	// InternalEncryptionKey is the name of the configuration whether
 	// internal traffic is encrypted or not.
 	InternalEncryptionKey = "internal-encryption"
@@ -445,9 +445,21 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 	return nc, nil
 }
 
-// InternalTLSEnabled returns whether or not dataplane-trust is disabled
-func (c *Config) InternalTLSEnabled() bool {
-	return c.DataplaneTrust != TrustDisabled
+// DataplaneTLSEnabled returns whether or not dataplane-trust is enabled.
+func (c *Config) DataplaneTLSEnabled() bool {
+	return tlsEnabled(c.DataplaneTrust)
+}
+
+// ControlplaneTLSEnabled returns whether or not controlane-trust is enabled.
+func (c *Config) ControlplaneTLSEnabled() bool {
+	return tlsEnabled(c.ControlplaneTrust)
+}
+
+func tlsEnabled(trust Trust) bool {
+	return trust == TrustMinimal ||
+		trust == TrustEnabled ||
+		trust == TrustMutual ||
+		trust == TrustIdentity
 }
 
 // GetDomainTemplate returns the golang Template from the config map
