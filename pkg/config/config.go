@@ -445,14 +445,10 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 	return nc, nil
 }
 
-// DataplaneTLSEnabled returns whether or not dataplane-trust is enabled.
-func (c *Config) DataplaneTLSEnabled() bool {
+// InternalTLSEnabled returns whether or not InternalEncyrption is enabled.
+// Currently only DataplaneTrust is considered.
+func (c *Config) InternalTLSEnabled() bool {
 	return tlsEnabled(c.DataplaneTrust)
-}
-
-// ControlplaneTLSEnabled returns whether or not controlane-trust is enabled.
-func (c *Config) ControlplaneTLSEnabled() bool {
-	return tlsEnabled(c.ControlplaneTrust)
 }
 
 func tlsEnabled(trust Trust) bool {
