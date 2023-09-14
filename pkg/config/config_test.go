@@ -186,7 +186,26 @@ func TestConfiguration(t *testing.T) {
 			DomainTemplateKey: "{{.Name}}.{{.NAmespace}}.{{.Domain}}",
 		},
 	}, {
-		name: "network configuration with Auto TLS enabled",
+		name: "network configuration with external-domain-tls enabled",
+		data: map[string]string{
+			ExternalDomainTLSKey: "enabled",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.AutoTLS = true
+			c.ExternalDomainTLS = true
+			return c
+		}(),
+	}, {
+		name: "network configuration with external-domain-tls disabled",
+		data: map[string]string{
+			ExternalDomainTLSKey: "disabled",
+		},
+		wantErr:    false,
+		wantConfig: defaultConfig(),
+	}, {
+		name: "network configuration with Auto TLS enabled (deprecated)",
 		data: map[string]string{
 			AutoTLSKey: "enabled",
 		},
@@ -194,15 +213,29 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.AutoTLS = true
+			c.ExternalDomainTLS = true
 			return c
 		}(),
 	}, {
-		name: "network configuration with Auto TLS disabled",
+		name: "network configuration with Auto TLS disabled (deprecated)",
 		data: map[string]string{
 			AutoTLSKey: "disabled",
 		},
 		wantErr:    false,
 		wantConfig: defaultConfig(),
+	}, {
+		name: "network configuration with external-domain-tls enabled and Auto TLS disabled",
+		data: map[string]string{
+			ExternalDomainTLSKey: "enabled", // the new key takes precedence
+			AutoTLSKey:           "disabled",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.AutoTLS = true
+			c.ExternalDomainTLS = true
+			return c
+		}(),
 	}, {
 		name: "network configuration with HTTPProtocol disabled",
 		data: map[string]string{
@@ -213,6 +246,7 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.AutoTLS = true
+			c.ExternalDomainTLS = true
 			c.HTTPProtocol = HTTPDisabled
 			return c
 		}(),
@@ -226,6 +260,7 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.AutoTLS = true
+			c.ExternalDomainTLS = true
 			c.HTTPProtocol = HTTPRedirected
 			return c
 		}(),
@@ -277,7 +312,17 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with activator-ca and activator-san",
+		name: "internal-encryption disabled (deprecated)",
+		data: map[string]string{
+			InternalEncryptionKey: "false",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			return c
+		}(),
+	}, {
+		name: "internal-encryption enabled (deprecated)",
 		data: map[string]string{
 			InternalEncryptionKey: "true",
 		},
@@ -285,41 +330,65 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.InternalEncryption = true
-			c.DataplaneTrust = TrustMinimal
+			c.KnativeInternalTLS = EncryptionEnabled
 			return c
 		}(),
 	}, {
-		name: "bad network configuration of the data-plane",
+		name: "knative-internal-tls with invalid configuration value",
 		data: map[string]string{
-			DataplaneTrustKey: "trustLevel",
+			KnativeInternalTLSKey: "wrong",
 		},
 		wantErr: true,
 	}, {
-		name: "network configuration of the data-plane",
+		name: "knative-internal-tls with encryption disabled",
 		data: map[string]string{
-			DataplaneTrustKey: "identity",
+			KnativeInternalTLSKey: "disabled",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.DataplaneTrust = TrustIdentity
+			c.KnativeInternalTLS = EncryptionDisabled
+			c.InternalEncryption = false
 			return c
 		}(),
 	}, {
-		name: "bad network configuration of the control-plane",
+		name: "knative-internal-tls with encryption enabled",
 		data: map[string]string{
-			ControlplaneTrustKey: "trustLevel",
-		},
-		wantErr: true,
-	}, {
-		name: "network configuration of the control-plane",
-		data: map[string]string{
-			ControlplaneTrustKey: "mutual",
+			KnativeInternalTLSKey: "enabled",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.ControlplaneTrust = TrustMutual
+			c.KnativeInternalTLS = EncryptionEnabled
+			c.InternalEncryption = true
+			return c
+		}(),
+	}, {
+		name: "cluster-local-domain-tls with invalid configuration value",
+		data: map[string]string{
+			ClusterLocalDomainTLSKey: "wrong",
+		},
+		wantErr: true,
+	}, {
+		name: "cluster-local-domain-tls with encryption disabled",
+		data: map[string]string{
+			ClusterLocalDomainTLSKey: "disabled",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ClusterLocalDomainTLS = EncryptionDisabled
+			return c
+		}(),
+	}, {
+		name: "cluster-local-domain-tls with encryption enabled",
+		data: map[string]string{
+			ClusterLocalDomainTLSKey: "enabled",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.ClusterLocalDomainTLS = EncryptionEnabled
 			return c
 		}(),
 	}, {
@@ -347,11 +416,12 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaims: true,
 			HTTPProtocol:                  HTTPRedirected,
 			AutoTLS:                       true,
+			ExternalDomainTLS:             true,
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			DataplaneTrust:        TrustDisabled,
-			ControlplaneTrust:     TrustDisabled,
+			KnativeInternalTLS:    EncryptionDisabled,
+			ClusterLocalDomainTLS: EncryptionDisabled,
 		},
 	}, {
 		name: "newer keys take precedence over legacy keys",
@@ -377,8 +447,6 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaimsKey: "false",
 			HTTPProtocolKey:                  "enabled",
 			AutoTLSKey:                       "disabled",
-			DataplaneTrustKey:                "MiNiMal",
-			ControlplaneTrustKey:             "EnAbLeD",
 		},
 		wantConfig: &Config{
 			DefaultIngressClass:     "7",
@@ -391,11 +459,12 @@ func TestConfiguration(t *testing.T) {
 			AutocreateClusterDomainClaims: false,
 			HTTPProtocol:                  HTTPEnabled,
 			AutoTLS:                       false,
+			ExternalDomainTLS:             false,
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			DataplaneTrust:        TrustMinimal,
-			ControlplaneTrust:     TrustEnabled,
+			KnativeInternalTLS:    EncryptionDisabled,
+			ClusterLocalDomainTLS: EncryptionDisabled,
 		},
 	}}
 
