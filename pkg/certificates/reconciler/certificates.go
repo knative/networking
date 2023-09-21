@@ -119,7 +119,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 		return fmt.Errorf("unknown cert type: %v", r.secretTypeLabelName)
 	}
 
-	cert, _, err := parseAndValidateSecret(secret, caSecret.Data[certificates.SecretCertKey], sans...)
+	cert, _, err := parseAndValidateSecret(secret, caSecret.Data[certificates.CertName], sans...)
 	if err != nil {
 		r.logger.Infof("Secret invalid: %v", err)
 		// Check the secret to reconcile type
@@ -129,7 +129,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 		if err != nil {
 			return fmt.Errorf("cannot generate the cert: %w", err)
 		}
-		err = r.commitUpdatedSecret(ctx, secret, keyPair, caSecret.Data[certificates.SecretCertKey])
+		err = r.commitUpdatedSecret(ctx, secret, keyPair, caSecret.Data[certificates.CertName])
 		if err != nil {
 			return err
 		}
@@ -146,21 +146,21 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 
 // All sans provided are required to be lower case
 func parseAndValidateSecret(secret *corev1.Secret, caCert []byte, sans ...string) (*x509.Certificate, *rsa.PrivateKey, error) {
-	certBytes, ok := secret.Data[certificates.SecretCertKey]
+	certBytes, ok := secret.Data[certificates.CertName]
 	if !ok {
-		return nil, nil, fmt.Errorf("missing cert bytes")
+		return nil, nil, fmt.Errorf("missing cert bytes in %q", certificates.CertName)
 	}
-	pkBytes, ok := secret.Data[certificates.SecretPKKey]
+	pkBytes, ok := secret.Data[certificates.PrivateKeyName]
 	if !ok {
-		return nil, nil, fmt.Errorf("missing pk bytes")
+		return nil, nil, fmt.Errorf("missing pk bytes in %q", certificates.PrivateKeyName)
 	}
 	if caCert != nil {
-		ca, ok := secret.Data[certificates.SecretCaCertKey]
+		ca, ok := secret.Data[certificates.CaCertName]
 		if !ok {
-			return nil, nil, fmt.Errorf("missing ca cert bytes")
+			return nil, nil, fmt.Errorf("missing ca cert bytes in %q", certificates.CaCertName)
 		}
 		if !bytes.Equal(ca, caCert) {
-			return nil, nil, fmt.Errorf("ca cert bytes changed")
+			return nil, nil, fmt.Errorf("ca cert bytes changed in %q", certificates.CaCertName)
 		}
 	}
 
