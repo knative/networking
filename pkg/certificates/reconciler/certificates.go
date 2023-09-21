@@ -74,10 +74,10 @@ var _ Interface = (*reconciler)(nil)
 func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) pkgreconciler.Event {
 	// This should not happen, but it happens :) https://github.com/knative/pkg/issues/1891
 	if !r.shouldReconcile(secret) {
-		r.logger.Infof("Skipping reconciling secret %q:%q", secret.Namespace, secret.Name)
+		r.logger.Infof("Skipping reconciling secret %s/%s", secret.Namespace, secret.Name)
 		return nil
 	}
-	r.logger.Infof("Updating secret %q:%q", secret.Namespace, secret.Name)
+	r.logger.Infof("Updating secret %s/%s", secret.Namespace, secret.Name)
 
 	// Reconcile CA secret first
 	caSecret, err := r.secretLister.Secrets(system.Namespace()).Get(r.caSecretName)
@@ -87,7 +87,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 		// secret information.
 		return nil
 	} else if err != nil {
-		r.logger.Errorf("Error accessing CA certificate secret %q %q: %v", system.Namespace(), r.caSecretName, err)
+		r.logger.Errorf("Error accessing CA certificate secret %s/%s: %v", system.Namespace(), r.caSecretName, err)
 		return err
 	}
 	caCert, caPk, err := parseAndValidateSecret(caSecret, nil)
@@ -121,7 +121,7 @@ func (r *reconciler) ReconcileKind(ctx context.Context, secret *corev1.Secret) p
 
 	cert, _, err := parseAndValidateSecret(secret, caSecret.Data[certificates.CertName], sans...)
 	if err != nil {
-		r.logger.Infof("Secret invalid: %v", err)
+		r.logger.Infof("Secret %s/%s invalid: %v", secret.Namespace, secret.Name, err)
 		// Check the secret to reconcile type
 
 		var keyPair *certificates.KeyPair
