@@ -137,13 +137,7 @@ var (
 	}
 
 	// Deprecated: use DisableExternalDomainTLSAnnotation instead.
-	DisableAutoTLSAnnotation = kmap.KeyPriority{
-		DisableAutoTLSAnnotationKey,
-		DisableAutoTLSAnnotationAltKey,
-
-		// backward compatibility
-		DisableExternalDomainTLSAnnotationKey,
-	}
+	DisableAutoTLSAnnotation = DisableExternalDomainTLSAnnotation
 
 	DisableExternalDomainTLSAnnotation = kmap.KeyPriority{
 		// backward compatibility
@@ -172,9 +166,7 @@ func GetHTTPProtocol(annotations map[string]string) (val string) {
 }
 
 // Deprecated: use GetDisableExternalDomainTLS instead.
-func GetDisableAutoTLS(annotations map[string]string) (val string) {
-	return DisableAutoTLSAnnotation.Value(annotations)
-}
+var GetDisableAutoTLS = GetDisableExternalDomainTLS
 
 func GetDisableExternalDomainTLS(annotations map[string]string) (val string) {
 	return DisableExternalDomainTLSAnnotation.Value(annotations)
