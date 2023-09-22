@@ -330,36 +330,36 @@ func TestConfiguration(t *testing.T) {
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.InternalEncryption = true
-			c.KnativeInternalTLS = EncryptionEnabled
+			c.SystemInternalTLS = EncryptionEnabled
 			return c
 		}(),
 	}, {
-		name: "knative-internal-tls with invalid configuration value",
+		name: "system-internal-tls with invalid configuration value",
 		data: map[string]string{
-			KnativeInternalTLSKey: "wrong",
+			SystemInternalTLSKey: "wrong",
 		},
 		wantErr: true,
 	}, {
-		name: "knative-internal-tls with encryption disabled",
+		name: "system-internal-tls with encryption disabled",
 		data: map[string]string{
-			KnativeInternalTLSKey: "disabled",
+			SystemInternalTLSKey: "disabled",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.KnativeInternalTLS = EncryptionDisabled
+			c.SystemInternalTLS = EncryptionDisabled
 			c.InternalEncryption = false
 			return c
 		}(),
 	}, {
-		name: "knative-internal-tls with encryption enabled",
+		name: "system-internal-tls with encryption enabled",
 		data: map[string]string{
-			KnativeInternalTLSKey: "enabled",
+			SystemInternalTLSKey: "enabled",
 		},
 		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.KnativeInternalTLS = EncryptionEnabled
+			c.SystemInternalTLS = EncryptionEnabled
 			c.InternalEncryption = true
 			return c
 		}(),
@@ -420,7 +420,7 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			KnativeInternalTLS:    EncryptionDisabled,
+			SystemInternalTLS:     EncryptionDisabled,
 			ClusterLocalDomainTLS: EncryptionDisabled,
 		},
 	}, {
@@ -463,7 +463,7 @@ func TestConfiguration(t *testing.T) {
 
 			// This is defaulted
 			MeshCompatibilityMode: MeshCompatibilityModeAuto,
-			KnativeInternalTLS:    EncryptionDisabled,
+			SystemInternalTLS:     EncryptionDisabled,
 			ClusterLocalDomainTLS: EncryptionDisabled,
 		},
 	}}

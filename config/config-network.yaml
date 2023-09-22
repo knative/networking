@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "8cbfa515"
+    knative.dev/example-checksum: "b2698fe8"
 data:
   _example: |
     ################################
@@ -133,10 +133,10 @@ data:
     #       for now. Use with caution.
     cluster-local-domain-tls: "Disabled"
 
-    # internal-encryption is deprecated and replaced by knative-internal-tls
+    # internal-encryption is deprecated and replaced by system-internal-tls
     internal-encryption: "false"
 
-    # knative-internal-tls controls weather TLS encryption is used for connections between
+    # system-internal-tls controls weather TLS encryption is used for connections between
     # the internal components of Knative:
     # - ingress to activator
     # - ingress to queue-proxy
@@ -147,7 +147,7 @@ data:
     # - Disabled: disables the TLS certificate provisioning feature for cluster cluster local domains.
     # NOTE: This flag is in an alpha state and is mostly here to enable internal testing
     #       for now. Use with caution.
-    knative-internal-tls: "Disabled"
+    system-internal-tls: "Disabled"
 
     # Controls the behavior of the HTTP endpoint for the Knative ingress.
     # It requires auto-tls to be enabled.

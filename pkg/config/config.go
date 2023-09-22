@@ -145,12 +145,12 @@ const (
 
 	// InternalEncryptionKey is the name of the configuration whether
 	// internal traffic is encrypted or not.
-	// Deprecated: please use KnativeInternalTLSKey.
+	// Deprecated: please use SystemInternalTLSKey.
 	InternalEncryptionKey = "internal-encryption"
 
-	// KnativeInternalTLSKey is the name of the configuration whether
-	// knative internal traffic is encrypted or not.
-	KnativeInternalTLSKey = "knative-internal-tls"
+	// SystemInternalTLSKey is the name of the configuration whether
+	// traffic between Knative system components is encrypted or not.
+	SystemInternalTLSKey = "system-internal-tls"
 )
 
 // EncryptionConfig indicates the encryption configuration
@@ -294,11 +294,11 @@ type Config struct {
 	DefaultExternalScheme string
 
 	// InternalEncryption specifies whether internal traffic is encrypted or not.
-	// Deprecated: please use KnativeInternalTLSKey instead.
+	// Deprecated: please use SystemInternalTLSKey instead.
 	InternalEncryption bool
 
-	// KnativeInternalTLS specifies whether knative internal traffic is encrypted or not.
-	KnativeInternalTLS EncryptionConfig
+	// SystemInternalTLS specifies whether knative internal traffic is encrypted or not.
+	SystemInternalTLS EncryptionConfig
 
 	// ClusterLocalDomainTLS specifies whether cluster-local traffic is encrypted or not.
 	ClusterLocalDomainTLS EncryptionConfig
@@ -318,7 +318,7 @@ func defaultConfig() *Config {
 		DefaultExternalScheme:         "http",
 		MeshCompatibilityMode:         MeshCompatibilityModeAuto,
 		InternalEncryption:            false,
-		KnativeInternalTLS:            EncryptionDisabled,
+		SystemInternalTLS:             EncryptionDisabled,
 		ClusterLocalDomainTLS:         EncryptionDisabled,
 	}
 }
@@ -422,23 +422,23 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 		return nil, fmt.Errorf("httpProtocol %s in config-network ConfigMap is not supported", data[HTTPProtocolKey])
 	}
 
-	switch strings.ToLower(data[KnativeInternalTLSKey]) {
+	switch strings.ToLower(data[SystemInternalTLSKey]) {
 	case "", string(EncryptionDisabled):
-		// If KnativeInternalTLSKey is not set in the config-network, default is already
+		// If SystemInternalTLSKey is not set in the config-network, default is already
 		// set to EncryptionDisabled.
 		if nc.InternalEncryption {
 			// Backward compatibility
-			nc.KnativeInternalTLS = EncryptionEnabled
+			nc.SystemInternalTLS = EncryptionEnabled
 		}
 	case string(EncryptionEnabled):
-		nc.KnativeInternalTLS = EncryptionEnabled
+		nc.SystemInternalTLS = EncryptionEnabled
 
 		// The new key takes precedence, but we support compatibility
 		// for code that has not updated to the new field yet.
 		nc.InternalEncryption = true
 	default:
 		return nil, fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported",
-			KnativeInternalTLSKey, data[KnativeInternalTLSKey])
+			SystemInternalTLSKey, data[SystemInternalTLSKey])
 	}
 
 	switch strings.ToLower(data[ClusterLocalDomainTLSKey]) {
@@ -456,14 +456,14 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 }
 
 // InternalTLSEnabled returns whether InternalEncryption is enabled or not.
-// Deprecated: please use KnativeInternalTLSEnabled()
+// Deprecated: please use SystemInternalTLSEnabled()
 func (c *Config) InternalTLSEnabled() bool {
-	return tlsEnabled(c.KnativeInternalTLS)
+	return tlsEnabled(c.SystemInternalTLS)
 }
 
-// KnativeInternalTLSEnabled returns whether KnativeInternalTLS is enabled or not.
-func (c *Config) KnativeInternalTLSEnabled() bool {
-	return tlsEnabled(c.KnativeInternalTLS)
+// SystemInternalTLSEnabled returns whether SystemInternalTLS is enabled or not.
+func (c *Config) SystemInternalTLSEnabled() bool {
+	return tlsEnabled(c.SystemInternalTLS)
 }
 
 func tlsEnabled(encryptionConfig EncryptionConfig) bool {
