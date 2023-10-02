@@ -3,7 +3,7 @@
 This repository contains the Knative Ingress and Certificate CRDs, as well as
 their conformance tests. These are our extension points to plugin different
 Ingress plugins (Ambassador, Contour, Gloo, Istio, Kong and Kourier), as well as
-different AutoTLS plugins (CertManager and Knative's own HTTP01 challenge
+different ExternalDomainTLS plugins (CertManager and Knative's own HTTP01 challenge
 solver).
 
 # Knative Ingress aka KIngress

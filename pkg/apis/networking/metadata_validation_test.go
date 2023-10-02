@@ -45,6 +45,11 @@ func TestValidateObjectMetadata(t *testing.T) {
 			DisableAutoTLSAnnotationAltKey: "true",
 		},
 	}, {
+		name: "valid disable external-domain-tls annotation key",
+		annotations: map[string]string{
+			DisableExternalDomainTLSAnnotationKey: "true",
+		},
+	}, {
 		name: "valid certificate class annotation key",
 		annotations: map[string]string{
 			CertificateClassAnnotationKey:    "certificate.class",
