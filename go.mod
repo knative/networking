@@ -20,8 +20,8 @@ require (
 	k8s.io/code-generator v0.27.6
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491
 	knative.dev/hack v0.0.0-20231025074238-d4af42e9b222
-	knative.dev/pkg v0.0.0-20231023152443-b7a62c0b7003
-	sigs.k8s.io/yaml v1.3.0
+	knative.dev/pkg v0.0.0-20231101193506-b09d4f2a2845
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -45,7 +45,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/uuid v1.3.1 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.11.3 // indirect
 	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
