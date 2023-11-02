@@ -88,7 +88,7 @@ github.com/google/go-cmp/cmp/internal/value
 ## explicit; go 1.12
 github.com/google/gofuzz
 github.com/google/gofuzz/bytesource
-# github.com/google/uuid v1.3.1
+# github.com/google/uuid v1.4.0
 ## explicit
 github.com/google/uuid
 # github.com/gorilla/websocket v1.5.0
@@ -893,7 +893,7 @@ k8s.io/utils/trace
 # knative.dev/hack v0.0.0-20231025074238-d4af42e9b222
 ## explicit; go 1.18
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20231023152443-b7a62c0b7003
+# knative.dev/pkg v0.0.0-20231101193506-b09d4f2a2845
 ## explicit; go 1.18
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
@@ -959,6 +959,7 @@ sigs.k8s.io/structured-merge-diff/v4/merge
 sigs.k8s.io/structured-merge-diff/v4/schema
 sigs.k8s.io/structured-merge-diff/v4/typed
 sigs.k8s.io/structured-merge-diff/v4/value
-# sigs.k8s.io/yaml v1.3.0
+# sigs.k8s.io/yaml v1.4.0
 ## explicit; go 1.12
 sigs.k8s.io/yaml
+sigs.k8s.io/yaml/goyaml.v2
