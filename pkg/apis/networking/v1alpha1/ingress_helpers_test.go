@@ -135,6 +135,29 @@ func TestGetIngressTLSForVisibility(t *testing.T) {
 			},
 		},
 		want: make([]IngressTLS, 0),
+	}, {
+		name:       "matching entries with additional hosts in TLS block",
+		visibility: IngressVisibilityClusterLocal,
+		ingress: &Ingress{
+			Spec: IngressSpec{
+				Rules: []IngressRule{
+					{
+						Hosts:      []string{"expected"},
+						Visibility: IngressVisibilityClusterLocal,
+					},
+					{
+						Hosts:      []string{"other", "entries"},
+						Visibility: IngressVisibilityExternalIP,
+					},
+				},
+				TLS: []IngressTLS{
+					{Hosts: []string{"expected", "additional"}},
+				},
+			},
+		},
+		want: []IngressTLS{
+			{Hosts: []string{"expected", "additional"}},
+		},
 	}}
 
 	for _, test := range tests {

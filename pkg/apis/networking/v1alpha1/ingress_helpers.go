@@ -17,12 +17,11 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
+	"slices"
 )
 
-// GetIngressTLSForVisibility returns a list of `Spec.TLS` where the `Hosts` field matches
-// to `Spec.Rules.Hosts` and where the Rules have the defined ingress visibility.
+// GetIngressTLSForVisibility returns a list of `Spec.TLS` where each host in the `Rules.Hosts` field is
+// present in `Spec.TLS.Hosts` and where the Rules have the defined ingress visibility.
 // This method can be used in net-* implementations to select the correct `IngressTLS` entries
 // for cluster-local and cluster-external gateways/listeners.
 func (i *Ingress) GetIngressTLSForVisibility(visibility IngressVisibility) []IngressTLS {
@@ -32,12 +31,21 @@ func (i *Ingress) GetIngressTLSForVisibility(visibility IngressVisibility) []Ing
 		return ingressTLS
 	}
 
-	for _, r := range i.Spec.Rules {
-		if r.Visibility == visibility {
-			for _, t := range i.Spec.TLS {
-				// Check if hosts slices are equal ignoring the order
-				if cmp.Diff(r.Hosts, t.Hosts, cmpopts.SortSlices(func(a, b string) bool { return a < b })) == "" {
-					ingressTLS = append(ingressTLS, t)
+	for _, rule := range i.Spec.Rules {
+		if rule.Visibility == visibility {
+			if rule.Hosts == nil || len(rule.Hosts) == 0 {
+				return ingressTLS
+			}
+
+			for _, tls := range i.Spec.TLS {
+				containsAllRuleHosts := true
+				for _, h := range rule.Hosts {
+					if !slices.Contains(tls.Hosts, h) {
+						containsAllRuleHosts = false
+					}
+				}
+				if containsAllRuleHosts {
+					ingressTLS = append(ingressTLS, tls)
 				}
 			}
 		}
