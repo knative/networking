@@ -53,3 +53,8 @@ Check out:
   for more information about the Certificate API spec.
 - [pkg/apis/networking/v1alpha1/certificate_validation.go](pkg/apis/networking/v1alpha1/certificate_validation.go)
   for more information about the validation logic for Certificate API spec.
+
+# Contributing
+
+If you would like to contribute to Knative, take a look at [CLOTRIBUTOR](https://clotributor.dev/search?project=knative&page=1)
+for a list of help wanted issues across the project.
