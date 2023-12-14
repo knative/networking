@@ -43,7 +43,7 @@ const (
 )
 
 const (
-	// PublicGroupName is the name for hte public networking API group
+	// PublicGroupName is the name for the public networking API group
 	PublicGroupName = "networking.knative.dev"
 
 	// CertificateClassAnnotationKey is the annotation for the
@@ -125,7 +125,7 @@ const (
 	CertificateTypeLabelKey = PublicGroupName + "/certificate-type"
 
 	// TrustBundleLabelKey is the label to indicate that a ConfigMap should be considered
-	// as a trust-bundle containing a list of CA to trust by Knative components.
+	// as a trust-bundle containing a list of CA certificates to trust by Knative components.
 	// The actual value is not important, this label is used as a filter on informers.
 	TrustBundleLabelKey = PublicGroupName + "/trust-bundle"
 )
