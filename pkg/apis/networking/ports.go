@@ -38,6 +38,9 @@ const (
 
 	// ServicePortNameHTTPS is the name of the external port of the service for HTTPS
 	ServicePortNameHTTPS = "https"
+
+	// AppProtocolH2C is the name of the external port of the service for HTTP/2
+	AppProtocolH2C = "kubernetes.io/h2c"
 )
 
 // ServicePortName returns the port for the app level protocol.
@@ -54,4 +57,12 @@ func ServicePort(proto ProtocolType) int {
 		return ServiceHTTP2Port
 	}
 	return ServiceHTTPPort
+}
+
+// AppProtocol returns the value for app level protocol based on the ProtocolType
+func AppProtocol(proto ProtocolType) string {
+	if proto == ProtocolH2C {
+		return AppProtocolH2C
+	}
+	return ""
 }
