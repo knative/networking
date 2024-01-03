@@ -60,9 +60,9 @@ func ServicePort(proto ProtocolType) int {
 }
 
 // AppProtocol returns the value for app level protocol based on the ProtocolType
-func AppProtocol(proto ProtocolType) string {
+func AppProtocol(proto ProtocolType) (ap *string) {
 	if proto == ProtocolH2C {
-		return AppProtocolH2C
+		*ap = AppProtocolH2C
 	}
-	return ""
+	return
 }
