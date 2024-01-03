@@ -42,7 +42,7 @@ const (
 
 var (
 	// AppProtocolH2C is the name of the external port of the service for HTTP/2
-	AppProtocolH2C string = "kubernetes.io/h2c"
+	AppProtocolH2C = "kubernetes.io/h2c"
 )
 
 // ServicePortName returns the port for the app level protocol.
