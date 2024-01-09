@@ -28,57 +28,57 @@ import (
 func TestGetExpandedHosts(t *testing.T) {
 	for _, test := range []struct {
 		name  string
-		hosts sets.String
-		want  sets.String
+		hosts sets.Set[string]
+		want  sets.Set[string]
 	}{{
 		name:  "cluster local service in non-default namespace",
-		hosts: sets.NewString("service.name-space.svc.cluster.local"),
-		want: sets.NewString(
+		hosts: sets.New("service.name-space.svc.cluster.local"),
+		want: sets.New(
 			"service.name-space",
 			"service.name-space.svc",
 			"service.name-space.svc.cluster.local",
 		),
 	}, {
 		name:  "cluster local service in all-numeric namespace",
-		hosts: sets.NewString("service.1234.svc.cluster.local"),
-		want: sets.NewString(
+		hosts: sets.New("service.1234.svc.cluster.local"),
+		want: sets.New(
 			"service.1234.svc",
 			"service.1234.svc.cluster.local",
 		),
 	}, {
 		name:  "funky namespace",
-		hosts: sets.NewString("service.1-1.svc.cluster.local"),
-		want: sets.NewString(
+		hosts: sets.New("service.1-1.svc.cluster.local"),
+		want: sets.New(
 			"service.1-1",
 			"service.1-1.svc",
 			"service.1-1.svc.cluster.local",
 		),
 	}, {
 		name: "cluster local service somehow has a very long tld",
-		hosts: sets.NewString(
+		hosts: sets.New(
 			"service." + strings.Repeat("s", 64) + ".svc.cluster.local",
 		),
-		want: sets.NewString(
+		want: sets.New(
 			"service."+strings.Repeat("s", 64)+".svc",
 			"service."+strings.Repeat("s", 64)+".svc.cluster.local",
 		),
 	}, {
 		name:  "example.com service",
-		hosts: sets.NewString("foo.bar.example.com"),
-		want: sets.NewString(
+		hosts: sets.New("foo.bar.example.com"),
+		want: sets.New(
 			"foo.bar.example.com",
 		),
 	}, {
 		name:  "default.example.com service",
-		hosts: sets.NewString("foo.default.example.com"),
-		want:  sets.NewString("foo.default.example.com"),
+		hosts: sets.New("foo.default.example.com"),
+		want:  sets.New("foo.default.example.com"),
 	}, {
 		name: "mix",
-		hosts: sets.NewString(
+		hosts: sets.New(
 			"foo.default.example.com",
 			"foo.default.svc.cluster.local",
 		),
-		want: sets.NewString(
+		want: sets.New(
 			"foo.default",
 			"foo.default.example.com",
 			"foo.default.svc",
@@ -88,7 +88,7 @@ func TestGetExpandedHosts(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			got := ExpandedHosts(test.hosts)
 			if !got.Equal(test.want) {
-				t.Errorf("ExpandedHosts diff(-want +got):\n%s", cmp.Diff(got.List(), test.want.List()))
+				t.Errorf("ExpandedHosts diff(-want +got):\n%s", cmp.Diff(sets.List(got), sets.List(test.want)))
 			}
 		})
 	}
@@ -208,8 +208,8 @@ func TestHostsPerVisibility(t *testing.T) {
 	tests := []struct {
 		name    string
 		ingress *v1alpha1.Ingress
-		in      map[v1alpha1.IngressVisibility]sets.String
-		want    map[string]sets.String
+		in      map[v1alpha1.IngressVisibility]sets.Set[string]
+		want    map[string]sets.Set[string]
 	}{{
 		name: "external rule",
 		ingress: &v1alpha1.Ingress{
@@ -235,12 +235,12 @@ func TestHostsPerVisibility(t *testing.T) {
 				}},
 			},
 		},
-		in: map[v1alpha1.IngressVisibility]sets.String{
-			v1alpha1.IngressVisibilityExternalIP:   sets.NewString("foo"),
-			v1alpha1.IngressVisibilityClusterLocal: sets.NewString("bar", "baz"),
+		in: map[v1alpha1.IngressVisibility]sets.Set[string]{
+			v1alpha1.IngressVisibilityExternalIP:   sets.New("foo"),
+			v1alpha1.IngressVisibilityClusterLocal: sets.New("bar", "baz"),
 		},
-		want: map[string]sets.String{
-			"foo": sets.NewString(
+		want: map[string]sets.Set[string]{
+			"foo": sets.New(
 				"example.com",
 				"foo.bar.svc.cluster.local",
 				"foo.bar.svc",
@@ -271,17 +271,17 @@ func TestHostsPerVisibility(t *testing.T) {
 				}},
 			},
 		},
-		in: map[v1alpha1.IngressVisibility]sets.String{
-			v1alpha1.IngressVisibilityExternalIP:   sets.NewString("foo"),
-			v1alpha1.IngressVisibilityClusterLocal: sets.NewString("bar", "baz"),
+		in: map[v1alpha1.IngressVisibility]sets.Set[string]{
+			v1alpha1.IngressVisibilityExternalIP:   sets.New("foo"),
+			v1alpha1.IngressVisibilityClusterLocal: sets.New("bar", "baz"),
 		},
-		want: map[string]sets.String{
-			"bar": sets.NewString(
+		want: map[string]sets.Set[string]{
+			"bar": sets.New(
 				"foo.bar.svc.cluster.local",
 				"foo.bar.svc",
 				"foo.bar",
 			),
-			"baz": sets.NewString(
+			"baz": sets.New(
 				"foo.bar.svc.cluster.local",
 				"foo.bar.svc",
 				"foo.bar",

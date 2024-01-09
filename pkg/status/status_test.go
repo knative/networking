@@ -109,7 +109,7 @@ func TestProbeAllHosts(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		fakeProbeTargetLister{{
-			PodIPs:  sets.NewString(hostname),
+			PodIPs:  sets.New(hostname),
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
@@ -233,7 +233,7 @@ func TestProbeLifecycle(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		fakeProbeTargetLister{{
-			PodIPs:  sets.NewString(hostname),
+			PodIPs:  sets.New(hostname),
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
@@ -387,7 +387,7 @@ func TestCancelPodProbing(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		fakeProbeTargetLister{{
-			PodIPs:  sets.NewString(hostname),
+			PodIPs:  sets.New(hostname),
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
@@ -530,7 +530,7 @@ func TestPartialPodCancellation(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		fakeProbeTargetLister{{
-			PodIPs:  sets.NewString(pods[0].Status.PodIP, pods[1].Status.PodIP),
+			PodIPs:  sets.New(pods[0].Status.PodIP, pods[1].Status.PodIP),
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},
@@ -604,7 +604,7 @@ func TestCancelIngressProbing(t *testing.T) {
 	prober := NewProber(
 		zaptest.NewLogger(t).Sugar(),
 		fakeProbeTargetLister{{
-			PodIPs:  sets.NewString(hostname),
+			PodIPs:  sets.New(hostname),
 			PodPort: strconv.Itoa(port),
 			URLs:    []*url.URL{tsURL},
 		}},

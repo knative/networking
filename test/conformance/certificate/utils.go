@@ -134,7 +134,7 @@ func WaitForCertificateState(ctx context.Context, client *test.NetworkingClients
 func VerifyChallenges(ctx context.Context, t *testing.T, client *test.Clients, cert *v1alpha1.Certificate) {
 	t.Helper()
 
-	certDomains := sets.NewString(cert.Spec.DNSNames...)
+	certDomains := sets.New(cert.Spec.DNSNames...)
 
 	for _, challenge := range cert.Status.HTTP01Challenges {
 		if challenge.ServiceName == "" {
