@@ -41,7 +41,7 @@ const (
 )
 
 var (
-	// AppProtocolH2C is the name of the external port of the service for HTTP/2
+	// AppProtocolH2C is the name of the external port of the service for HTTP/2, from https://github.com/kubernetes/enhancements/tree/master/keps/sig-network/3726-standard-application-protocols#new-standard-protocols
 	AppProtocolH2C = "kubernetes.io/h2c"
 )
 
