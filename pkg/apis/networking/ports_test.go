@@ -36,7 +36,7 @@ func TestServicePortName(t *testing.T) {
 	}}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got, want := ServicePortName(c.proto), c.expect; !(got == want) {
+			if got, want := ServicePortName(c.proto), c.expect; got != want {
 				t.Errorf("got = %s, want: %s", got, want)
 			}
 		})
@@ -59,7 +59,7 @@ func TestServicePort(t *testing.T) {
 	}}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got, want := ServicePort(c.proto), c.expect; !(got == want) {
+			if got, want := ServicePort(c.proto), c.expect; got != want {
 				t.Errorf("got = %d, want: %d", got, want)
 			}
 		})
@@ -82,7 +82,7 @@ func TestAppProtocol(t *testing.T) {
 	}}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got, want := AppProtocol(c.proto), c.expect; !(got == want) {
+			if got, want := AppProtocol(c.proto), c.expect; got != want {
 				t.Errorf("got = %d, want: %d", got, want)
 			}
 		})
