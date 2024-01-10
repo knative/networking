@@ -36,7 +36,7 @@ func TestServicePortName(t *testing.T) {
 	}}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got, want := ServicePortName(c.proto), c.expect; !(got == want) {
+			if got, want := ServicePortName(c.proto), c.expect; got != want {
 				t.Errorf("got = %s, want: %s", got, want)
 			}
 		})
@@ -59,7 +59,30 @@ func TestServicePort(t *testing.T) {
 	}}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got, want := ServicePort(c.proto), c.expect; !(got == want) {
+			if got, want := ServicePort(c.proto), c.expect; got != want {
+				t.Errorf("got = %d, want: %d", got, want)
+			}
+		})
+	}
+}
+
+func TestAppProtocol(t *testing.T) {
+	cases := []struct {
+		name   string
+		proto  ProtocolType
+		expect *string
+	}{{
+		name:   "pass h2c protocol to get Serving and Activator K8s services for HTTP/2 endpoints",
+		proto:  ProtocolH2C,
+		expect: &AppProtocolH2C,
+	}, {
+		name:   "other protocols result in nil",
+		proto:  ProtocolHTTP1,
+		expect: nil,
+	}}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got, want := AppProtocol(c.proto), c.expect; got != want {
 				t.Errorf("got = %d, want: %d", got, want)
 			}
 		})
