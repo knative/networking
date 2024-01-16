@@ -20,7 +20,7 @@ require (
 	k8s.io/code-generator v0.28.5
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
 	knative.dev/hack v0.0.0-20240111013919-e89096d74d85
-	knative.dev/pkg v0.0.0-20240115081926-347a4b5e6da3
+	knative.dev/pkg v0.0.0-20240115132401-f95090a164db
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
-	github.com/evanphx/json-patch/v5 v5.7.0 // indirect
+	github.com/evanphx/json-patch/v5 v5.8.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
