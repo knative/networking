@@ -8,7 +8,6 @@ require (
 	github.com/gorilla/websocket v1.5.1
 	github.com/hashicorp/golang-lru v1.0.2
 	github.com/rs/dnscache v0.0.0-20211102005908-e0241e321417
-	github.com/stretchr/testify v1.8.2
 	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/sync v0.6.0
@@ -57,7 +56,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openzipkin/zipkin-go v0.4.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.18.0 // indirect
 	github.com/prometheus/client_model v0.5.0 // indirect
 	github.com/prometheus/common v0.46.0 // indirect
