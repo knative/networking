@@ -84,12 +84,16 @@ func TestMarkNotReady(_ *testing.T) {
 }
 
 func TestMarkFailed(t *testing.T) {
-	c := &CertificateStatus{}
-	c.InitializeConditions()
-	apistest.CheckCondition(c, CertificateConditionReady, corev1.ConditionUnknown)
+	cs := &CertificateStatus{}
+	cs.InitializeConditions()
+	apistest.CheckCondition(cs, CertificateConditionReady, corev1.ConditionUnknown)
 
-	c.MarkFailed("failed", "failed")
-	apistest.CheckConditionFailed(c, CertificateConditionReady, t)
+	cs.MarkFailed("failed", "failed")
+	apistest.CheckConditionFailed(cs, CertificateConditionReady, t)
+	c := &Certificate{Status: *cs}
+	if !c.IsFailed() {
+		t.Error("IsFailed=false, want: true")
+	}
 }
 
 func TestMarkResourceNotOwned(t *testing.T) {
