@@ -33,7 +33,6 @@ jobs:
         - knative-extensions/net-istio
         - knative-extensions/net-kourier
         - knative-extensions/net-certmanager
-        - knative-extensions/net-http01
 
     steps:
     - name: Set up Go 1.21.x
