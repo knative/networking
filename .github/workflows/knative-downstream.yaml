@@ -35,17 +35,10 @@ jobs:
         - knative-extensions/net-certmanager
 
     steps:
-    - name: Set up Go 1.21.x
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.21.x
-
-    - name: Install Dependencies
-      run: |
-        go install github.com/google/go-licenses@latest
+    - uses: knative/actions/setup-go@main
 
     - name: Checkout upstream at ${{ github.base_ref }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: upstream
@@ -66,7 +59,7 @@ jobs:
          git pull --no-rebase --no-commit upstream ${{ github.base_ref }}
 
     - name: Checkout downstream at ${{ github.base_ref }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         ref: ${{ github.base_ref }}
         repository: ${{ matrix.repo }}
