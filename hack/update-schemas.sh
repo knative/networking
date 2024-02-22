@@ -27,7 +27,7 @@ function restore {
 
 trap restore EXIT
 
-go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.9.2 \
+go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.14.0 \
   schemapatch:manifests=config/,generateEmbeddedObjectMeta=false \
   output:dir=config \
   paths=./pkg/apis/...
