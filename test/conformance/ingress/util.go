@@ -171,8 +171,8 @@ func CreateRuntimeService(ctx context.Context, t *testing.T, clients *test.Clien
 		},
 	}
 
-	if appProtocol != "" {
-		svc.Spec.Ports[0].AppProtocol = &appProtocol
+	if len(appProtocol) > 0 {
+		svc.Spec.Ports[0].AppProtocol = ptr.String(appProtocol[0])
 	}
 
 	return name, port, createPodAndService(ctx, t, clients, pod, svc)
