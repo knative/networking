@@ -55,6 +55,13 @@ const (
 	// at the Queue proxy level back to be a host header.
 	OriginalHostKey = "K-Original-Host"
 
+	// KubeletProbeKey is the name of the header supplied by kubelet
+	// probes.  Istio with mTLS rewrites probes, but their probes pass a
+	// different user-agent.  So we augment the probes with this header.
+	//
+	// Deprecated: use knative.dev/networking/pkg/http/header.UserAgentKey
+	KubeletProbeKey = "K-Kubelet-Probe"
+
 	// RouteTagKey is the name of the header entry which has a tag name as value.
 	// The tag name specifies which route was expected to be chosen by Ingress.
 	RouteTagKey = "Knative-Serving-Tag"
