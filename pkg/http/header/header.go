@@ -55,11 +55,6 @@ const (
 	// at the Queue proxy level back to be a host header.
 	OriginalHostKey = "K-Original-Host"
 
-	// KubeletProbeKey is the name of the header supplied by kubelet
-	// probes.  Istio with mTLS rewrites probes, but their probes pass a
-	// different user-agent.  So we augment the probes with this header.
-	KubeletProbeKey = "K-Kubelet-Probe"
-
 	// RouteTagKey is the name of the header entry which has a tag name as value.
 	// The tag name specifies which route was expected to be chosen by Ingress.
 	RouteTagKey = "Knative-Serving-Tag"
@@ -126,8 +121,7 @@ func IsProbe(r *http.Request) bool {
 
 // IsKubeletProbe returns true if the request is a Kubernetes probe.
 func IsKubeletProbe(r *http.Request) bool {
-	return strings.HasPrefix(r.Header.Get("User-Agent"), KubeProbeUAPrefix) ||
-		r.Header.Get(KubeletProbeKey) != ""
+	return strings.HasPrefix(r.Header.Get("User-Agent"), KubeProbeUAPrefix)
 }
 
 // RewriteHostIn removes the `Host` header from the inbound (server) request
