@@ -66,15 +66,8 @@ const (
 	// probes.  Istio with mTLS rewrites probes, but their probes pass a
 	// different user-agent.  So we augment the probes with this header.
 	//
-	// Deprecated: use knative.dev/networking/pkg/http/header.UserAgentKey
-	KubeletProbeHeaderName = header.UserAgentKey
-
-	// KubeletProbeKey is the name of the header supplied by kubelet
-	// probes.  Istio with mTLS rewrites probes, but their probes pass a
-	// different user-agent.  So we augment the probes with this header.
-	//
-	// Deprecated: use knative.dev/networking/pkg/http/header.UserAgentKey
-	KubeletProbeKey = header.UserAgentKey
+	// Deprecated: use knative.dev/networking/pkg/http/header.KubeletProbeKey
+	KubeletProbeHeaderName = header.KubeletProbeKey
 
 	// UserAgentKey is the constant for header "User-Agent".
 	//
