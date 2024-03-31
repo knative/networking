@@ -124,7 +124,7 @@ data:
     # - Disabled: disables the TLS certificate provisioning feature for cluster external domains.
     external-domain-tls: "Disabled"
 
-    # Controls weather TLS certificates are automatically provisioned and
+    # Controls whether TLS certificates are automatically provisioned and
     # installed in the Knative ingress to terminate TLS connections
     # for cluster local domains (like: app.namespace.svc.<your-cluster-domain>)
     # - Enabled: enables the TLS certificate provisioning feature for cluster cluster-local domains.
