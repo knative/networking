@@ -1046,16 +1046,6 @@ func CreateDialContext(ctx context.Context, t *testing.T, ing *v1alpha1.Ingress,
 	// TODO(mattmoor): I'm open to tricks that would let us cleanly test multiple
 	// public load balancers or LBs with multiple ingresses (below), but want to
 	// keep our simple tests simple, thus the [0]s...
-	dial := network.NewBackoffDialer(dialBackoff)
-	ingressIP := ing.Status.PublicLoadBalancer.Ingress[0].IP
-	if ingressIP != "" {
-		return func(ctx context.Context, _ string, address string) (net.Conn, error) {
-			if ingressIP != "" {
-				return dial(ctx, "tcp", ingressIP+":80")
-			}
-			return nil, errors.New("service ingress does not contain dialing information")
-		}
-	}
 	// We expect an ingress LB with the form foo.bar.svc.cluster.local (though
 	// we aren't strictly sensitive to the suffix, this is just illustrative.
 	internalDomain := ing.Status.PublicLoadBalancer.Ingress[0].DomainInternal
@@ -1074,7 +1064,7 @@ func CreateDialContext(ctx context.Context, t *testing.T, ing *v1alpha1.Ingress,
 		t.Fatalf("Unable to retrieve Kubernetes service %s/%s: %v", namespace, name, err)
 	}
 
-	//dial := network.NewBackoffDialer(dialBackoff)
+	dial := network.NewBackoffDialer(dialBackoff)
 	if pkgTest.Flags.IngressEndpoint != "" {
 		t.Logf("ingressendpoint: %q", pkgTest.Flags.IngressEndpoint)
 
