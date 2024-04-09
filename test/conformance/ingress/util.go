@@ -1122,12 +1122,14 @@ func RuntimeRequestWithExpectations(ctx context.Context, t *testing.T, client *h
 	opts ...RequestOption) *types.RuntimeInfo {
 	t.Helper()
 
-	t.Logf("delay of %d before doing the request \n", test.NetworkingFlags.RequestDelay)
 	if test.NetworkingFlags.RequestDelay < 0 {
 		t.Error("Error creating Request:", fmt.Errorf("request delay value must be greater than or equal to 0, receieved %d", test.NetworkingFlags.RequestDelay))
 		return nil
 	}
-	time.Sleep(time.Duration(test.NetworkingFlags.RequestDelay) * time.Second)
+	if test.NetworkingFlags.RequestDelay > 0 {
+		t.Logf("delay of %d before doing the request", test.NetworkingFlags.RequestDelay)
+		time.Sleep(time.Duration(test.NetworkingFlags.RequestDelay) * time.Second)
+	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
