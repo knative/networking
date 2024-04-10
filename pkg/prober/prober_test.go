@@ -224,7 +224,7 @@ func TestDoAsyncTimeout(t *testing.T) {
 		if done {
 			t.Errorf("done was true")
 		}
-		if !errors.Is(err, wait.ErrWaitTimeout) {
+		if !errors.Is(err, context.DeadlineExceeded) {
 			t.Error("Unexpected error =", err)
 		}
 		wch <- arg
@@ -258,7 +258,7 @@ func TestAsyncMultiple(t *testing.T) {
 	wch <- 2009
 	<-wch
 
-	wait.PollImmediate(probeInterval, probeTimeout, func() (bool, error) {
+	wait.PollUntilContextTimeout(context.Background(), probeInterval, probeTimeout, true, func(ctx context.Context) (bool, error) {
 		return m.len() == 0, nil
 	})
 	if got, want := m.len(), 0; got != want {
