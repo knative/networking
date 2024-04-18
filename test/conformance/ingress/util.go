@@ -1096,10 +1096,8 @@ func CreateDialContext(ctx context.Context, t *testing.T, ing *v1alpha1.Ingress,
 				}
 				return nil, errors.New("service ingress does not contain dialing information")
 			}
-		} else {
-			t.Fatal("Service does not have a supported shape (not type LoadBalancer? missing --ingressendpoint?).")
-			return nil // Unreachable
 		}
+		t.Fatal("Service does not have a supported shape (not type LoadBalancer? missing --ingressendpoint?).")
 	} else if ing.Status.PublicLoadBalancer.Ingress[0].IP != "" {
 		dial := network.NewBackoffDialer(dialBackoff)
 		ingressIP := ing.Status.PublicLoadBalancer.Ingress[0].IP
@@ -1114,8 +1112,8 @@ func CreateDialContext(ctx context.Context, t *testing.T, ing *v1alpha1.Ingress,
 		}
 	} else {
 		t.Fatal("No IP or domain found on ingress.")
-		return nil // Unreachable
 	}
+	return nil // Unreachable
 }
 
 type RequestOption func(*http.Request)
