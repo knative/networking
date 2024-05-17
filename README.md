@@ -1,4 +1,6 @@
 # knative/networking
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fknative%2Fnetworking.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fknative%2Fnetworking?ref=badge_shield)
+
 
 This repository contains the Knative Ingress and Certificate CRDs, as well as
 their conformance tests. These are our extension points to plugin different
@@ -58,3 +60,7 @@ Check out:
 
 If you would like to contribute to Knative, take a look at [CLOTRIBUTOR](https://clotributor.dev/search?project=knative&page=1)
 for a list of help wanted issues across the project.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fknative%2Fnetworking.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fknative%2Fnetworking?ref=badge_large)
