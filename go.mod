@@ -9,7 +9,7 @@ require (
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529
 	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.7.0
+	golang.org/x/sync v0.8.0
 	golang.org/x/time v0.5.0
 	google.golang.org/grpc v1.65.0
 	k8s.io/api v0.29.2
@@ -18,7 +18,7 @@ require (
 	k8s.io/code-generator v0.29.2
 	k8s.io/utils v0.0.0-20240102154912-e7106e64919e
 	knative.dev/hack v0.0.0-20240801232131-441a19fc9ead
-	knative.dev/pkg v0.0.0-20240730131544-0e7ffe491d5e
+	knative.dev/pkg v0.0.0-20240805063731-c88d5dad9653
 	sigs.k8s.io/yaml v1.4.0
 )
 
