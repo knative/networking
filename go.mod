@@ -9,7 +9,7 @@ require (
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529
 	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.8.0
+	golang.org/x/sync v0.9.0
 	golang.org/x/time v0.6.0
 	google.golang.org/grpc v1.67.1
 	k8s.io/api v0.30.3
@@ -17,8 +17,8 @@ require (
 	k8s.io/client-go v0.30.3
 	k8s.io/code-generator v0.30.3
 	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8
-	knative.dev/hack v0.0.0-20241025103803-ef6e7e983a60
-	knative.dev/pkg v0.0.0-20241026180704-25f6002b00f3
+	knative.dev/hack v0.0.0-20241106013728-b7995315deb5
+	knative.dev/pkg v0.0.0-20241111070503-7b333a046a23
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -65,11 +65,11 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/mod v0.21.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/oauth2 v0.22.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/term v0.25.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/term v0.26.0 // indirect
+	golang.org/x/text v0.20.0 // indirect
 	golang.org/x/tools v0.26.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.183.0 // indirect
