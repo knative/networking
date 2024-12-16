@@ -104,6 +104,21 @@ func TestIsProbe(t *testing.T) {
 	}
 }
 
+func TestIsMetricsIgnored(t *testing.T) {
+	// Not a metrics ignored
+	req, err := http.NewRequest(http.MethodGet, "http://example.com/", nil)
+	if err != nil {
+		t.Fatal("Error building request:", err)
+	}
+	if IsMetricsIgnored(req) {
+		t.Error("Not a metrics ignored but counted as such")
+	}
+	req.Header.Set(IgnoreMetricsKey, "true")
+	if !IsMetricsIgnored(req) {
+		t.Error("Metrics ignored but not counted as such")
+	}
+}
+
 func TestRewriteHost(t *testing.T) {
 	r := httptest.NewRequest(http.MethodGet, "http://love.is/not-hate", nil)
 	r.Header.Set("Host", "love.is")
