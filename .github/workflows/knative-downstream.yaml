@@ -32,6 +32,7 @@ jobs:
         - knative-extensions/net-contour
         - knative-extensions/net-istio
         - knative-extensions/net-kourier
+        - knative-extensions/net-gateway-api
 
     steps:
     - uses: knative/actions/setup-go@main
