@@ -64,7 +64,7 @@ func TestGRPC(t *testing.T) {
 		}},
 	})
 
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		domain+":80",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
@@ -133,7 +133,7 @@ func TestGRPCSplit(t *testing.T) {
 		}},
 	})
 
-	conn, err := grpc.Dial(
+	conn, err := grpc.NewClient(
 		domain+":80",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {

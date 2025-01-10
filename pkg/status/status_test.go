@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -33,7 +34,6 @@ import (
 	"knative.dev/networking/pkg/http/probe"
 	"knative.dev/networking/pkg/ingress"
 
-	"go.uber.org/atomic"
 	"go.uber.org/zap/zaptest"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
