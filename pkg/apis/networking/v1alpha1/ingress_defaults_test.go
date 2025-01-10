@@ -147,5 +147,4 @@ func TestIngressDefaulting(t *testing.T) {
 			}
 		})
 	}
-
 }

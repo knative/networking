@@ -47,7 +47,6 @@ func TestStoreLoadWithContext(t *testing.T) {
 			t.Error("Unexpected defaults config (-want, +got):", diff)
 		}
 	})
-
 }
 
 func TestStoreLoadWithContextOrDefaults(t *testing.T) {

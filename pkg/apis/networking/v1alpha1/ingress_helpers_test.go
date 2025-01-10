@@ -22,9 +22,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-var (
-	hosts = []string{"foo", "bar", "foo.bar"}
-)
+var hosts = []string{"foo", "bar", "foo.bar"}
 
 func TestGetIngressTLSForVisibility(t *testing.T) {
 	tests := []struct {

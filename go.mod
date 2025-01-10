@@ -7,7 +7,6 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/gorilla/websocket v1.5.1
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529
-	go.uber.org/atomic v1.9.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.10.0
 	golang.org/x/time v0.6.0
