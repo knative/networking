@@ -106,7 +106,6 @@ func TestProbeHeaders(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 // TestTagHeaders verifies that an Ingress properly dispatches to backends based on the tag header
@@ -210,7 +209,6 @@ func TestTagHeaders(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 // TestPreSplitSetHeaders verifies that an Ingress that specified AppendHeaders pre-split has the appropriate header(s) set.

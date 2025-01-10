@@ -103,7 +103,6 @@ func main() {
 		log.Print("Listening on address: ", address)
 		test.ListenAndServeGracefully(address, handler)
 	}
-
 }
 
 // newDNSCachingTransport caches DNS lookups locally to avoid issues like

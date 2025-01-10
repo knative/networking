@@ -67,7 +67,6 @@ func TestIngressClass(t *testing.T) {
 			verifyIngressWithAnnotations(ctx, t, clients, test.annotations, ingressBackend)
 		})
 	}
-
 }
 
 func verifyIngressWithAnnotations(ctx context.Context, t *testing.T, clients *test.Clients,

@@ -79,7 +79,6 @@ func TestVisibility(t *testing.T) {
 }
 
 func testProxyToHelloworld(ctx context.Context, t *testing.T, ingress *v1alpha1.Ingress, clients *test.Clients, privateHostName string) {
-
 	loadbalancerAddress := ingress.Status.PrivateLoadBalancer.Ingress[0].DomainInternal
 	proxyName, proxyPort, _ := CreateProxyService(ctx, t, clients, privateHostName, loadbalancerAddress)
 
