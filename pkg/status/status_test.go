@@ -39,23 +39,21 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var (
-	ingTemplate = &v1alpha1.Ingress{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: "default",
-			Name:      "whatever",
-		},
-		Spec: v1alpha1.IngressSpec{
-			Rules: []v1alpha1.IngressRule{{
-				Hosts: []string{
-					"foo.bar.com",
-				},
-				Visibility: v1alpha1.IngressVisibilityExternalIP,
-				HTTP:       &v1alpha1.HTTPIngressRuleValue{},
-			}},
-		},
-	}
-)
+var ingTemplate = &v1alpha1.Ingress{
+	ObjectMeta: metav1.ObjectMeta{
+		Namespace: "default",
+		Name:      "whatever",
+	},
+	Spec: v1alpha1.IngressSpec{
+		Rules: []v1alpha1.IngressRule{{
+			Hosts: []string{
+				"foo.bar.com",
+			},
+			Visibility: v1alpha1.IngressVisibilityExternalIP,
+			HTTP:       &v1alpha1.HTTPIngressRuleValue{},
+		}},
+	},
+}
 
 func TestProbeAllHosts(t *testing.T) {
 	const hostA = "foo.bar.com"
@@ -73,7 +71,7 @@ func TestProbeAllHosts(t *testing.T) {
 	failedRequests := make(chan *http.Request)
 	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		failedRequests <- r
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
@@ -163,7 +161,6 @@ func TestProbeAllHosts(t *testing.T) {
 
 	// Just drain the requests in the channel to not block the handler
 	go func() {
-		//nolint:all
 		for range probeRequests {
 		}
 	}()
@@ -197,7 +194,7 @@ func TestProbeLifecycle(t *testing.T) {
 	failedRequests := make(chan *http.Request)
 	failHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		failedRequests <- r
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusInternalServerError)
 	})
 
 	// Actual probe handler used in Activator and Queue-Proxy
@@ -260,7 +257,7 @@ func TestProbeLifecycle(t *testing.T) {
 	const expHostHeader = "foo.bar.com"
 
 	// Wait for the first (failing) and second (success) requests to be executed and validate Host header
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		req := <-probeRequests
 		if req.Host != expHostHeader {
 			t.Fatalf("Host header = %q, want %q", req.Host, expHostHeader)
@@ -275,7 +272,7 @@ func TestProbeLifecycle(t *testing.T) {
 	}
 
 	// The subsequent calls to IsReady must succeed and return true
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		if ok, err = prober.IsReady(context.Background(), ing); err != nil {
 			t.Fatal("IsReady failed:", err)
 		}

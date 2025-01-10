@@ -18,17 +18,16 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"flag"
 	"log"
 	"net"
-	"os"
-
-	"crypto/tls"
-	"crypto/x509"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 
 	"github.com/rs/dnscache"
 	"knative.dev/networking/pkg/http/probe"

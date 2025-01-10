@@ -34,11 +34,11 @@ func TestIsReadyCallCount(t *testing.T) {
 	ingress2 := v1alpha1.Ingress{ObjectMeta: metav1.ObjectMeta{Namespace: "ns2", Name: "name2"}}
 	ingress3 := v1alpha1.Ingress{ObjectMeta: metav1.ObjectMeta{Namespace: "ns3", Name: "name3"}}
 
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		statusManager.IsReady(context.Background(), &ingress1)
 	}
 
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		statusManager.IsReady(context.Background(), &ingress2)
 	}
 

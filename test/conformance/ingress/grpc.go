@@ -85,7 +85,7 @@ func TestGRPC(t *testing.T) {
 		t.Fatal("PingStream() =", err)
 	}
 
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		checkGRPCRoundTrip(t, stream, suffix)
 	}
 }
@@ -151,7 +151,7 @@ func TestGRPCSplit(t *testing.T) {
 
 	const maxRequests = 100
 	got := sets.New[string]()
-	for i := 0; i < maxRequests; i++ {
+	for range maxRequests {
 		stream, err := pc.PingStream(ctx)
 		if err != nil {
 			t.Error("PingStream() =", err)
@@ -164,7 +164,7 @@ func TestGRPCSplit(t *testing.T) {
 		}
 		got.Insert(suffix)
 
-		for j := 0; j < 10; j++ {
+		for range 10 {
 			checkGRPCRoundTrip(t, stream, suffix)
 		}
 

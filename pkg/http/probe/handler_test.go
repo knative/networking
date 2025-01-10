@@ -109,7 +109,7 @@ func BenchmarkProbeHandlerNoProbeHeader(b *testing.B) {
 	req := httptest.NewRequest(http.MethodGet, "http://example.com", nil)
 
 	b.Run("sequential-no-header", func(b *testing.B) {
-		for j := 0; j < b.N; j++ {
+		for range b.N {
 			h.ServeHTTP(resp, req)
 		}
 	})
@@ -131,7 +131,7 @@ func BenchmarkProbeHandlerWithProbeHeader(b *testing.B) {
 	h = NewHandler(h)
 	b.Run("sequential-probe-header", func(b *testing.B) {
 		resp := httptest.NewRecorder()
-		for j := 0; j < b.N; j++ {
+		for range b.N {
 			h.ServeHTTP(resp, req)
 		}
 	})

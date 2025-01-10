@@ -95,6 +95,7 @@ func TestCertificateSpecValidation(t *testing.T) {
 		})
 	}
 }
+
 func TestCertificateValidation(t *testing.T) {
 	tests := []struct {
 		name string

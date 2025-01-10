@@ -19,6 +19,7 @@ package status
 import (
 	"context"
 	"crypto/tls"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"net/http"
@@ -58,10 +59,8 @@ const (
 	initialDelay = 200 * time.Millisecond
 )
 
-var (
-	// probeMaxRetryDelay defines the maximum delay between retries in the backoff of probing
-	probeMaxRetryDelay = 30 * time.Second
-)
+// probeMaxRetryDelay defines the maximum delay between retries in the backoff of probing
+var probeMaxRetryDelay = 30 * time.Second
 
 func init() {
 	if val, ok := os.LookupEnv("PROBE_MAX_RETRY_DELAY_SECONDS"); ok {
@@ -151,7 +150,8 @@ type Prober struct {
 func NewProber(
 	logger *zap.SugaredLogger,
 	targetLister ProbeTargetLister,
-	readyCallback func(*v1alpha1.Ingress)) *Prober {
+	readyCallback func(*v1alpha1.Ingress),
+) *Prober {
 	return &Prober{
 		logger:        logger,
 		ingressStates: make(map[types.NamespacedName]*ingressState),
@@ -183,7 +183,7 @@ func (m *Prober) IsReady(ctx context.Context, ing *v1alpha1.Ingress) (bool, erro
 	if err != nil {
 		return false, fmt.Errorf("failed to compute the hash of the Ingress: %w", err)
 	}
-	hash := fmt.Sprintf("%x", bytes)
+	hash := hex.EncodeToString(bytes[:])
 
 	if ready, ok := func() (bool, bool) {
 		m.mu.Lock()
@@ -297,11 +297,11 @@ func (m *Prober) Start(done <-chan struct{}) chan struct{} {
 	var wg sync.WaitGroup
 
 	// Start the worker goroutines
-	for i := 0; i < m.probeConcurrency; i++ {
+	for range m.probeConcurrency {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			//nolint:all
+
 			for m.processWorkItem() {
 			}
 		}()

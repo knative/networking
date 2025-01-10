@@ -215,7 +215,7 @@ func TestPathAndPercentageSplit(t *testing.T) {
 	var g errgroup.Group
 	g.SetLimit(8)
 
-	for i := 0; i < total; i++ {
+	for range total {
 		g.Go(func() error {
 			ri := RuntimeRequest(ctx, t, client, "http://"+name+"."+test.NetworkingFlags.ServiceDomain+"/foo")
 			if ri == nil {

@@ -548,8 +548,10 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 			Name:      "foo",
 			Namespace: "bar",
 			Annotations: map[string]string{
-				"sub": "sub1"},
-			Domain: "baz.com"},
+				"sub": "sub1",
+			},
+			Domain: "baz.com",
+		},
 	}, {
 		name:               "network configuration without annotations in template",
 		wantErr:            false,
@@ -561,7 +563,8 @@ func TestAnnotationsInDomainTemplate(t *testing.T) {
 		data: DomainTemplateValues{
 			Name:      "foo",
 			Namespace: "bar",
-			Domain:    "baz.com"},
+			Domain:    "baz.com",
+		},
 	}}
 
 	for _, tt := range networkConfigTests {
@@ -602,8 +605,10 @@ func TestLabelsInDomainTemplate(t *testing.T) {
 			Name:      "foo",
 			Namespace: "bar",
 			Labels: map[string]string{
-				"sub": "sub1"},
-			Domain: "baz.com"},
+				"sub": "sub1",
+			},
+			Domain: "baz.com",
+		},
 	}, {
 		name:               "network configuration without labels in template",
 		wantErr:            false,
@@ -615,7 +620,8 @@ func TestLabelsInDomainTemplate(t *testing.T) {
 		templateValue: DomainTemplateValues{
 			Name:      "foo",
 			Namespace: "bar",
-			Domain:    "baz.com"},
+			Domain:    "baz.com",
+		},
 	}}
 
 	for _, tt := range networkConfigTests {
