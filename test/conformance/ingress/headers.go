@@ -83,7 +83,7 @@ func TestProbeHeaders(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req, err := http.NewRequest("GET", fmt.Sprintf("http://%s.%s", name, test.NetworkingFlags.ServiceDomain), nil)
+			req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://%s.%s", name, test.NetworkingFlags.ServiceDomain), nil)
 			if err != nil {
 				t.Fatal("Error creating request:", err)
 			}
