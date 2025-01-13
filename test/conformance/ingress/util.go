@@ -257,6 +257,9 @@ func CreateProxyService(ctx context.Context, t *testing.T, clients *test.Clients
 					Name:  "TARGET_HOST",
 					Value: target,
 				}, {
+					Name:  "GATEWAY_HOST",
+					Value: gatewayDomain,
+				}, {
 					Name:  "PORT",
 					Value: strconv.Itoa(containerPort),
 				}},
@@ -311,13 +314,7 @@ func CreateProxyService(ctx context.Context, t *testing.T, clients *test.Clients
 		},
 	}
 	proxyServiceCancel := createPodAndService(ctx, t, clients, pod, svc)
-
-	externalNameServiceCancel := createExternalNameService(ctx, t, clients, target, gatewayDomain)
-
-	return name, port, func() {
-		externalNameServiceCancel()
-		proxyServiceCancel()
-	}
+	return name, port, proxyServiceCancel
 }
 
 // CreateTimeoutService creates a Kubernetes service that will respond to the protocol
