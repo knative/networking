@@ -17,7 +17,7 @@ require (
 	k8s.io/code-generator v0.31.4
 	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8
 	knative.dev/hack v0.0.0-20250109131303-f8be0ccdff36
-	knative.dev/pkg v0.0.0-20250109201817-83cd52ed87d9
+	knative.dev/pkg v0.0.0-20250110150618-accfe3649188
 	sigs.k8s.io/yaml v1.4.0
 )
 
