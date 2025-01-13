@@ -17,7 +17,7 @@ require (
 	k8s.io/code-generator v0.31.4
 	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8
 	knative.dev/hack v0.0.0-20250109131303-f8be0ccdff36
-	knative.dev/pkg v0.0.0-20250110150618-accfe3649188
+	knative.dev/pkg v0.0.0-20250113161000-0c2a238a16ed
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -70,7 +70,7 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/tools v0.28.0 // indirect
+	golang.org/x/tools v0.29.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.183.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241015192408-796eee8c2d53 // indirect
