@@ -20,25 +20,25 @@ set -o pipefail
 
 source $(dirname $0)/../vendor/knative.dev/hack/codegen-library.sh
 
-# If we run with -mod=vendor here, then generate-groups.sh looks for vendor files in the wrong place.
-export GOFLAGS=-mod=
-
 echo "=== Update Codegen for $MODULE_NAME"
 
 group "Generating checksums for configmap _example keys"
 
-go run "${REPO_ROOT_DIR}/vendor/knative.dev/pkg/configmap/hash-gen" "${REPO_ROOT_DIR}"/config/config-network.yaml
+go run knative.dev/pkg/configmap/hash-gen "${REPO_ROOT_DIR}/config/config-network.yaml"
 
 group "Kubernetes Codegen"
+source "${CODEGEN_PKG}/kube_codegen.sh"
 
-# generate the code with:
-# --output-base    because this script should also be able to run inside the vendor dir of
-#                  k8s.io/kubernetes. The output-base is needed for the generators to output into the vendor dir
-#                  instead of the $GOPATH directly. For normal projects this can be dropped.
-${CODEGEN_PKG}/generate-groups.sh "deepcopy,client,informer,lister" \
-  knative.dev/networking/pkg/client knative.dev/networking/pkg/apis \
-  "networking:v1alpha1" \
-  --go-header-file ${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt
+kube::codegen::gen_helpers \
+  --boilerplate "${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt" \
+  "${REPO_ROOT_DIR}/pkg/apis"
+
+kube::codegen::gen_client \
+  --boilerplate "${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt" \
+  --output-dir "${REPO_ROOT_DIR}/pkg/client" \
+  --output-pkg "knative.dev/networking/pkg/client" \
+  --with-watch \
+  "${REPO_ROOT_DIR}/pkg/apis"
 
 group "Knative Codegen"
 
@@ -47,15 +47,6 @@ ${KNATIVE_CODEGEN_PKG}/hack/generate-knative.sh "injection" \
   knative.dev/networking/pkg/client knative.dev/networking/pkg/apis \
   "networking:v1alpha1" \
   --go-header-file ${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt
-
-group "Deepcopy Gen"
-
-# Depends on generate-groups.sh to install bin/deepcopy-gen
-${GOPATH}/bin/deepcopy-gen \
-  -O zz_generated.deepcopy \
-  --go-header-file ${REPO_ROOT_DIR}/hack/boilerplate/boilerplate.go.txt \
-  -i knative.dev/networking/pkg/apis/config \
-  -i knative.dev/networking/pkg/config
 
 group "Update deps post-codegen"
 
