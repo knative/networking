@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/gogo/protobuf v1.3.2
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529
 	go.uber.org/zap v1.27.0
@@ -16,8 +16,8 @@ require (
 	k8s.io/client-go v0.32.2
 	k8s.io/code-generator v0.32.2
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
-	knative.dev/hack v0.0.0-20250217122557-ce4c934f30e5
-	knative.dev/pkg v0.0.0-20250214140553-ae2c6bcc1f59
+	knative.dev/hack v0.0.0-20250219013704-306ce745e077
+	knative.dev/pkg v0.0.0-20250226145529-0372c089c78f
 	sigs.k8s.io/yaml v1.4.0
 )
 
