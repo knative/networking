@@ -875,10 +875,10 @@ k8s.io/utils/net
 k8s.io/utils/pointer
 k8s.io/utils/ptr
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20250424013725-c4037b0fe56b
+# knative.dev/hack v0.0.0-20250514121446-f525e187efdc
 ## explicit; go 1.21
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20250513222746-1c0e799b8740
+# knative.dev/pkg v0.0.0-20250514120547-19a13830745a
 ## explicit; go 1.23.0
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
