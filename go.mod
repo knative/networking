@@ -10,14 +10,14 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.14.0
 	golang.org/x/time v0.10.0
-	google.golang.org/grpc v1.72.0
+	google.golang.org/grpc v1.72.1
 	k8s.io/api v0.32.2
 	k8s.io/apimachinery v0.32.2
 	k8s.io/client-go v0.32.2
 	k8s.io/code-generator v0.32.2
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
 	knative.dev/hack v0.0.0-20250514121446-f525e187efdc
-	knative.dev/pkg v0.0.0-20250514120547-19a13830745a
+	knative.dev/pkg v0.0.0-20250520014526-44579e9ce5ed
 	sigs.k8s.io/yaml v1.4.0
 )
 
