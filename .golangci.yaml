@@ -141,6 +141,10 @@ linters:
   disable:
     - errcheck
   settings:
+    staticcheck:
+      checks:
+      - all
+      - "-QF1008" # Disable https://staticcheck.dev/docs/checks/#QF1008
     gocritic:
       disabled-checks:
         - exitAfterDefer
@@ -178,6 +182,9 @@ linters:
       - legacy
       - std-error-handling
     rules:
+      - linters:
+          - staticcheck
+        text: corev1.Endpoint.* is deprecated
       - linters:
           - gosec
           - noctx

@@ -134,11 +134,12 @@ func TestProbeAllHosts(t *testing.T) {
 	// Wait for both hosts to be probed
 	hostASeen, hostBSeen := false, false
 	for req := range probeRequests {
-		if req.Host == hostA {
+		switch req.Host {
+		case hostA:
 			hostASeen = true
-		} else if req.Host == hostB {
+		case hostB:
 			hostBSeen = true
-		} else {
+		default:
 			t.Fatalf("Host header = %q, want %q or %q", req.Host, hostA, hostB)
 		}
 
