@@ -8,7 +8,7 @@ require (
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/rs/dnscache v0.0.0-20230804202142-fc85eb664529
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.16.0
+	golang.org/x/sync v0.17.0
 	golang.org/x/time v0.10.0
 	google.golang.org/grpc v1.74.2
 	k8s.io/api v0.33.4
@@ -17,7 +17,7 @@ require (
 	k8s.io/code-generator v0.33.4
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
 	knative.dev/hack v0.0.0-20250902153942-1499de21e119
-	knative.dev/pkg v0.0.0-20250820014848-e9c87121ec4c
+	knative.dev/pkg v0.0.0-20250909010931-8c9c1d368e4b
 	sigs.k8s.io/yaml v1.6.0
 )
 
@@ -63,7 +63,7 @@ require (
 	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
-	google.golang.org/protobuf v1.36.7 // indirect
+	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
