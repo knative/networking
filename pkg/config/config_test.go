@@ -364,6 +364,17 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
+		name: "system-internal-tls-allow-serve-mode set to enabled",
+		data: map[string]string{
+			SystemInternalTLSAllowServeModeKey: "enabled",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SystemInternalTLSAllowServeMode = true
+			return c
+		}(),
+	}, {
 		name: "cluster-local-domain-tls with invalid configuration value",
 		data: map[string]string{
 			ClusterLocalDomainTLSKey: "wrong",
