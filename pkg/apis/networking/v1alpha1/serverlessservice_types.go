@@ -38,17 +38,17 @@ type ServerlessService struct {
 	// Standard object's metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// Spec is the desired state of the ServerlessService.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Spec ServerlessServiceSpec `json:"spec,omitempty"`
+	Spec ServerlessServiceSpec `json:"spec,omitzero"`
 
 	// Status is the current state of the ServerlessService.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Status ServerlessServiceStatus `json:"status,omitempty"`
+	Status ServerlessServiceStatus `json:"status,omitzero"`
 }
 
 // Verify that ServerlessService adheres to the appropriate interfaces.
@@ -72,7 +72,7 @@ type ServerlessServiceList struct {
 	// Standard object's metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitzero"`
 
 	// Items is the list of ServerlessService.
 	Items []ServerlessService `json:"items"`

@@ -39,17 +39,17 @@ type Ingress struct {
 	// Standard object's metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// Spec is the desired state of the Ingress.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Spec IngressSpec `json:"spec,omitempty"`
+	Spec IngressSpec `json:"spec,omitzero"`
 
 	// Status is the current state of the Ingress.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Status IngressStatus `json:"status,omitempty"`
+	Status IngressStatus `json:"status,omitzero"`
 }
 
 // Verify that Ingress adheres to the appropriate interfaces.
@@ -73,7 +73,7 @@ type IngressList struct {
 	// Standard object metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitzero"`
 
 	// Items is the list of Ingress objects.
 	Items []Ingress `json:"items"`

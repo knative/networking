@@ -36,17 +36,17 @@ type Certificate struct {
 	// Standard object's metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// Spec is the desired state of the Certificate.
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Spec CertificateSpec `json:"spec,omitempty"`
+	Spec CertificateSpec `json:"spec,omitzero"`
 
 	// Status is the current state of the Certificate.
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Status CertificateStatus `json:"status,omitempty"`
+	Status CertificateStatus `json:"status,omitzero"`
 }
 
 // Verify that Certificate adheres to the appropriate interfaces.
@@ -70,7 +70,7 @@ type CertificateList struct {
 	// Standard object's metadata.
 	// More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitzero"`
 
 	// Items is the list of `Certificate`.
 	Items []Certificate `json:"items"`
@@ -121,7 +121,7 @@ type HTTP01Challenge struct {
 	ServiceNamespace string `json:"serviceNamespace,omitempty"`
 
 	// ServicePort is the port of the service to serve HTTP01 challenge requests.
-	ServicePort intstr.IntOrString `json:"servicePort,omitempty"`
+	ServicePort intstr.IntOrString `json:"servicePort,omitzero"`
 }
 
 // GetStatus retrieves the status of the Certificate. Implements the KRShaped interface.

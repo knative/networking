@@ -31,12 +31,12 @@ type ClusterDomainClaim struct {
 	// Standard object's metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty"`
+	metav1.ObjectMeta `json:"metadata,omitzero"`
 
 	// Spec is the desired state of the ClusterDomainClaim.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 	// +optional
-	Spec ClusterDomainClaimSpec `json:"spec,omitempty"`
+	Spec ClusterDomainClaimSpec `json:"spec,omitzero"`
 }
 
 // Check that we can create OwnerReferences to a ClusterDomainClaim.
@@ -50,7 +50,7 @@ type ClusterDomainClaimList struct {
 	// Standard object metadata.
 	// More info: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty"`
+	metav1.ListMeta `json:"metadata,omitzero"`
 
 	// Items is the list of ClusterDomainClaim objects.
 	Items []ClusterDomainClaim `json:"items"`
