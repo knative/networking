@@ -179,8 +179,8 @@ golang.org/x/net/trace
 ## explicit; go 1.24.0
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sync v0.19.0
-## explicit; go 1.24.0
+# golang.org/x/sync v0.20.0
+## explicit; go 1.25.0
 golang.org/x/sync/errgroup
 golang.org/x/sync/singleflight
 # golang.org/x/sys v0.41.0
@@ -826,10 +826,10 @@ k8s.io/utils/lru
 k8s.io/utils/net
 k8s.io/utils/ptr
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20260212092700-0126b283bf20
+# knative.dev/hack v0.0.0-20260310014051-c448fdb867e2
 ## explicit; go 1.24
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20260302190359-1f39e94ef003
+# knative.dev/pkg v0.0.0-20260310013839-5504026dd1b6
 ## explicit; go 1.25.0
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
