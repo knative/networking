@@ -42,7 +42,7 @@ const (
 	RolloutAnnotationKey = GroupName + "/rollout"
 
 	// TagToHostAnnotationKey is the annotation key used for storing a JSON map of
-	// tags to host names
+	// tag names to hostnames that should be routed to that tag.
 	TagToHostAnnotationKey = GroupName + "/tag-to-host"
 )
 

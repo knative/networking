@@ -861,10 +861,10 @@ func setDefaultsForTest(ing *v1alpha1.Ingress) {
 	}
 }
 
-func createIngressReadyDialContext(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec) (*v1alpha1.Ingress, func(context.Context, string, string) (net.Conn, error), context.CancelFunc) {
+func createIngressReadyDialContext(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, io ...Option) (*v1alpha1.Ingress, func(context.Context, string, string) (net.Conn, error), context.CancelFunc) {
 	t.Helper()
 
-	ing, cancel := CreateIngress(ctx, t, clients, spec)
+	ing, cancel := CreateIngress(ctx, t, clients, spec, io...)
 	ingName := ktypes.NamespacedName{Name: ing.Name, Namespace: ing.Namespace}
 
 	if err := WaitForIngressState(ctx, clients.NetworkingClient, ing.Name, IsIngressReady, t.Name()); err != nil {
@@ -889,10 +889,20 @@ func CreateIngressReady(ctx context.Context, t *testing.T, clients *test.Clients
 }
 
 func CreateIngressReadyWithTLS(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, tlsConfig *tls.Config) (*v1alpha1.Ingress, *http.Client, context.CancelFunc) {
+	return CreateIngressReadyWithTLSAndOptions(ctx, t, clients, spec, tlsConfig)
+}
+
+// CreateIngressReadyWithOptions creates a ready Ingress and applies the provided options.
+func CreateIngressReadyWithOptions(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, io ...Option) (*v1alpha1.Ingress, *http.Client, context.CancelFunc) {
+	return CreateIngressReadyWithTLSAndOptions(ctx, t, clients, spec, nil, io...)
+}
+
+// CreateIngressReadyWithTLSAndOptions creates a ready Ingress with TLS and applies the provided options.
+func CreateIngressReadyWithTLSAndOptions(ctx context.Context, t *testing.T, clients *test.Clients, spec v1alpha1.IngressSpec, tlsConfig *tls.Config, io ...Option) (*v1alpha1.Ingress, *http.Client, context.CancelFunc) {
 	t.Helper()
 
 	// Create a client with a dialer based on the Ingress' public load balancer.
-	ing, dialer, cancel := createIngressReadyDialContext(ctx, t, clients, spec)
+	ing, dialer, cancel := createIngressReadyDialContext(ctx, t, clients, spec, io...)
 
 	return ing, &http.Client{
 		Transport: &uaRoundTripper{

@@ -210,6 +210,95 @@ func TestTagHeaders(t *testing.T) {
 	}
 }
 
+// TestTagToHost verifies that an Ingress properly dispatches to backends based on
+// the requested host when a tag-to-host annotation is present.
+func TestTagToHost(t *testing.T) {
+	t.Parallel()
+	ctx, clients := context.Background(), test.Setup(t)
+
+	name, port, _ := CreateRuntimeService(ctx, t, clients, networking.ServicePortNameHTTP1)
+
+	const (
+		tagName           = "the-tag"
+		backendHeader     = "Which-Backend"
+		backendWithTag    = "tag"
+		backendWithoutTag = "no-tag"
+	)
+
+	defaultHost := name + "." + test.NetworkingFlags.ServiceDomain
+	tagHost := "tag-" + name + "." + test.NetworkingFlags.ServiceDomain
+
+	_, client, _ := CreateIngressReadyWithOptions(ctx, t, clients, v1alpha1.IngressSpec{
+		Rules: []v1alpha1.IngressRule{{
+			Hosts:      []string{defaultHost},
+			Visibility: v1alpha1.IngressVisibilityExternalIP,
+			HTTP: &v1alpha1.HTTPIngressRuleValue{
+				Paths: []v1alpha1.HTTPIngressPath{{
+					Headers: map[string]v1alpha1.HeaderMatch{
+						header.RouteTagKey: {
+							Exact: tagName,
+						},
+					},
+					AppendHeaders: map[string]string{
+						backendHeader: backendWithTag,
+					},
+					Splits: []v1alpha1.IngressBackendSplit{{
+						IngressBackend: v1alpha1.IngressBackend{
+							ServiceName:      name,
+							ServiceNamespace: test.ServingNamespace,
+							ServicePort:      intstr.FromInt(port),
+						},
+					}},
+				}, {
+					AppendHeaders: map[string]string{
+						backendHeader: backendWithoutTag,
+					},
+					Splits: []v1alpha1.IngressBackendSplit{{
+						IngressBackend: v1alpha1.IngressBackend{
+							ServiceName:      name,
+							ServiceNamespace: test.ServingNamespace,
+							ServicePort:      intstr.FromInt(port),
+						},
+					}},
+				}},
+			},
+		}},
+	}, OverrideIngressAnnotation(map[string]string{
+		networking.IngressClassAnnotationKey: test.NetworkingFlags.IngressClass,
+		networking.TagToHostAnnotationKey:    fmt.Sprintf(`{"%s":["%s"]}`, tagName, tagHost),
+	}))
+
+	tests := []struct {
+		name string
+		host string
+		want string
+	}{{
+		name: "tag host routes to tagged backend",
+		host: tagHost,
+		want: backendWithTag,
+	}, {
+		name: "default host routes to untagged backend",
+		host: defaultHost,
+		want: backendWithoutTag,
+	}}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ri := RuntimeRequest(ctx, t, client, "http://"+tt.host)
+			if ri == nil {
+				t.Error("Couldn't make request")
+				return
+			}
+
+			if got := ri.Request.Headers.Get(backendHeader); got != tt.want {
+				t.Errorf("Header[%q] = %q, wanted %q", backendHeader, got, tt.want)
+			}
+		})
+	}
+}
+
 // TestPreSplitSetHeaders verifies that an Ingress that specified AppendHeaders pre-split has the appropriate header(s) set.
 func TestPreSplitSetHeaders(t *testing.T) {
 	t.Parallel()

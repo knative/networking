@@ -50,8 +50,9 @@ var stableTests = map[string]func(t *testing.T){
 
 var betaTests = map[string]func(t *testing.T){
 	// Add your conformance test for beta features
-	"host-rewrite": TestRewriteHost,
-	"headers/tags": TestTagHeaders,
+	"host-rewrite":        TestRewriteHost,
+	"headers/tags":        TestTagHeaders,
+	"headers/tag-to-host": TestTagToHost,
 }
 
 var alphaTests = map[string]func(t *testing.T){
