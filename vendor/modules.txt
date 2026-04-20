@@ -828,10 +828,10 @@ k8s.io/utils/lru
 k8s.io/utils/net
 k8s.io/utils/ptr
 k8s.io/utils/trace
-# knative.dev/hack v0.0.0-20260318014029-7eede7fdcbad
+# knative.dev/hack v0.0.0-20260416140237-504af4d2178f
 ## explicit; go 1.24
 knative.dev/hack
-# knative.dev/pkg v0.0.0-20260414003832-e65cbe95a718
+# knative.dev/pkg v0.0.0-20260417155523-2b1e89838597
 ## explicit; go 1.25.0
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
