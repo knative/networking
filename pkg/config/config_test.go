@@ -23,6 +23,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/lru"
 
@@ -466,6 +467,103 @@ func TestConfiguration(t *testing.T) {
 			SystemInternalTLS:     EncryptionDisabled,
 			ClusterLocalDomainTLS: EncryptionDisabled,
 		},
+	}, {
+		name: "network configuration with IPv6 single-stack SKS services",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "SingleStack",
+			SKSServiceIPFamiliesKey:     "IPv6",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicySingleStack
+			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv6Protocol}
+			return c
+		}(),
+	}, {
+		name: "network configuration with ordered dual-stack SKS services",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "PreferDualStack",
+			SKSServiceIPFamiliesKey:     "IPv6,IPv4",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyPreferDualStack
+			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv6Protocol, corev1.IPv4Protocol}
+			return c
+		}(),
+	}, {
+		name: "network configuration with required dual-stack SKS services",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "RequireDualStack",
+			SKSServiceIPFamiliesKey:     "IPv4,IPv6",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyRequireDualStack
+			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv4Protocol, corev1.IPv6Protocol}
+			return c
+		}(),
+	}, {
+		name: "network configuration with SKS service policy but no families",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "SingleStack",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with SKS service families but no policy",
+		data: map[string]string{
+			SKSServiceIPFamiliesKey: "IPv6",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with unsupported SKS service policy",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "DualStack",
+			SKSServiceIPFamiliesKey:     "IPv6",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with unsupported SKS service family",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "SingleStack",
+			SKSServiceIPFamiliesKey:     "IPv8",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with duplicate SKS service family",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "PreferDualStack",
+			SKSServiceIPFamiliesKey:     "IPv6,IPv6",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with single stack policy and two families",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "SingleStack",
+			SKSServiceIPFamiliesKey:     "IPv4,IPv6",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with required dual-stack policy and one family",
+		data: map[string]string{
+			SKSServiceIPFamilyPolicyKey: "RequireDualStack",
+			SKSServiceIPFamiliesKey:     "IPv6",
+		},
+		wantErr: true,
+	}, {
+		name: "network configuration with no SKS service families leaves fields unset",
+		data: map[string]string{
+			DefaultIngressClassKey: "foo-ingress",
+		},
+		wantErr: false,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.DefaultIngressClass = "foo-ingress"
+			return c
+		}(),
 	}}
 
 	for _, tt := range networkConfigTests {

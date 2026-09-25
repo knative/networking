@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/component: networking
     app.kubernetes.io/version: devel
   annotations:
-    knative.dev/example-checksum: "0573e07d"
+    knative.dev/example-checksum: "cbdf6154"
 data:
   _example: |
     ################################
@@ -201,3 +201,15 @@ data:
     # fronting Knative with an external loadbalancer that deals with TLS termination and
     # Knative doesn't know about that otherwise.
     default-external-scheme: "http"
+    # sks-service-ip-family-policy and sks-service-ip-families control the
+    # spec.ipFamilyPolicy and spec.ipFamilies set on the K8s Services created
+    # for ServerlessServices (the public revision Service "<revision>" and the
+    # private one "<revision>-private"). Both keys must be set together.
+    # Permitted policy values are: "SingleStack", "PreferDualStack",
+    # "RequireDualStack". Families is an ordered comma-separated list of
+    # "IPv4" and/or "IPv6", e.g.:
+    #   sks-service-ip-family-policy: "SingleStack"
+    #   sks-service-ip-families: "IPv6"
+    # When unset (default) both ServiceSpec fields are left empty and the
+    # cluster default Service CIDR family applies. Changing these values only
+    # affects newly created Services; existing Services are never modified.
