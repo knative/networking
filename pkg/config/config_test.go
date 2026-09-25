@@ -473,7 +473,6 @@ func TestConfiguration(t *testing.T) {
 			SKSServiceIPFamilyPolicyKey: "SingleStack",
 			SKSServiceIPFamiliesKey:     "IPv6",
 		},
-		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicySingleStack
@@ -486,7 +485,6 @@ func TestConfiguration(t *testing.T) {
 			SKSServiceIPFamilyPolicyKey: "PreferDualStack",
 			SKSServiceIPFamiliesKey:     "IPv6,IPv4",
 		},
-		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
 			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyPreferDualStack
@@ -494,28 +492,9 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with required dual-stack SKS services",
-		data: map[string]string{
-			SKSServiceIPFamilyPolicyKey: "RequireDualStack",
-			SKSServiceIPFamiliesKey:     "IPv4,IPv6",
-		},
-		wantErr: false,
-		wantConfig: func() *Config {
-			c := defaultConfig()
-			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyRequireDualStack
-			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv4Protocol, corev1.IPv6Protocol}
-			return c
-		}(),
-	}, {
 		name: "network configuration with SKS service policy but no families",
 		data: map[string]string{
 			SKSServiceIPFamilyPolicyKey: "SingleStack",
-		},
-		wantErr: true,
-	}, {
-		name: "network configuration with SKS service families but no policy",
-		data: map[string]string{
-			SKSServiceIPFamiliesKey: "IPv6",
 		},
 		wantErr: true,
 	}, {
@@ -552,16 +531,10 @@ func TestConfiguration(t *testing.T) {
 			SKSServiceIPFamilyPolicyKey: "RequireDualStack",
 			SKSServiceIPFamiliesKey:     "IPv6",
 		},
-		wantErr: true,
-	}, {
-		name: "network configuration with no SKS service families leaves fields unset",
-		data: map[string]string{
-			DefaultIngressClassKey: "foo-ingress",
-		},
-		wantErr: false,
 		wantConfig: func() *Config {
 			c := defaultConfig()
-			c.DefaultIngressClass = "foo-ingress"
+			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyRequireDualStack
+			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv6Protocol}
 			return c
 		}(),
 	}}

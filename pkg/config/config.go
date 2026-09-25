@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -141,19 +142,16 @@ const (
 	// traffic between Knative system components is encrypted or not.
 	SystemInternalTLSKey = "system-internal-tls"
 
-	// SKSServiceIPFamilyPolicyKey is the name of the configuration entry
-	// that specifies the spec.ipFamilyPolicy applied to the K8s Services
-	// created for ServerlessServices (the public revision Service and its
-	// private counterpart). Empty means the field is left unset on newly
-	// created Services and the cluster default applies.
+	// SKSServiceIPFamilyPolicyKey is the config for the spec.ipFamilyPolicy
+	// set on Services created for ServerlessServices. When unset the field
+	// is left empty and the cluster default applies.
 	// Must be set together with SKSServiceIPFamiliesKey.
 	SKSServiceIPFamilyPolicyKey = "sks-service-ip-family-policy"
 
-	// SKSServiceIPFamiliesKey is the name of the configuration entry that
-	// specifies the ordered spec.ipFamilies applied to the K8s Services
-	// created for ServerlessServices, as a comma-separated list
-	// (e.g. "IPv6,IPv4"). Empty means the field is left unset on newly
-	// created Services and the cluster default applies.
+	// SKSServiceIPFamiliesKey is the config for the ordered, comma-separated
+	// spec.ipFamilies (e.g. "IPv6,IPv4") set on Services created for
+	// ServerlessServices. When unset the field is left empty and the cluster
+	// default applies.
 	// Must be set together with SKSServiceIPFamilyPolicyKey.
 	SKSServiceIPFamiliesKey = "sks-service-ip-families"
 )
@@ -322,15 +320,13 @@ type Config struct {
 	// ClusterLocalDomainTLS specifies whether cluster-local traffic is encrypted or not.
 	ClusterLocalDomainTLS EncryptionConfig
 
-	// SKSServiceIPFamilyPolicy is the spec.ipFamilyPolicy applied to the
-	// K8s Services newly created for ServerlessServices. Empty ("") means
-	// the field is left unset on the Service and the cluster default
-	// applies. Only takes effect together with SKSServiceIPFamilies.
+	// SKSServiceIPFamilyPolicy is the spec.ipFamilyPolicy applied to newly
+	// created SKS Services. Empty leaves the field unset (cluster default).
+	// Only takes effect together with SKSServiceIPFamilies.
 	SKSServiceIPFamilyPolicy corev1.IPFamilyPolicyType
 
-	// SKSServiceIPFamilies is the ordered spec.ipFamilies applied to the
-	// K8s Services newly created for ServerlessServices. Nil means the
-	// field is left unset on the Service and the cluster default applies.
+	// SKSServiceIPFamilies is the ordered spec.ipFamilies applied to newly
+	// created SKS Services. Nil leaves the field unset (cluster default).
 	// Only takes effect together with SKSServiceIPFamilyPolicy.
 	SKSServiceIPFamilies []corev1.IPFamily
 }
@@ -604,9 +600,8 @@ func asMode(key string, target *MeshCompatibilityMode) cm.ParseFunc {
 }
 
 // checkSKSServiceIPFamilies parses the sks-service-ip-family-policy and
-// sks-service-ip-families keys. Both keys must be set together and hold
-// Kubernetes-supported values; anything else is rejected so that invalid
-// or partial configurations are not applied.
+// sks-service-ip-families keys. Both must be set together with
+// Kubernetes-supported values; anything else is rejected.
 func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 	policy, hasPolicy := data[SKSServiceIPFamilyPolicyKey]
 	families, hasFamilies := data[SKSServiceIPFamiliesKey]
@@ -620,12 +615,11 @@ func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 			SKSServiceIPFamilyPolicyKey, SKSServiceIPFamiliesKey)
 	}
 
-	var parsedPolicy corev1.IPFamilyPolicyType
-	switch corev1.IPFamilyPolicyType(policy) {
+	parsedPolicy := corev1.IPFamilyPolicyType(policy)
+	switch parsedPolicy {
 	case corev1.IPFamilyPolicySingleStack,
 		corev1.IPFamilyPolicyPreferDualStack,
 		corev1.IPFamilyPolicyRequireDualStack:
-		parsedPolicy = corev1.IPFamilyPolicyType(policy)
 	default:
 		return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s, %s",
 			SKSServiceIPFamilyPolicyKey, policy, corev1.IPFamilyPolicySingleStack,
@@ -633,7 +627,6 @@ func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 	}
 
 	var parsedFamilies []corev1.IPFamily
-	seen := make(map[corev1.IPFamily]struct{}, 2)
 	for _, raw := range strings.Split(families, ",") {
 		family := corev1.IPFamily(strings.TrimSpace(raw))
 		switch family {
@@ -642,27 +635,19 @@ func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 			return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s",
 				SKSServiceIPFamiliesKey, raw, corev1.IPv4Protocol, corev1.IPv6Protocol)
 		}
-		if _, dup := seen[family]; dup {
+		if slices.Contains(parsedFamilies, family) {
 			return fmt.Errorf("%s in config-network ConfigMap contains duplicate family: %q",
 				SKSServiceIPFamiliesKey, family)
 		}
-		seen[family] = struct{}{}
 		parsedFamilies = append(parsedFamilies, family)
 	}
 
-	// Enforce the Kubernetes ipFamilies cardinality rules for the policy,
-	// so invalid combinations are rejected here instead of failing at
-	// Service creation time.
-	minFamilies, maxFamilies := 1, 2
-	if parsedPolicy == corev1.IPFamilyPolicyRequireDualStack {
-		minFamilies = 2
-	}
-	if parsedPolicy == corev1.IPFamilyPolicySingleStack {
-		maxFamilies = 1
-	}
-	if len(parsedFamilies) < minFamilies || len(parsedFamilies) > maxFamilies {
-		return fmt.Errorf("%s with value: %q in config-network ConfigMap requires %d-%d entries in %s, but got %d: %q",
-			SKSServiceIPFamilyPolicyKey, policy, minFamilies, maxFamilies,
+	// Enforce the Kubernetes ipFamilies cardinality rules: SingleStack
+	// takes exactly one family; the dual-stack policies accept one or two
+	// (the apiserver adds the alternate family when only one is given).
+	if parsedPolicy == corev1.IPFamilyPolicySingleStack && len(parsedFamilies) > 1 {
+		return fmt.Errorf("%s with value: %q in config-network ConfigMap requires exactly one entry in %s, but got %d: %q",
+			SKSServiceIPFamilyPolicyKey, policy,
 			SKSServiceIPFamiliesKey, len(parsedFamilies), families)
 	}
 
