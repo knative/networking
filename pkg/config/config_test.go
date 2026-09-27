@@ -492,11 +492,25 @@ func TestConfiguration(t *testing.T) {
 			return c
 		}(),
 	}, {
-		name: "network configuration with SKS service policy but no families",
+		name: "network configuration with SKS service policy only",
 		data: map[string]string{
-			SKSServiceIPFamilyPolicyKey: "SingleStack",
+			SKSServiceIPFamilyPolicyKey: "RequireDualStack",
 		},
-		wantErr: true,
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SKSServiceIPFamilyPolicy = corev1.IPFamilyPolicyRequireDualStack
+			return c
+		}(),
+	}, {
+		name: "network configuration with SKS service families only",
+		data: map[string]string{
+			SKSServiceIPFamiliesKey: "IPv6,IPv4",
+		},
+		wantConfig: func() *Config {
+			c := defaultConfig()
+			c.SKSServiceIPFamilies = []corev1.IPFamily{corev1.IPv6Protocol, corev1.IPv4Protocol}
+			return c
+		}(),
 	}, {
 		name: "network configuration with unsupported SKS service policy",
 		data: map[string]string{

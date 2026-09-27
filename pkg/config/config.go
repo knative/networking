@@ -145,14 +145,12 @@ const (
 	// SKSServiceIPFamilyPolicyKey is the config for the spec.ipFamilyPolicy
 	// set on Services created for ServerlessServices. When unset the field
 	// is left empty and the cluster default applies.
-	// Must be set together with SKSServiceIPFamiliesKey.
 	SKSServiceIPFamilyPolicyKey = "sks-service-ip-family-policy"
 
 	// SKSServiceIPFamiliesKey is the config for the ordered, comma-separated
 	// spec.ipFamilies (e.g. "IPv6,IPv4") set on Services created for
 	// ServerlessServices. When unset the field is left empty and the cluster
 	// default applies.
-	// Must be set together with SKSServiceIPFamilyPolicyKey.
 	SKSServiceIPFamiliesKey = "sks-service-ip-families"
 )
 
@@ -322,12 +320,10 @@ type Config struct {
 
 	// SKSServiceIPFamilyPolicy is the spec.ipFamilyPolicy applied to newly
 	// created SKS Services. Empty leaves the field unset (cluster default).
-	// Only takes effect together with SKSServiceIPFamilies.
 	SKSServiceIPFamilyPolicy corev1.IPFamilyPolicyType
 
 	// SKSServiceIPFamilies is the ordered spec.ipFamilies applied to newly
 	// created SKS Services. Nil leaves the field unset (cluster default).
-	// Only takes effect together with SKSServiceIPFamilyPolicy.
 	SKSServiceIPFamilies []corev1.IPFamily
 }
 
@@ -600,55 +596,55 @@ func asMode(key string, target *MeshCompatibilityMode) cm.ParseFunc {
 }
 
 // checkSKSServiceIPFamilies parses the sks-service-ip-family-policy and
-// sks-service-ip-families keys. Both must be set together with
-// Kubernetes-supported values; anything else is rejected.
+// sks-service-ip-families keys. Each key is optional, matching the Kubernetes
+// Service semantics: a set key must hold a Kubernetes-supported value,
+// an unset key leaves the corresponding ServiceSpec field for the apiserver
+// to default.
 func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 	policy, hasPolicy := data[SKSServiceIPFamilyPolicyKey]
 	families, hasFamilies := data[SKSServiceIPFamiliesKey]
-
-	switch {
-	case !hasPolicy && !hasFamilies:
-		// Both unset: leave the ServiceSpec fields unset.
+	if !hasPolicy && !hasFamilies {
 		return nil
-	case hasPolicy != hasFamilies:
-		return fmt.Errorf("%s and %s in config-network ConfigMap must be set together",
-			SKSServiceIPFamilyPolicyKey, SKSServiceIPFamiliesKey)
 	}
 
 	parsedPolicy := corev1.IPFamilyPolicyType(policy)
-	switch parsedPolicy {
-	case corev1.IPFamilyPolicySingleStack,
-		corev1.IPFamilyPolicyPreferDualStack,
-		corev1.IPFamilyPolicyRequireDualStack:
-	default:
-		return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s, %s",
-			SKSServiceIPFamilyPolicyKey, policy, corev1.IPFamilyPolicySingleStack,
-			corev1.IPFamilyPolicyPreferDualStack, corev1.IPFamilyPolicyRequireDualStack)
+	if hasPolicy {
+		switch parsedPolicy {
+		case corev1.IPFamilyPolicySingleStack,
+			corev1.IPFamilyPolicyPreferDualStack,
+			corev1.IPFamilyPolicyRequireDualStack:
+		default:
+			return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s, %s",
+				SKSServiceIPFamilyPolicyKey, policy, corev1.IPFamilyPolicySingleStack,
+				corev1.IPFamilyPolicyPreferDualStack, corev1.IPFamilyPolicyRequireDualStack)
+		}
 	}
 
 	var parsedFamilies []corev1.IPFamily
-	for _, raw := range strings.Split(families, ",") {
-		family := corev1.IPFamily(strings.TrimSpace(raw))
-		switch family {
-		case corev1.IPv4Protocol, corev1.IPv6Protocol:
-		default:
-			return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s",
-				SKSServiceIPFamiliesKey, raw, corev1.IPv4Protocol, corev1.IPv6Protocol)
+	if hasFamilies {
+		for _, raw := range strings.Split(families, ",") {
+			family := corev1.IPFamily(strings.TrimSpace(raw))
+			switch family {
+			case corev1.IPv4Protocol, corev1.IPv6Protocol:
+			default:
+				return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s",
+					SKSServiceIPFamiliesKey, raw, corev1.IPv4Protocol, corev1.IPv6Protocol)
+			}
+			if slices.Contains(parsedFamilies, family) {
+				return fmt.Errorf("%s in config-network ConfigMap contains duplicate family: %q",
+					SKSServiceIPFamiliesKey, family)
+			}
+			parsedFamilies = append(parsedFamilies, family)
 		}
-		if slices.Contains(parsedFamilies, family) {
-			return fmt.Errorf("%s in config-network ConfigMap contains duplicate family: %q",
-				SKSServiceIPFamiliesKey, family)
-		}
-		parsedFamilies = append(parsedFamilies, family)
-	}
 
-	// Enforce the Kubernetes ipFamilies cardinality rules: SingleStack
-	// takes exactly one family; the dual-stack policies accept one or two
-	// (the apiserver adds the alternate family when only one is given).
-	if parsedPolicy == corev1.IPFamilyPolicySingleStack && len(parsedFamilies) > 1 {
-		return fmt.Errorf("%s with value: %q in config-network ConfigMap requires exactly one entry in %s, but got %d: %q",
-			SKSServiceIPFamilyPolicyKey, policy,
-			SKSServiceIPFamiliesKey, len(parsedFamilies), families)
+		// Kubernetes rule: an explicit SingleStack policy takes exactly one
+		// family; the dual-stack policies accept one or two (the apiserver
+		// adds the alternate family when only one is given).
+		if parsedPolicy == corev1.IPFamilyPolicySingleStack && len(parsedFamilies) > 1 {
+			return fmt.Errorf("%s with value: %q in config-network ConfigMap requires exactly one entry in %s, but got %d: %q",
+				SKSServiceIPFamilyPolicyKey, policy,
+				SKSServiceIPFamiliesKey, len(parsedFamilies), families)
+		}
 	}
 
 	nc.SKSServiceIPFamilyPolicy = parsedPolicy
