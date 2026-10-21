@@ -768,7 +768,7 @@ func TestProbeVerifier(t *testing.T) {
 type fakeProbeTargetLister []ProbeTarget
 
 func (l fakeProbeTargetLister) ListProbeTargets(_ context.Context, ing *v1alpha1.Ingress) ([]ProbeTarget, error) {
-	targets := []ProbeTarget{}
+	targets := make([]ProbeTarget, 0, len(l))
 	for _, target := range l {
 		newTarget := ProbeTarget{
 			PodIPs:  target.PodIPs,
