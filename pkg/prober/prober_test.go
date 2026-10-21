@@ -95,9 +95,9 @@ func TestDoServing(t *testing.T) {
 
 func TestBlackHole(t *testing.T) {
 	transport := &http.Transport{
-		Dial: (&net.Dialer{
+		DialContext: (&net.Dialer{
 			Timeout: 10 * time.Millisecond,
-		}).Dial,
+		}).DialContext,
 	}
 	got, err := Do(context.Background(), transport, "http://gone.fishing.svc.custer.local:8080", ExpectsStatusCodes([]int{http.StatusOK}))
 	if want := false; got != want {

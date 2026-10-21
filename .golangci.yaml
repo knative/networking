@@ -184,7 +184,17 @@ linters:
     rules:
       - linters:
           - staticcheck
-        text: corev1.Endpoint.* is deprecated
+        text: '(corev1|k8s\.io/api/core/v1)\.Endpoint.* is deprecated'
+      - linters:
+          - staticcheck
+        path: ^test/
+        text: '(pkgTest|knative\.dev/pkg/test)\.Flags is deprecated'
+      # The pod context is canceled through the function retained in podContexts.
+      - linters:
+          - gosec
+        path: ^pkg/status/status.go$
+        text: 'G118: context cancellation function'
+        source: 'ctx, cancel := context.WithCancel\(context.Background\(\)\)'
       - linters:
           - gosec
           - noctx
