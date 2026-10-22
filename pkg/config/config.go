@@ -320,7 +320,7 @@ type Config struct {
 
 	// SKSServiceIPFamilyPolicy is the spec.ipFamilyPolicy applied to newly
 	// created SKS Services. Empty leaves the field unset (cluster default).
-	SKSServiceIPFamilyPolicy corev1.IPFamilyPolicyType
+	SKSServiceIPFamilyPolicy corev1.IPFamilyPolicy
 
 	// SKSServiceIPFamilies is the ordered spec.ipFamilies applied to newly
 	// created SKS Services. Nil leaves the field unset (cluster default).
@@ -607,7 +607,7 @@ func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
 		return nil
 	}
 
-	parsedPolicy := corev1.IPFamilyPolicyType(policy)
+	parsedPolicy := corev1.IPFamilyPolicy(policy)
 	if hasPolicy {
 		switch parsedPolicy {
 		case corev1.IPFamilyPolicySingleStack,
