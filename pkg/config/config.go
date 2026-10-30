@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -142,6 +143,17 @@ const (
 	// SystemInternalTLSKey is the name of the configuration whether
 	// traffic between Knative system components is encrypted or not.
 	SystemInternalTLSKey = "system-internal-tls"
+
+	// SKSServiceIPFamilyPolicyKey is the config for the spec.ipFamilyPolicy
+	// set on Services created for ServerlessServices. When unset the field
+	// is left empty and the cluster default applies.
+	SKSServiceIPFamilyPolicyKey = "sks-service-ip-family-policy"
+
+	// SKSServiceIPFamiliesKey is the config for the ordered, comma-separated
+	// spec.ipFamilies (e.g. "IPv6,IPv4") set on Services created for
+	// ServerlessServices. When unset the field is left empty and the cluster
+	// default applies.
+	SKSServiceIPFamiliesKey = "sks-service-ip-families"
 )
 
 // CertificateType indicates the type of Knative Certificate.
@@ -309,6 +321,14 @@ type Config struct {
 
 	// ClusterLocalDomainTLS specifies whether cluster-local traffic is encrypted or not.
 	ClusterLocalDomainTLS EncryptionConfig
+
+	// SKSServiceIPFamilyPolicy is the spec.ipFamilyPolicy applied to newly
+	// created SKS Services. Empty leaves the field unset (cluster default).
+	SKSServiceIPFamilyPolicy corev1.IPFamilyPolicy
+
+	// SKSServiceIPFamilies is the ordered spec.ipFamilies applied to newly
+	// created SKS Services. Nil leaves the field unset (cluster default).
+	SKSServiceIPFamilies []corev1.IPFamily
 }
 
 func defaultConfig() *Config {
@@ -459,6 +479,10 @@ func NewConfigFromMap(data map[string]string) (*Config, error) {
 			ClusterLocalDomainTLSKey, data[ClusterLocalDomainTLSKey])
 	}
 
+	if err := checkSKSServiceIPFamilies(data, nc); err != nil {
+		return nil, err
+	}
+
 	return nc, nil
 }
 
@@ -574,4 +598,61 @@ func asMode(key string, target *MeshCompatibilityMode) cm.ParseFunc {
 		}
 		return nil
 	}
+}
+
+// checkSKSServiceIPFamilies parses the sks-service-ip-family-policy and
+// sks-service-ip-families keys. Each key is optional, matching the Kubernetes
+// Service semantics: a set key must hold a Kubernetes-supported value,
+// an unset key leaves the corresponding ServiceSpec field for the apiserver
+// to default.
+func checkSKSServiceIPFamilies(data map[string]string, nc *Config) error {
+	policy, hasPolicy := data[SKSServiceIPFamilyPolicyKey]
+	families, hasFamilies := data[SKSServiceIPFamiliesKey]
+	if !hasPolicy && !hasFamilies {
+		return nil
+	}
+
+	parsedPolicy := corev1.IPFamilyPolicy(policy)
+	if hasPolicy {
+		switch parsedPolicy {
+		case corev1.IPFamilyPolicySingleStack,
+			corev1.IPFamilyPolicyPreferDualStack,
+			corev1.IPFamilyPolicyRequireDualStack:
+		default:
+			return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s, %s",
+				SKSServiceIPFamilyPolicyKey, policy, corev1.IPFamilyPolicySingleStack,
+				corev1.IPFamilyPolicyPreferDualStack, corev1.IPFamilyPolicyRequireDualStack)
+		}
+	}
+
+	var parsedFamilies []corev1.IPFamily
+	if hasFamilies {
+		for _, raw := range strings.Split(families, ",") {
+			family := corev1.IPFamily(strings.TrimSpace(raw))
+			switch family {
+			case corev1.IPv4Protocol, corev1.IPv6Protocol:
+			default:
+				return fmt.Errorf("%s with value: %q in config-network ConfigMap is not supported, must be one of: %s, %s",
+					SKSServiceIPFamiliesKey, raw, corev1.IPv4Protocol, corev1.IPv6Protocol)
+			}
+			if slices.Contains(parsedFamilies, family) {
+				return fmt.Errorf("%s in config-network ConfigMap contains duplicate family: %q",
+					SKSServiceIPFamiliesKey, family)
+			}
+			parsedFamilies = append(parsedFamilies, family)
+		}
+
+		// Kubernetes rule: an explicit SingleStack policy takes exactly one
+		// family; the dual-stack policies accept one or two (the apiserver
+		// adds the alternate family when only one is given).
+		if parsedPolicy == corev1.IPFamilyPolicySingleStack && len(parsedFamilies) > 1 {
+			return fmt.Errorf("%s with value: %q in config-network ConfigMap requires exactly one entry in %s, but got %d: %q",
+				SKSServiceIPFamilyPolicyKey, policy,
+				SKSServiceIPFamiliesKey, len(parsedFamilies), families)
+		}
+	}
+
+	nc.SKSServiceIPFamilyPolicy = parsedPolicy
+	nc.SKSServiceIPFamilies = parsedFamilies
+	return nil
 }
