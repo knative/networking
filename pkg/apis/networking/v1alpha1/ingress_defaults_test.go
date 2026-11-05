@@ -36,6 +36,23 @@ func TestIngressDefaulting(t *testing.T) {
 			Spec: IngressSpec{},
 		},
 	}, {
+		name: "rule-without-http",
+		in: &Ingress{
+			Spec: IngressSpec{
+				Rules: []IngressRule{{
+					Hosts: []string{"example.com"},
+				}},
+			},
+		},
+		want: &Ingress{
+			Spec: IngressSpec{
+				Rules: []IngressRule{{
+					Hosts:      []string{"example.com"},
+					Visibility: IngressVisibilityExternalIP,
+				}},
+			},
+		},
+	}, {
 		name: "split-timeout-and-visibility-defaulting",
 		in: &Ingress{
 			Spec: IngressSpec{
