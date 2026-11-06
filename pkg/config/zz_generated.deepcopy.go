@@ -22,6 +22,7 @@ limitations under the License.
 package config
 
 import (
+	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -32,6 +33,11 @@ func (in *Config) DeepCopyInto(out *Config) {
 		in, out := &in.NamespaceWildcardCertSelector, &out.NamespaceWildcardCertSelector
 		*out = new(v1.LabelSelector)
 		(*in).DeepCopyInto(*out)
+	}
+	if in.SKSServiceIPFamilies != nil {
+		in, out := &in.SKSServiceIPFamilies, &out.SKSServiceIPFamilies
+		*out = make([]corev1.IPFamily, len(*in))
+		copy(*out, *in)
 	}
 	return
 }
