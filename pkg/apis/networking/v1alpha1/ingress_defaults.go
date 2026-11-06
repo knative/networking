@@ -45,7 +45,9 @@ func (r *IngressRule) SetDefaults(ctx context.Context) {
 	if r.Visibility == "" {
 		r.Visibility = IngressVisibilityExternalIP
 	}
-	r.HTTP.SetDefaults(ctx)
+	if r.HTTP != nil {
+		r.HTTP.SetDefaults(ctx)
+	}
 }
 
 // SetDefaults populates default values in HTTPIngressRuleValue
